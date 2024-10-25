@@ -2,7 +2,6 @@
 
 import axios from "axios";
 import { NextResponse } from "next/server";
-import type { TRetreat } from "../../../../../types";
 
 export async function GET(
   request: Request,
@@ -29,7 +28,7 @@ export async function GET(
       );
     }
 
-    const retreatData: TRetreat = response.data.retreat;
+    const retreatData = response.data.retreat;
 
     return NextResponse.json(retreatData);
   } catch (error) {

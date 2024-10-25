@@ -18,7 +18,7 @@ interface RetreatRegistrationComponentProps {
 // 실제 API 호출 함수 using axios
 const fetchRetreatData = async (id: string): Promise<TRetreatInfo> => {
   try {
-    const response = await axios.get<TRetreatInfo>(`/api/v1/retreat/${id}`)
+    const response = await axios.get(`/api/v1/retreats/${id}`)
     return response.data
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -381,7 +381,7 @@ export function RetreatRegistrationComponent({ retreatId }: RetreatRegistrationC
                   {retreatData.dates.map((date: string) => {
                     // Find the event based on date and type
                     const event: TSchedule | undefined = retreatData.schedule.find(
-                      (s: TSchedule) => s.date.toISOString().startsWith(new Date(date).toISOString()) && s.type === eventType
+                      (s: TSchedule) => s.date && new Date(s.date).toISOString().startsWith(new Date(date).toISOString()) && s.type === eventType
                     )
                     return (
                       <TableCell key={date}>

@@ -1,3 +1,11 @@
+export type TUser = {
+  id: number;
+  name: string;
+  phone_number: string;
+  grade: number;
+  univ_group: number;
+};
+
 export type TRetreat = {
   id: number;
   name: string;
@@ -22,7 +30,7 @@ export type TUnivGroup = {
 
 export type TSchedule = {
   id: number;
-  time: string; // ISO 8601 형식의 날짜 및 시간 문자열
+  date: Date;
   type: string;
 };
 
@@ -35,9 +43,11 @@ export type TRetreatInfo = {
   retreat: {
     id: number;
     name: string;
-    image_url: string;
     dates: string[];
     location: string;
+    main_verse: string;
+    main_speaker: string;
+    memo?: string;
     univ_group_and_grade: TUnivGroup[];
     schedule: TSchedule[];
     payment: TPayment;
