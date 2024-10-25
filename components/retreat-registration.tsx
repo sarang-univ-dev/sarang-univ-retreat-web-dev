@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -8,106 +9,73 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent } from "@/components/ui/card"
+import { TRetreatInfo, TGrade, TUnivGroup, TSchedule } from '../types'
 
-// Mock API call
-const fetchRetreatData = () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        retreat: {
-          name: "Summer Coding Retreat 2024",
-          image_url: "/placeholder.svg?height=200&width=400",
-          dates: ['2024-07-01', '2024-07-02', '2024-07-04', '2024-07-05'],
-          location: "Tech Valley Resort",
-          univ_group_and_grade: [
-            {
-              "univ_group_id": 1,
-              "univ_group_name": "Computer Science",
-              "univ_group_number": 101,
-              "grades": [
-                {
-                  "grade_id": 1,
-                  "grade_name": "Freshman",
-                  "grade_number": 1
-                },
-                {
-                  "grade_id": 2,
-                  "grade_name": "Sophomore",
-                  "grade_number": 2
-                }
-              ]
-            },
-            {
-              "univ_group_id": 2,
-              "univ_group_name": "Mechanical Engineering",
-              "univ_group_number": 102,
-              "grades": [
-                {
-                  "grade_id": 3,
-                  "grade_name": "Junior",
-                  "grade_number": 3
-                },
-                {
-                  "grade_id": 4,
-                  "grade_name": "Senior",
-                  "grade_number": 4
-                }
-              ]
-            }
-          ],
-          schedule: [
-            { id: 1, time: '2024-07-01 08:00:00', type: 'BREAKFAST' },
-            { id: 2, time: '2024-07-01 12:00:00', type: 'LUNCH' },
-            { id: 3, time: '2024-07-01 18:00:00', type: 'DINNER' },
-            { id: 5, time: '2024-07-02 08:00:00', type: 'BREAKFAST' },
-            { id: 7, time: '2024-07-02 18:00:00', type: 'DINNER' },
-            { id: 9, time: '2024-07-04 08:00:00', type: 'BREAKFAST' },
-            { id: 10, time: '2024-07-04 12:00:00', type: 'LUNCH' },
-            { id: 13, time: '2024-07-05 08:00:00', type: 'BREAKFAST' },
-            { id: 15, time: '2024-07-05 18:00:00', type: 'DINNER' },
-          ],
-          payment: {
-            total_price: 100000,
-            partial_price_per_event: 25000,
-          }
-        }
-      })
-    }, 1000)
-  })
+interface RetreatRegistrationComponentProps {
+  retreatId: string
 }
 
-const groupDates = (dates) => {
-  const sortedDates = dates.sort((a, b) => new Date(a) - new Date(b))
-  const groups = []
-  let currentGroup = [sortedDates[0]]
+// 실제 API 호출 함수 using axios
+const fetchRetreatData = async (id: string): Promise<TRetreatInfo> => {
+  try {
+    const response = await axios.get<TRetreatInfo>(`/api/v1/retreat/${id}`)
+    return response.data
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data?.message || 'Failed to fetch retreat data')
+    } else {
+      throw new Error('Failed to fetch retreat data')
+    }
+  }
+}
+
+const groupDates = (dates: string[]): string[] => {
+  if (dates.length === 0) return []
+
+  const sortedDates = [...dates].sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+  const groups: string[] = []
+  let currentGroupStart = sortedDates[0]
+  let previousDate = new Date(sortedDates[0])
 
   for (let i = 1; i < sortedDates.length; i++) {
     const currentDate = new Date(sortedDates[i])
-    const previousDate = new Date(sortedDates[i - 1])
-    
-    if (currentDate - previousDate === 24 * 60 * 60 * 1000) {
-      currentGroup.push(sortedDates[i])
+
+    // Check if the current date is consecutive
+    if ((currentDate.getTime() - previousDate.getTime()) === 24 * 60 * 60 * 1000) {
+      previousDate = currentDate
+      continue
     } else {
-      groups.push(currentGroup)
-      currentGroup = [sortedDates[i]]
+      if (currentGroupStart === sortedDates[i - 1]) {
+        groups.push(currentGroupStart)
+      } else {
+        groups.push(`${currentGroupStart}~${sortedDates[i - 1]}`)
+      }
+      currentGroupStart = sortedDates[i]
+      previousDate = currentDate
     }
   }
-  
-  groups.push(currentGroup)
 
-  return groups.map(group => {
-    if (group.length === 1) {
-      return group[0]
-    } else {
-      return `${group[0]}~${group[group.length - 1]}`
-    }
-  })
+  // Add the last group
+  if (currentGroupStart === sortedDates[sortedDates.length - 1]) {
+    groups.push(currentGroupStart)
+  } else {
+    groups.push(`${currentGroupStart}~${sortedDates[sortedDates.length - 1]}`)
+  }
+
+  return groups
 }
 
-export function RetreatRegistrationComponent() {
-  const [retreatData, setRetreatData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [formData, setFormData] = useState({
+export function RetreatRegistrationComponent({ retreatId }: RetreatRegistrationComponentProps) {
+  const [retreatData, setRetreatData] = useState<TRetreatInfo['retreat'] | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [formData, setFormData] = useState<{
+    univGroup: string
+    grade: string
+    name: string
+    phoneNumber: string
+    scheduleSelection: number[]
+    privacyConsent: boolean
+  }>({
     univGroup: '',
     grade: '',
     name: '',
@@ -115,9 +83,16 @@ export function RetreatRegistrationComponent() {
     scheduleSelection: [],
     privacyConsent: false
   })
-  const [availableGrades, setAvailableGrades] = useState([])
-  const [totalPrice, setTotalPrice] = useState(0)
-  const [formErrors, setFormErrors] = useState({
+  const [availableGrades, setAvailableGrades] = useState<TGrade[]>([])
+  const [totalPrice, setTotalPrice] = useState<number>(0)
+  const [formErrors, setFormErrors] = useState<{
+    univGroup: string
+    grade: string
+    name: string
+    phoneNumber: string
+    scheduleSelection: string
+    privacyConsent: string
+  }>({
     univGroup: '',
     grade: '',
     name: '',
@@ -127,14 +102,18 @@ export function RetreatRegistrationComponent() {
   })
 
   useEffect(() => {
-    fetchRetreatData().then((data) => {
-      setRetreatData(data.retreat)
-      setLoading(false)
-    }).catch((error) => {
-      console.error("Failed to fetch retreat data:", error)
-      setLoading(false)
-    })
-  }, [])
+    const getData = async () => {
+      try {
+        const data = await fetchRetreatData(retreatId)
+        setRetreatData(data.retreat)
+      } catch (error) {
+        console.error("Failed to fetch retreat data:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    getData()
+  }, [retreatId])
 
   useEffect(() => {
     if (retreatData) {
@@ -155,14 +134,16 @@ export function RetreatRegistrationComponent() {
     return <div className="flex justify-center items-center h-screen">Retreat not found</div>
   }
 
-  const handleUnivGroupChange = (value) => {
-    const selectedGroup = retreatData.univ_group_and_grade.find(group => group.univ_group_id.toString() === value)
+  const handleUnivGroupChange = (value: string) => {
+    const selectedGroup: TUnivGroup | undefined = retreatData.univ_group_and_grade.find(
+      (group: TUnivGroup) => group.univ_group_id.toString() === value
+    )
     setAvailableGrades(selectedGroup ? selectedGroup.grades : [])
     setFormData({ ...formData, univGroup: value, grade: '' })
     setFormErrors({ ...formErrors, univGroup: '' })
   }
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
     setFormErrors({ ...formErrors, [name]: '' })
@@ -170,33 +151,33 @@ export function RetreatRegistrationComponent() {
     if (name === 'phoneNumber') {
       const phoneRegex = /^010-\d{4}-\d{4}$/
       if (!phoneRegex.test(value)) {
-        setFormErrors({ ...formErrors, phoneNumber: 'Please enter a valid phone number in the format 010-1234-5678' })
+        setFormErrors(prevErrors => ({ ...prevErrors, phoneNumber: 'Please enter a valid phone number in the format 010-1234-5678' }))
       } else {
-        setFormErrors({ ...formErrors, phoneNumber: '' })
+        setFormErrors(prevErrors => ({ ...prevErrors, phoneNumber: '' }))
       }
     }
   }
 
-  const handleScheduleChange = (id) => {
+  const handleScheduleChange = (id: number) => {
     const updatedSelection = formData.scheduleSelection.includes(id)
       ? formData.scheduleSelection.filter(item => item !== id)
       : [...formData.scheduleSelection, id]
     setFormData({ ...formData, scheduleSelection: updatedSelection })
-    setFormErrors({ ...formErrors, scheduleSelection: '' })
+    setFormErrors(prevErrors => ({ ...prevErrors, scheduleSelection: '' }))
   }
 
-  const handleAllScheduleChange = (checked) => {
-    const allScheduleIds = retreatData.schedule.map(item => item.id)
+  const handleAllScheduleChange = (checked: boolean) => {
+    const allScheduleIds: number[] = retreatData.schedule.map((item: TSchedule) => item.id)
     setFormData({ ...formData, scheduleSelection: checked ? allScheduleIds : [] })
-    setFormErrors({ ...formErrors, scheduleSelection: '' })
+    setFormErrors(prevErrors => ({ ...prevErrors, scheduleSelection: '' }))
   }
 
-  const handlePrivacyConsentChange = (checked) => {
+  const handlePrivacyConsentChange = (checked: boolean) => {
     setFormData({ ...formData, privacyConsent: checked })
-    setFormErrors({ ...formErrors, privacyConsent: '' })
+    setFormErrors(prevErrors => ({ ...prevErrors, privacyConsent: '' }))
   }
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     const errors = {
       univGroup: '',
       grade: '',
@@ -242,21 +223,42 @@ export function RetreatRegistrationComponent() {
     return isValid
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validateForm()) {
-      console.log("Form submitted:", { ...formData, totalPrice })
-      // Here you would typically send the form data to your backend
+      const submissionData = {
+        ...formData,
+        totalPrice,
+        grade: Number(formData.grade),
+        univGroup: Number(formData.univGroup),
+        scheduleSelection: formData.scheduleSelection,
+        phoneNumber: formData.phoneNumber,
+        name: formData.name,
+        privacyConsent: formData.privacyConsent
+      }
+
+      console.log("Form submitted:", submissionData)
+      // Example axios POST request (uncomment and adjust as needed)
+      /*
+      try {
+        const response = await axios.post('/api/v1/register', submissionData)
+        // Handle success (e.g., display a success message, redirect, etc.)
+        console.log('Registration successful:', response.data)
+      } catch (error: any) {
+        console.error('Registration failed:', error.response?.data?.message || error.message)
+        // Optionally, set form errors based on the response
+      }
+      */
     }
   }
 
-  const groupedDates = groupDates(retreatData.dates)
+  const groupedDates = groupDates(retreatData?.dates || [])
 
   return (
     <div className="container mx-auto p-4">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">{retreatData.name}</h1>
-        <img src={retreatData.image_url} alt={retreatData.name} className="w-full h-48 object-cover mb-4" />
+        <h1 className="text-3xl font-bold mb-4">{retreatData.name}</h1>        
+        {/* <img src={retreatData.image_url} alt={retreatData.name} className="w-full h-48 object-cover mb-4" /> */}
         <p>Dates: {groupedDates.join(', ')}</p>
         <p>Location: {retreatData.location}</p>
       </div>
@@ -298,7 +300,7 @@ export function RetreatRegistrationComponent() {
                 <SelectValue placeholder="Select University Group" />
               </SelectTrigger>
               <SelectContent>
-                {retreatData.univ_group_and_grade.map((group) => (
+                {retreatData.univ_group_and_grade.map((group: TUnivGroup) => (
                   <SelectItem key={group.univ_group_id} value={group.univ_group_id.toString()}>
                     {group.univ_group_name}
                   </SelectItem>
@@ -311,9 +313,9 @@ export function RetreatRegistrationComponent() {
           <div className="space-y-2">
             <Label htmlFor="grade">Grade</Label>
             <Select 
-              onValueChange={(value) => {
+              onValueChange={(value: string) => {
                 setFormData({ ...formData, grade: value })
-                setFormErrors({ ...formErrors, grade: '' })
+                setFormErrors(prevErrors => ({ ...prevErrors, grade: '' }))
               }} 
               value={formData.grade}
               disabled={!formData.univGroup}
@@ -322,7 +324,7 @@ export function RetreatRegistrationComponent() {
                 <SelectValue placeholder="Select Grade" />
               </SelectTrigger>
               <SelectContent>
-                {availableGrades.map((grade) => (
+                {availableGrades.map((grade: TGrade) => (
                   <SelectItem key={grade.grade_id} value={grade.grade_id.toString()}>
                     {`${grade.grade_number}학년 ${grade.grade_name}`}
                   </SelectItem>
@@ -357,18 +359,17 @@ export function RetreatRegistrationComponent() {
             <Checkbox
               id="allSchedule"
               checked={formData.scheduleSelection.length === retreatData.schedule.length}
-              onCheckedChange={handleAllScheduleChange}
+              onCheckedChange={(checked: boolean) => handleAllScheduleChange(checked)}
             />
             <label htmlFor="allSchedule" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               Select All
-            
             </label>
           </div>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Event</TableHead>
-                {retreatData.dates.map((date) => (
+                {retreatData.dates.map((date: string) => (
                   <TableHead key={date}>{new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</TableHead>
                 ))}
               </TableRow>
@@ -377,9 +378,10 @@ export function RetreatRegistrationComponent() {
               {['BREAKFAST', 'LUNCH', 'DINNER'].map((eventType) => (
                 <TableRow key={eventType}>
                   <TableCell>{eventType}</TableCell>
-                  {retreatData.dates.map((date) => {
-                    const event = retreatData.schedule.find(
-                      (s) => s.time.startsWith(date) && s.type === eventType
+                  {retreatData.dates.map((date: string) => {
+                    // Find the event based on date and type
+                    const event: TSchedule | undefined = retreatData.schedule.find(
+                      (s: TSchedule) => s.date.toISOString().startsWith(new Date(date).toISOString()) && s.type === eventType
                     )
                     return (
                       <TableCell key={date}>
