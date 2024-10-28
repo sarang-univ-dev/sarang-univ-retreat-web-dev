@@ -7,7 +7,7 @@ export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
-  const { slug } = params;
+  const { slug } = await params;
   const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
   if (!SERVER_URL) {
