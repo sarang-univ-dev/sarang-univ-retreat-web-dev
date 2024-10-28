@@ -5,9 +5,9 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { slug: string } }
 ) {
-  const { id } = params;
+  const { slug } = params;
   const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
   if (!SERVER_URL) {
@@ -18,7 +18,7 @@ export async function GET(
   }
 
   try {
-    const response = await axios.get(`${SERVER_URL}/api/v1/retreats/${id}`);
+    const response = await axios.get(`${SERVER_URL}/api/v1/retreats/${slug}`);
 
     if (response.status !== 200) {
       console.error("서버 오류:", response.data);

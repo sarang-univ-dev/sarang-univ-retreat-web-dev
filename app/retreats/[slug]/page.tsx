@@ -7,19 +7,19 @@ import { TRetreatInfo } from "@/types";
 import { RetreatRegistrationComponent } from "@/components/retreat-registration";
 
 export default function RetreatPage() {
-  const params = useParams<{ id: string }>();
-  const { id } = params;
+  const params = useParams<{ slug: string }>();
+  const { slug } = params;
 
   const [retreat, setRetreat] = useState<TRetreatInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!id) return;
+    if (!slug) return;
 
     const fetchRetreat = async () => {
       try {
-        const response = await axios.get(`/api/v1/retreats/${id}`);
+        const response = await axios.get(`/api/v1/retreats/${slug}`);
 
         console.log(response.data);
 
@@ -38,11 +38,11 @@ export default function RetreatPage() {
     };
 
     fetchRetreat();
-  }, [id]);
+  }, [slug]);
 
   if (loading) return <p>로딩 중...</p>;
   if (error) return <p>에러: {error}</p>;
   if (!retreat) return <p>리트리트를 찾을 수 없습니다.</p>;
 
-  return <RetreatRegistrationComponent retreatId={id} />;
+  return <RetreatRegistrationComponent retreatSlug={slug} />;
 }
