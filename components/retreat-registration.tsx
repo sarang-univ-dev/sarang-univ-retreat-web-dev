@@ -186,8 +186,7 @@ export function RetreatRegistrationComponent({
       if (!phoneRegex.test(value)) {
         setFormErrors((prevErrors) => ({
           ...prevErrors,
-          phoneNumber:
-            "Please enter a valid phone number in the format 010-1234-5678"
+          phoneNumber: "010-1234-5678 형식으로 적어주세요"
         }));
       } else {
         setFormErrors((prevErrors) => ({ ...prevErrors, phoneNumber: "" }));
@@ -231,36 +230,33 @@ export function RetreatRegistrationComponent({
     let isValid = true;
 
     if (!formData.univGroup) {
-      errors.univGroup = "Please select a University Group";
+      errors.univGroup = "부서를 선택해주세요";
       isValid = false;
     }
     if (!formData.grade) {
-      errors.grade = "Please select a Grade";
+      errors.grade = "학년을 선택해주세요";
       isValid = false;
     }
     if (!formData.name.trim()) {
-      errors.name = "Please enter your Name";
+      errors.name = "이름을 입력해주세요";
       isValid = false;
     }
     if (!formData.phoneNumber.trim()) {
-      errors.phoneNumber = "Please enter your Phone Number";
+      errors.phoneNumber = "전화번호를 입력해주세요";
       isValid = false;
     } else {
       const phoneRegex = /^010-\d{4}-\d{4}$/;
       if (!phoneRegex.test(formData.phoneNumber)) {
-        errors.phoneNumber =
-          "Please enter a valid phone number in the format 010-1234-5678";
+        errors.phoneNumber = "010-1234-5678 형식으로 적어주세요";
         isValid = false;
       }
     }
     if (formData.scheduleSelection.length === 0) {
-      errors.scheduleSelection =
-        "Please select at least one event from the schedule";
+      errors.scheduleSelection = "수양회 일정을 선택해주세요";
       isValid = false;
     }
     if (!formData.privacyConsent) {
-      errors.privacyConsent =
-        "You must agree to the privacy policy to register";
+      errors.privacyConsent = "개인정보 수집 및 이용에 동의해주세요";
       isValid = false;
     }
 
@@ -304,8 +300,8 @@ export function RetreatRegistrationComponent({
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4">{retreatData.name}</h1>
         {/* <img src={retreatData.image_url} alt={retreatData.name} className="w-full h-48 object-cover mb-4" /> */}
-        <p>Dates: {groupedDates.join(", ")}</p>
-        <p>Location: {retreatData.location}</p>
+        <p>날짜: {groupedDates.join(", ")}</p>
+        <p>장소: {retreatData.location}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -322,16 +318,13 @@ export function RetreatRegistrationComponent({
                   htmlFor="privacyConsent"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  I agree to the privacy policy
+                  개인정보 수집 및 이용에 동의합니다
                 </label>
-                <p className="text-sm text-muted-foreground">
-                  By checking this box, you agree to our{" "}
-                  <a href="#" className="text-primary underline">
-                    Privacy Policy
-                  </a>{" "}
-                  and consent to the collection and use of your personal
-                  information.
-                </p>
+                {/* <p className="text-sm text-muted-foreground">
+                  이 상자를 선택하면{" "}
+                  <a className="text-primary underline">개인정보 처리방침</a> 에
+                  동의하고 귀하의 개인정보 수집 및 사용에 동의하게 됩니다.
+                </p> */}
               </div>
             </div>
             {formErrors.privacyConsent && (
@@ -344,13 +337,13 @@ export function RetreatRegistrationComponent({
 
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="univGroup">University Group</Label>
+            <Label htmlFor="univGroup">부서</Label>
             <Select
               onValueChange={handleUnivGroupChange}
               value={formData.univGroup}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select University Group" />
+                <SelectValue placeholder="부서를 선택해주세요" />
               </SelectTrigger>
               <SelectContent>
                 {retreatData.univ_group_and_grade.map((group: TUnivGroup) => (
@@ -358,7 +351,7 @@ export function RetreatRegistrationComponent({
                     key={group.univ_group_id}
                     value={group.univ_group_id.toString()}
                   >
-                    {group.univ_group_name}
+                    {group.univ_group_number}부 {group.univ_group_name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -371,7 +364,7 @@ export function RetreatRegistrationComponent({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="grade">Grade</Label>
+            <Label htmlFor="grade">학년</Label>
             <Select
               onValueChange={(value: string) => {
                 setFormData({ ...formData, grade: value });
@@ -381,7 +374,7 @@ export function RetreatRegistrationComponent({
               disabled={!formData.univGroup}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Grade" />
+                <SelectValue placeholder="학년을 선택해주세요" />
               </SelectTrigger>
               <SelectContent>
                 {availableGrades.map((grade: TGrade) => (
@@ -400,7 +393,7 @@ export function RetreatRegistrationComponent({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">이름</Label>
             <Input
               id="name"
               name="name"
@@ -413,7 +406,7 @@ export function RetreatRegistrationComponent({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phoneNumber">Phone Number</Label>
+            <Label htmlFor="phoneNumber">전화번호</Label>
             <Input
               id="phoneNumber"
               name="phoneNumber"
@@ -430,7 +423,7 @@ export function RetreatRegistrationComponent({
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold mb-4">Retreat Schedule</h2>
+          <h2 className="text-2xl font-bold mb-4">수양회 일정 선택</h2>
           <div className="flex items-center space-x-2 mb-4">
             <Checkbox
               id="allSchedule"
@@ -446,13 +439,13 @@ export function RetreatRegistrationComponent({
               htmlFor="allSchedule"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Select All
+              전참
             </label>
           </div>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Event</TableHead>
+                <TableHead>일정 선택</TableHead>
                 {retreatData.dates.map((date: string) => (
                   <TableHead key={date}>
                     {new Date(date).toLocaleDateString("en-US", {
@@ -506,13 +499,13 @@ export function RetreatRegistrationComponent({
           )}
           <div className="mt-4 text-right">
             <p className="font-bold">
-              Total Price: ₩{totalPrice.toLocaleString()}
+              총금액: {totalPrice.toLocaleString()}원
             </p>
           </div>
         </div>
 
         <Button type="submit" className="w-full">
-          Register
+          수양회 신청하기
         </Button>
       </form>
     </div>
