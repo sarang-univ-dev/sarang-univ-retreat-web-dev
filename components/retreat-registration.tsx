@@ -337,29 +337,22 @@ export function RetreatRegistrationComponent({
     e.preventDefault();
     if (validateForm()) {
       const submissionData = {
-        ...formData,
-        totalPrice,
-        grade: Number(formData.grade),
-        univGroup: Number(formData.univGroup),
-        scheduleSelection: formData.scheduleSelection,
-        phoneNumber: formData.phoneNumber,
+        grade_id: Number(formData.grade),
+        schedule_selection: formData.scheduleSelection,
+        phone_number: formData.phoneNumber,
         name: formData.name,
-        privacyConsent: formData.privacyConsent,
         gender: formData.gender
       };
 
-      console.log("Form submitted:", submissionData);
-      // Example axios POST request (uncomment and adjust as needed)
-      /*
       try {
-        const response = await axios.post('/api/v1/register', submissionData)
-        // Handle success (e.g., display a success message, redirect, etc.)
-        console.log('Registration successful:', response.data)
-      } catch (error: any) {
-        console.error('Registration failed:', error.response?.data?.message || error.message)
+        await axios.post(`/api/v1/retreats/${retreatSlug}/register`, submissionData);
+      } catch (error: Error | AxiosError) {
+        console.error(
+          "Registration failed:",
+          error.response?.data?.message || error.message
+        );
         // Optionally, set form errors based on the response
       }
-      */
     }
   };
 
@@ -595,7 +588,7 @@ export function RetreatRegistrationComponent({
           </div>
         </div>
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full text-md">
           수양회 신청하기
         </Button>
       </form>
