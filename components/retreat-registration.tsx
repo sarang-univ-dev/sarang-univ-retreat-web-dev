@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { TRetreatInfo, TGrade, TUnivGroup, TSchedule } from "../types";
+import RetreatCard from "./retreat-card";
 
 interface RetreatRegistrationComponentProps {
   retreatSlug: string;
@@ -141,12 +142,18 @@ export function RetreatRegistrationComponent({
 
   useEffect(() => {
     if (retreatData) {
-      const eventCount = formData.scheduleSelection.length;
-      const calculatedPrice = Math.min(
-        eventCount * retreatData.payment.partial_price_per_event,
-        retreatData.payment.total_price
-      );
-      setTotalPrice(calculatedPrice);
+      if (formData.scheduleSelection.length === retreatData.schedule.length) {
+        // 전참이 선택된 경우 전체 금액을 설정
+        setTotalPrice(retreatData.payment.total_price);
+      } else {
+        // 개별 선택된 일정 수에 따라 금액 계산
+        const eventCount = formData.scheduleSelection.length;
+        const calculatedPrice = Math.min(
+          eventCount * retreatData.payment.partial_price_per_event,
+          retreatData.payment.total_price
+        );
+        setTotalPrice(calculatedPrice);
+      }
     }
   }, [formData.scheduleSelection, retreatData]);
 
@@ -295,13 +302,39 @@ export function RetreatRegistrationComponent({
 
   const groupedDates = groupDates(retreatData?.dates || []);
 
+  // 헬퍼 함수: 날짜 문자열을 "M/D(요일)" 형식으로 변환
+  const formatDate = (dateStr: string): string => {
+    const date = new Date(dateStr);
+    const month = date.getMonth() + 1; // 월은 0부터 시작하므로 +1
+    const day = date.getDate();
+
+    const weekdays = ["주일", "월", "화", "수", "목", "금", "토"];
+    const dayOfWeek = weekdays[date.getDay()];
+
+    return `${month}/${day}(${dayOfWeek})`;
+  };
+
+  // 그룹화된 날짜를 포맷팅된 문자열로 변환
+  const formattedGroupedDates = groupedDates.map((group) => {
+    if (group.includes("~")) {
+      const [start, end] = group.split("~");
+      return `${formatDate(start)} ~ ${formatDate(end)}`;
+    } else {
+      return formatDate(group);
+    }
+  });
+
   return (
     <div className="container mx-auto p-4">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">{retreatData.name}</h1>
-        {/* <img src={retreatData.image_url} alt={retreatData.name} className="w-full h-48 object-cover mb-4" /> */}
-        <p>날짜: {groupedDates.join(", ")}</p>
-        <p>장소: {retreatData.location}</p>
+        <RetreatCard
+          name={retreatData.name}
+          dates={formattedGroupedDates.join(", ")}
+          location={retreatData.location}
+          main_verse={retreatData.main_verse}
+          main_speaker={retreatData.main_speaker}
+          memo={retreatData.memo}
+        />
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -427,6 +460,7 @@ export function RetreatRegistrationComponent({
           <div className="flex items-center space-x-2 mb-4">
             <Checkbox
               id="allSchedule"
+              className="all-schedule-checkbox" // 전참 체크박스에 클래스 이름 추가
               checked={
                 formData.scheduleSelection.length ===
                 retreatData.schedule.length
@@ -475,6 +509,7 @@ export function RetreatRegistrationComponent({
                       <TableCell key={date}>
                         {event ? (
                           <Checkbox
+                            className="schedule-checkbox" // 일정 선택 체크박스에 클래스 이름 추가
                             checked={formData.scheduleSelection.includes(
                               event.id
                             )}
@@ -498,9 +533,7 @@ export function RetreatRegistrationComponent({
             </p>
           )}
           <div className="mt-4 text-right">
-            <p className="font-bold">
-              총금액: {totalPrice.toLocaleString()}원
-            </p>
+            <p className="font-bold">총금액: {totalPrice.toLocaleString()}원</p>
           </div>
         </div>
 
