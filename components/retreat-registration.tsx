@@ -29,6 +29,14 @@ interface RetreatRegistrationComponentProps {
   retreatSlug: string;
 }
 
+// 이벤트 타입을 한글로 매핑
+const EVENT_TYPE_MAP: Record<string, string> = {
+  BREAKFAST: "아침",
+  LUNCH: "점심",
+  DINNER: "저녁",
+  SLEEP: "숙박"
+};
+
 // 실제 API 호출 함수 using axios
 const fetchRetreatData = async (slug: string): Promise<TRetreatInfo> => {
   try {
@@ -45,6 +53,19 @@ const fetchRetreatData = async (slug: string): Promise<TRetreatInfo> => {
   }
 };
 
+// 헬퍼 함수: 날짜 문자열을 "M/D(요일)" 형식으로 변환 (로컬 시간 기준)
+const formatDate = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const month = date.getMonth() + 1; // 월은 0부터 시작하므로 +1
+  const day = date.getDate();
+
+  const weekdays = ["주일", "월", "화", "수", "목", "금", "토"];
+  const dayOfWeek = weekdays[date.getDay()];
+
+  return `${month}/${day}(${dayOfWeek})`;
+};
+
+// 그룹화된 날짜를 포맷팅된 문자열으로 변환 (로컬 시간 기준)
 const groupDates = (dates: string[]): string[] => {
   if (dates.length === 0) return [];
 
@@ -58,7 +79,6 @@ const groupDates = (dates: string[]): string[] => {
   for (let i = 1; i < sortedDates.length; i++) {
     const currentDate = new Date(sortedDates[i]);
 
-    // Check if the current date is consecutive
     if (
       currentDate.getTime() - previousDate.getTime() ===
       24 * 60 * 60 * 1000
@@ -130,6 +150,8 @@ export function RetreatRegistrationComponent({
     gender: ""
   });
 
+  const [isAllScheduleSelected, setIsAllScheduleSelected] = useState(false);
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -146,12 +168,31 @@ export function RetreatRegistrationComponent({
 
   useEffect(() => {
     if (retreatData) {
-      if (formData.scheduleSelection.length === retreatData.schedule.length) {
-        // 전참이 선택된 경우 전체 금액을 설정
+      if (isAllScheduleSelected) {
         setTotalPrice(retreatData.payment.total_price);
       } else {
-        // 개별 선택된 일정 수에 따라 금액 계산
-        const eventCount = formData.scheduleSelection.length;
+        const selectedSchedules = retreatData.schedule.filter((schedule) =>
+          formData.scheduleSelection.includes(schedule.id)
+        );
+
+        const groupedByDate: Record<string, string[]> = {};
+        selectedSchedules.forEach((schedule) => {
+          const date = new Date(schedule.date).toLocaleDateString("ko-KR");
+          if (!groupedByDate[date]) {
+            groupedByDate[date] = [];
+          }
+          groupedByDate[date].push(schedule.type);
+        });
+
+        let eventCount = 0;
+        Object.values(groupedByDate).forEach((types) => {
+          if (types.includes("DINNER") && types.includes("SLEEP")) {
+            eventCount += types.length - 1;
+          } else {
+            eventCount += types.length;
+          }
+        });
+
         const calculatedPrice = Math.min(
           eventCount * retreatData.payment.partial_price_per_event,
           retreatData.payment.total_price
@@ -159,7 +200,7 @@ export function RetreatRegistrationComponent({
         setTotalPrice(calculatedPrice);
       }
     }
-  }, [formData.scheduleSelection, retreatData]);
+  }, [formData.scheduleSelection, isAllScheduleSelected, retreatData]);
 
   if (loading) {
     return (
@@ -211,9 +252,16 @@ export function RetreatRegistrationComponent({
       : [...formData.scheduleSelection, id];
     setFormData({ ...formData, scheduleSelection: updatedSelection });
     setFormErrors((prevErrors) => ({ ...prevErrors, scheduleSelection: "" }));
+
+    if (updatedSelection.length === retreatData.schedule.length) {
+      setIsAllScheduleSelected(true);
+    } else {
+      setIsAllScheduleSelected(false);
+    }
   };
 
   const handleAllScheduleChange = (checked: boolean) => {
+    setIsAllScheduleSelected(checked);
     const allScheduleIds: number[] = retreatData.schedule.map(
       (item: TSchedule) => item.id
     );
@@ -317,19 +365,6 @@ export function RetreatRegistrationComponent({
 
   const groupedDates = groupDates(retreatData?.dates || []);
 
-  // 헬퍼 함수: 날짜 문자열을 "M/D(요일)" 형식으로 변환
-  const formatDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    const month = date.getMonth() + 1; // 월은 0부터 시작하므로 +1
-    const day = date.getDate();
-
-    const weekdays = ["주일", "월", "화", "수", "목", "금", "토"];
-    const dayOfWeek = weekdays[date.getDay()];
-
-    return `${month}/${day}(${dayOfWeek})`;
-  };
-
-  // 그룹화된 날짜를 포맷팅된 문자열로 변환
   const formattedGroupedDates = groupedDates.map((group) => {
     if (group.includes("~")) {
       const [start, end] = group.split("~");
@@ -494,10 +529,7 @@ export function RetreatRegistrationComponent({
             <Checkbox
               id="allSchedule"
               className="all-schedule-checkbox" // 전참 체크박스에 클래스 이름 추가
-              checked={
-                formData.scheduleSelection.length ===
-                retreatData.schedule.length
-              }
+              checked={isAllScheduleSelected}
               onCheckedChange={(checked: boolean) =>
                 handleAllScheduleChange(checked)
               }
@@ -514,28 +546,21 @@ export function RetreatRegistrationComponent({
               <TableRow>
                 <TableHead>일정 선택</TableHead>
                 {retreatData.dates.map((date: string) => (
-                  <TableHead key={date}>
-                    {new Date(date).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric"
-                    })}
-                  </TableHead>
+                  <TableHead key={date}>{formatDate(date)}</TableHead>
                 ))}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {["BREAKFAST", "LUNCH", "DINNER"].map((eventType) => (
+              {["BREAKFAST", "LUNCH", "DINNER", "SLEEP"].map((eventType) => (
                 <TableRow key={eventType}>
-                  <TableCell>{eventType}</TableCell>
+                  <TableCell>{EVENT_TYPE_MAP[eventType]}</TableCell>
                   {retreatData.dates.map((date: string) => {
-                    // Find the event based on date and type
+                    // Find the event based on date and type (로컬 시간 기준)
                     const event: TSchedule | undefined =
                       retreatData.schedule.find(
                         (s: TSchedule) =>
-                          s.date &&
-                          new Date(s.date)
-                            .toISOString()
-                            .startsWith(new Date(date).toISOString()) &&
+                          new Date(s.date).toLocaleDateString("ko-KR") ===
+                            new Date(date).toLocaleDateString("ko-KR") &&
                           s.type === eventType
                       );
                     return (
