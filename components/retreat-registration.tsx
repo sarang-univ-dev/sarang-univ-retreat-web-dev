@@ -100,13 +100,15 @@ export function RetreatRegistrationComponent({
     phoneNumber: string;
     scheduleSelection: number[];
     privacyConsent: boolean;
+    gender: string;
   }>({
     univGroup: "",
     grade: "",
     name: "",
     phoneNumber: "",
     scheduleSelection: [],
-    privacyConsent: false
+    privacyConsent: false,
+    gender: ""
   });
   const [availableGrades, setAvailableGrades] = useState<TGrade[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
@@ -117,13 +119,15 @@ export function RetreatRegistrationComponent({
     phoneNumber: string;
     scheduleSelection: string;
     privacyConsent: string;
+    gender: string;
   }>({
     univGroup: "",
     grade: "",
     name: "",
     phoneNumber: "",
     scheduleSelection: "",
-    privacyConsent: ""
+    privacyConsent: "",
+    gender: ""
   });
 
   useEffect(() => {
@@ -225,6 +229,11 @@ export function RetreatRegistrationComponent({
     setFormErrors((prevErrors) => ({ ...prevErrors, privacyConsent: "" }));
   };
 
+  const handleGenderChange = (value: string) => {
+    setFormData({ ...formData, gender: value });
+    setFormErrors({ ...formErrors, gender: "" });
+  };
+
   const validateForm = (): boolean => {
     const errors = {
       univGroup: "",
@@ -232,7 +241,8 @@ export function RetreatRegistrationComponent({
       name: "",
       phoneNumber: "",
       scheduleSelection: "",
-      privacyConsent: ""
+      privacyConsent: "",
+      gender: ""
     };
     let isValid = true;
 
@@ -258,6 +268,10 @@ export function RetreatRegistrationComponent({
         isValid = false;
       }
     }
+    if (!formData.gender) {
+      errors.gender = "성별을 선택해주세요";
+      isValid = false;
+    }
     if (formData.scheduleSelection.length === 0) {
       errors.scheduleSelection = "수양회 일정을 선택해주세요";
       isValid = false;
@@ -282,7 +296,8 @@ export function RetreatRegistrationComponent({
         scheduleSelection: formData.scheduleSelection,
         phoneNumber: formData.phoneNumber,
         name: formData.name,
-        privacyConsent: formData.privacyConsent
+        privacyConsent: formData.privacyConsent,
+        gender: formData.gender
       };
 
       console.log("Form submitted:", submissionData);
@@ -369,6 +384,8 @@ export function RetreatRegistrationComponent({
         </Card>
 
         <div className="grid grid-cols-1 gap-4">
+          <h2 className="text-2xl font-bold">기본 정보 입력</h2>
+
           <div className="space-y-2">
             <Label htmlFor="univGroup">부서</Label>
             <Select
@@ -435,6 +452,22 @@ export function RetreatRegistrationComponent({
             />
             {formErrors.name && (
               <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="gender">성별</Label>
+            <Select onValueChange={handleGenderChange} value={formData.gender}>
+              <SelectTrigger>
+                <SelectValue placeholder="성별을 선택해주세요" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="male">남</SelectItem>
+                <SelectItem value="female">여</SelectItem>
+              </SelectContent>
+            </Select>
+            {formErrors.gender && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.gender}</p>
             )}
           </div>
 
