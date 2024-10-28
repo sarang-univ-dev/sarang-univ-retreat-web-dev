@@ -24,8 +24,8 @@ export async function POST(
   req: Request,
   { params }: { params: { slug: string } }
 ) {
-  const slug = await params.slug;
   try {
+    const slug = params.slug;
 
     // 요청 본문을 JSON으로 파싱
     const data: RegistrationData = await req.json();
@@ -51,11 +51,17 @@ export async function POST(
       // privacyConsent가 필요하다면 아래 조건을 추가하세요
       // || typeof privacyConsent !== 'boolean'
     ) {
-      return NextResponse.redirect(`/retreats/${slug}/registration-failure`, 303);
+      return NextResponse.json(
+        { error: "요청 본문에 유효하지 않거나 누락된 필드가 있습니다." },
+        { status: 400 }
+      );
     }
 
     if (!isValidPhoneNumber(phone_number)) {
-      return NextResponse.redirect(`/retreats/${slug}/registration-failure`, 303);
+      return NextResponse.json(
+        { error: "잘못된 전화번호 형식입니다. 형식: 010-1234-5678." },
+        { status: 400 }
+      );
     }
 
     // privacyConsent가 필요하다면 아래 블록을 주석 해제하세요
@@ -95,25 +101,25 @@ export async function POST(
       }
     );
 
-    if (response.status >= 200 && response.status < 300) {
-      // Encode the user data to safely include them in the URL
-      const queryParams = new URLSearchParams({
-        name: name,
-        gender: gender,
-        phone: phone_number
-      }).toString();
-
-      return NextResponse.redirect(`/retreats/${slug}/registration-success?${queryParams}`, 303);
-    } else {
-      return NextResponse.redirect(`/retreats/${slug}/registration-failure`, 303);
-    }
+    // 외부 서버의 응답을 클라이언트로 전달
+    return NextResponse.json(response.data, { status: response.status });
   } catch (error: unknown) {
+    // axios 에러 처리
     if (axios.isAxiosError(error)) {
       console.error("Axios error:", error.message);
-      return NextResponse.redirect(`/retreats/${slug}/registration-failure`, 303);
+      return NextResponse.json(
+        {
+          error:
+            error.response?.data?.error || "Retreat data could not be fetched."
+        },
+        { status: error.response?.status || 500 }
+      );
     } else {
       console.error("Unexpected error:", (error as Error).message);
-      return NextResponse.redirect(`/retreats/${slug}/registration-failure`, 303);
+      return NextResponse.json(
+        { error: "An unexpected error occurred." },
+        { status: 500 }
+      );
     }
   }
 }

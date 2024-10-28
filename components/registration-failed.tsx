@@ -1,33 +1,24 @@
-'use client'
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 export function RegistrationFailed() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md mx-2">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <AlertCircle className="h-6 w-6 text-red-600" />
           </div>
-          <CardTitle className="text-2xl font-bold">Registration Failed</CardTitle>
+          <CardTitle className="text-2xl font-bold">신청 오류</CardTitle>
         </CardHeader>
         <CardContent className="text-center">
           <p className="text-muted-foreground mb-4">
-            We&apos;re sorry, but we couldn&apos;t complete your registration at this time.
+            죄송합니다. 현재 등록을 완료할 수 없습니다. 다시 시도해주시기 바랍니다.
           </p>
-          <p className="text-sm text-muted-foreground">
-            This could be due to:
-          </p>
-          <ul className="text-sm text-muted-foreground list-disc list-inside mt-2">
-            <li>A network error</li>
-            <li>The email address is already in use</li>
-            <li>Invalid information provided</li>
-          </ul>
         </CardContent>
-
       </Card>
     </div>
-  )
+  );
 }

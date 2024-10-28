@@ -7,7 +7,7 @@ import { TRetreatInfo } from "@/types";
 import { RetreatRegistrationComponent } from "@/components/retreat-registration";
 
 export default function RetreatPage() {
-  const params = useParams<{ slug: string }>();
+  const params = useParams<{ slug: string; }>();
   const { slug } = params;
 
   const [retreat, setRetreat] = useState<TRetreatInfo | null>(null);

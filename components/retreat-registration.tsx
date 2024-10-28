@@ -24,6 +24,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { TRetreatInfo, TGrade, TUnivGroup, TSchedule } from "../types";
 import RetreatCard from "./retreat-card";
+import { useRouter } from "next/navigation";
 
 interface RetreatRegistrationComponentProps {
   retreatSlug: string;
@@ -109,6 +110,7 @@ const groupDates = (dates: string[]): string[] => {
 export function RetreatRegistrationComponent({
   retreatSlug: retreatSlug
 }: RetreatRegistrationComponentProps) {
+  const router = useRouter();
   const [retreatData, setRetreatData] = useState<
     TRetreatInfo["retreat"] | null
   >(null);
@@ -345,13 +347,17 @@ export function RetreatRegistrationComponent({
       };
 
       try {
-        await axios.post(`/api/v1/retreats/${retreatSlug}/register`, submissionData);
-      } catch (error: Error | AxiosError) {
-        console.error(
-          "Registration failed:",
-          error.response?.data?.message || error.message
+        await axios.post(
+          `/api/v1/retreats/${retreatSlug}/register`,
+          submissionData
         );
-        // Optionally, set form errors based on the response
+
+        router.push(
+          `/retreats/${retreatSlug}/registration-success?name=${formData.name}&gender=${formData.gender}&phone=${formData.phoneNumber}`
+        );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        router.push(`/retreats/${retreatSlug}/registration-failure`);
       }
     }
   };
