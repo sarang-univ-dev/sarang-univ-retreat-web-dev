@@ -24,7 +24,8 @@ export async function POST(
   req: NextRequest,
 ) {
   try {
-    const slug = req.nextUrl.pathname.split('/').slice(-3, -2)[0];
+    const pathSegments = req.nextUrl.pathname.split('/');
+    const slug = pathSegments[pathSegments.length - 2];
 
     // 요청 본문을 JSON으로 파싱
     const data: RegistrationData = await req.json();
