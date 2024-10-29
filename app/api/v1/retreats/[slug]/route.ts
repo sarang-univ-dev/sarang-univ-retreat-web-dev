@@ -1,13 +1,12 @@
 // app/api/v1/retreats/[id]/route.ts
 
 import axios from "axios";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
+  req: NextRequest,
 ) {
-  const { slug } = await params;
+  const slug = req.nextUrl.pathname.split('/').slice(-2, -1)[0];
   const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
   if (!SERVER_URL) {

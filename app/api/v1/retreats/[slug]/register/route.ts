@@ -1,6 +1,6 @@
 // /app/api/v1/retreats/[slug]/register/route.ts
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
 // 요청 바디의 예상 구조를 정의
@@ -21,11 +21,10 @@ const isValidPhoneNumber = (phone: string): boolean => {
 };
 
 export async function POST(
-  req: Request,
-  { params }: { params: { slug: string } }
+  req: NextRequest,
 ) {
   try {
-    const slug = params.slug;
+    const slug = req.nextUrl.pathname.split('/').slice(-3, -2)[0];
 
     // 요청 본문을 JSON으로 파싱
     const data: RegistrationData = await req.json();
