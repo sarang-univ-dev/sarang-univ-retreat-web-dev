@@ -115,6 +115,9 @@ export function RetreatRegistrationComponent({
     TRetreatInfo["retreat"] | null
   >(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   const [formData, setFormData] = useState<{
     univGroup: string;
     grade: string;
@@ -338,6 +341,8 @@ export function RetreatRegistrationComponent({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
+      setIsSubmitting(true);
+
       const submissionData = {
         grade_id: Number(formData.grade),
         schedule_selection: formData.scheduleSelection,
@@ -355,7 +360,7 @@ export function RetreatRegistrationComponent({
         router.push(
           `/retreats/${retreatSlug}/registration-success?name=${formData.name}&gender=${formData.gender}&phone=${formData.phoneNumber}`
         );
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         router.push(`/retreats/${retreatSlug}/registration-failure`);
       }
@@ -594,8 +599,35 @@ export function RetreatRegistrationComponent({
           </div>
         </div>
 
-        <Button type="submit" className="w-full text-md">
-          수양회 신청하기
+        {/* 3. Update the Submit Button to include a spinner */}
+        <Button
+          type="submit"
+          className="w-full text-md flex items-center justify-center"
+          disabled={isSubmitting}
+        >
+          <span>수양회 신청하기</span>
+          {isSubmitting && (
+            <svg
+              className="ml-2 h-5 w-5 animate-spin text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              ></path>
+            </svg>
+          )}
         </Button>
       </form>
     </div>
