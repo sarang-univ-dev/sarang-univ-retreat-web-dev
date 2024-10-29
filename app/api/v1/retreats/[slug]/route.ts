@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(
   req: NextRequest,
 ) {
-  const slug = req.nextUrl.pathname.split('/').slice(-2, -1)[0];
+  const slug = req.nextUrl.pathname.split('/').pop();
   const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
   if (!SERVER_URL) {
