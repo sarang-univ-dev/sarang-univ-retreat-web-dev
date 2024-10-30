@@ -26,6 +26,22 @@ import { TRetreatInfo, TGrade, TUnivGroup, TSchedule } from "../types";
 import RetreatCard from "./retreat-card";
 import { useRouter } from "next/navigation";
 
+// lucide-react 아이콘 추가
+import {
+  Building,
+  Book,
+  User,
+  UserRoundCheck,
+  Phone,
+  UserCheck,
+  Calendar,
+  Sunrise,
+  Sun,
+  Sunset,
+  Bed,
+  TriangleAlert // TriangleAlert 아이콘 추가
+} from "lucide-react";
+
 interface RetreatRegistrationComponentProps {
   retreatSlug: string;
 }
@@ -400,7 +416,9 @@ export function RetreatRegistrationComponent({
                 checked={formData.privacyConsent}
                 onCheckedChange={handlePrivacyConsentChange}
               />
-              <div className="grid gap-1.5 leading-none">
+              <div className="flex gap-1.5 items-center">
+                {" "}
+                <TriangleAlert className="text-red-500" size={20} />{" "}
                 <label
                   htmlFor="privacyConsent"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -422,11 +440,17 @@ export function RetreatRegistrationComponent({
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 gap-4">
-          <h2 className="text-2xl font-bold">기본 정보 입력</h2>
+        <div className="grid grid-cols-1 gap-4 pt-4 border-t">
+          <h2 className="text-2xl font-bold flex items-center">
+            <UserCheck className="mr-2" size={24} />
+            기본 정보 입력
+          </h2>
 
           <div className="space-y-2">
-            <Label htmlFor="univGroup">부서</Label>
+            <Label htmlFor="univGroup" className="flex items-center">
+              <Building className="mr-2" />
+              부서
+            </Label>
             <Select
               onValueChange={handleUnivGroupChange}
               value={formData.univGroup}
@@ -453,7 +477,10 @@ export function RetreatRegistrationComponent({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="grade">학년</Label>
+            <Label htmlFor="grade" className="flex items-center">
+              <Book className="mr-2" />
+              학년
+            </Label>
             <Select
               onValueChange={(value: string) => {
                 setFormData({ ...formData, grade: value });
@@ -482,7 +509,10 @@ export function RetreatRegistrationComponent({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">이름</Label>
+            <Label htmlFor="name" className="flex items-center">
+              <User className="mr-2" />
+              이름
+            </Label>
             <Input
               id="name"
               name="name"
@@ -495,7 +525,10 @@ export function RetreatRegistrationComponent({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="gender">성별</Label>
+            <Label htmlFor="gender" className="flex items-center">
+              <UserRoundCheck className="mr-2" />
+              성별
+            </Label>
             <Select onValueChange={handleGenderChange} value={formData.gender}>
               <SelectTrigger>
                 <SelectValue placeholder="성별을 선택해주세요" />
@@ -511,7 +544,10 @@ export function RetreatRegistrationComponent({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phoneNumber">전화번호</Label>
+            <Label htmlFor="phoneNumber" className="flex items-center">
+              <Phone className="mr-2" />
+              전화번호
+            </Label>
             <Input
               id="phoneNumber"
               name="phoneNumber"
@@ -527,8 +563,11 @@ export function RetreatRegistrationComponent({
           </div>
         </div>
 
-        <div>
-          <h2 className="text-2xl font-bold mb-4">수양회 일정 선택</h2>
+        <div className="pt-4 border-t">
+          <h2 className="text-2xl font-bold flex items-center mb-4">
+            <Calendar className="mr-2" size={24} />
+            수양회 일정 선택
+          </h2>
           <div className="flex items-center space-x-2 mb-4">
             <Checkbox
               id="allSchedule"
@@ -548,16 +587,29 @@ export function RetreatRegistrationComponent({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>일정 선택</TableHead>
+                <TableHead className="text-center whitespace-nowrap sm:px-2 px-1">
+                  일정 선택
+                </TableHead>
                 {retreatData.dates.map((date: string) => (
-                  <TableHead key={date}>{formatDate(date)}</TableHead>
+                  <TableHead
+                    key={date}
+                    className="text-center whitespace-nowrap sm:px-2 px-1"
+                  >
+                    {formatDate(date)}
+                  </TableHead>
                 ))}
               </TableRow>
             </TableHeader>
             <TableBody>
               {["BREAKFAST", "LUNCH", "DINNER", "SLEEP"].map((eventType) => (
                 <TableRow key={eventType}>
-                  <TableCell>{EVENT_TYPE_MAP[eventType]}</TableCell>
+                  <TableCell className="flex items-center justify-center whitespace-nowrap sm:px-2 px-1">
+                    {eventType === "BREAKFAST" && <Sunrise className="mr-2" />}
+                    {eventType === "LUNCH" && <Sun className="mr-2" />}
+                    {eventType === "DINNER" && <Sunset className="mr-2" />}
+                    {eventType === "SLEEP" && <Bed className="mr-2" />}
+                    {EVENT_TYPE_MAP[eventType]}
+                  </TableCell>
                   {retreatData.dates.map((date: string) => {
                     // Find the event based on date and type (로컬 시간 기준)
                     const event: TSchedule | undefined =
@@ -568,10 +620,13 @@ export function RetreatRegistrationComponent({
                           s.type === eventType
                       );
                     return (
-                      <TableCell key={date}>
+                      <TableCell
+                        key={date}
+                        className="text-center p-2 sm:px-3 sm:py-2 whitespace-nowrap"
+                      >
                         {event ? (
                           <Checkbox
-                            className="schedule-checkbox" // 일정 선택 체크박스에 클래스 이름 추가
+                            className="schedule-checkbox m-2"
                             checked={formData.scheduleSelection.includes(
                               event.id
                             )}
