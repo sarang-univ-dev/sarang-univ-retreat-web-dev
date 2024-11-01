@@ -28,8 +28,8 @@ import { useRouter } from "next/navigation";
 
 // lucide-react 아이콘 추가
 import {
-  Building,
-  Book,
+  Users,
+  Hash,
   User,
   UserRoundCheck,
   Phone,
@@ -304,7 +304,9 @@ export function RetreatRegistrationComponent({
     setFormErrors({ ...formErrors, gender: "" });
   };
 
-  const handleCurrentGbsLeaderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCurrentGbsLeaderChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { value } = e.target;
     setFormData({ ...formData, currentGbsLeader: value });
     setFormErrors({ ...formErrors, currentGbsLeader: "" });
@@ -461,7 +463,7 @@ export function RetreatRegistrationComponent({
 
           <div className="space-y-2">
             <Label htmlFor="univGroup" className="flex items-center">
-              <Building className="mr-2" />
+              <Users className="mr-2" />
               부서
             </Label>
             <Select
@@ -491,7 +493,7 @@ export function RetreatRegistrationComponent({
 
           <div className="space-y-2">
             <Label htmlFor="grade" className="flex items-center">
-              <Book className="mr-2" />
+              <Hash className="mr-2" />
               학년
             </Label>
             <Select
@@ -549,6 +551,7 @@ export function RetreatRegistrationComponent({
               name="name"
               value={formData.name}
               onChange={handleInputChange}
+              placeholder="이름을 입력해주세요"
             />
             {formErrors.name && (
               <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
