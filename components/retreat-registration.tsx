@@ -85,8 +85,6 @@ const formatDate = (dateStr: string): string => {
 
 // 그룹화된 날짜를 포맷팅된 문자열으로 변환 (로컬 시간 기준)
 const groupDates = (dates: string[]): string[] => {
-  if (dates.length === 0) return [];
-
   const sortedDates = [...dates].sort(
     (a, b) => new Date(a).getTime() - new Date(b).getTime()
   );
@@ -128,9 +126,7 @@ export function RetreatRegistrationComponent({
   retreatSlug: retreatSlug
 }: RetreatRegistrationComponentProps) {
   const router = useRouter();
-  const [retreatData, setRetreatData] = useState<
-    TRetreatInfo["retreat"] | null
-  >(null);
+  const [retreatData, setRetreatData] = useState<TRetreatInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -182,7 +178,7 @@ export function RetreatRegistrationComponent({
     const getData = async () => {
       try {
         const data = await fetchRetreatData(retreatSlug);
-        setRetreatData(data.retreat);
+        setRetreatData(data);
       } catch (error) {
         console.error("Failed to fetch retreat data:", error);
       } finally {
@@ -400,7 +396,7 @@ export function RetreatRegistrationComponent({
     }
   };
 
-  const groupedDates = groupDates(retreatData?.dates || []);
+  const groupedDates = groupDates(retreatData.retreat.dates || []);
 
   const formattedGroupedDates = groupedDates.map((group) => {
     if (group.includes("~")) {
@@ -415,12 +411,12 @@ export function RetreatRegistrationComponent({
     <div className="container mx-auto p-4">
       <div className="mb-8">
         <RetreatCard
-          name={retreatData.name}
-          dates={formattedGroupedDates.join(", ")}
-          location={retreatData.location}
-          main_verse={retreatData.main_verse}
-          main_speaker={retreatData.main_speaker}
-          memo={retreatData.memo}
+          name={retreatData.retreat.name}
+          dates={formattedGroupedDates.join(", ")} // Join multiple groups with commas
+          location={retreatData.retreat.location}
+          main_verse={retreatData.retreat.main_verse}
+          main_speaker={retreatData.retreat.main_speaker}
+          memo={retreatData.retreat.memo}
         />
       </div>
 
@@ -625,7 +621,7 @@ export function RetreatRegistrationComponent({
                 <TableHead className="text-center whitespace-nowrap sm:px-2 px-1">
                   일정 선택
                 </TableHead>
-                {retreatData.dates.map((date: string) => (
+                {retreatData.retreat.dates.map((date: string) => (
                   <TableHead
                     key={date}
                     className="text-center whitespace-nowrap sm:px-2 px-1"
@@ -645,7 +641,7 @@ export function RetreatRegistrationComponent({
                     {eventType === "SLEEP" && <Bed className="mr-2" />}
                     {EVENT_TYPE_MAP[eventType]}
                   </TableCell>
-                  {retreatData.dates.map((date: string) => {
+                  {retreatData.retreat.dates.map((date: string) => {
                     // Find the event based on date and type (로컬 시간 기준)
                     const event: TSchedule | undefined =
                       retreatData.schedule.find(

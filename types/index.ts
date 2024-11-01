@@ -8,7 +8,9 @@ export type TUser = {
 
 export type TRetreat = {
   id: number;
+  slug: string;
   name: string;
+  dates: string[];
   location: string;
   main_verse: string;
   main_speaker: string;
@@ -30,7 +32,7 @@ export type TUnivGroup = {
 
 export type TSchedule = {
   id: number;
-  date: Date;
+  date: string;
   type: string;
 };
 
@@ -40,16 +42,8 @@ export type TPayment = {
 };
 
 export type TRetreatInfo = {
-  retreat: {
-    id: number;
-    name: string;
-    dates: string[];
-    location: string;
-    main_verse: string;
-    main_speaker: string;
-    memo?: string;
-    univ_group_and_grade: TUnivGroup[];
-    schedule: TSchedule[];
-    payment: TPayment;
-  };
+  retreat: TRetreat;
+  univ_group_and_grade: TUnivGroup[];
+  schedule: TSchedule[];
+  payment: TPayment;
 };
