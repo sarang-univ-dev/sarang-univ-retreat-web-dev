@@ -5,6 +5,7 @@ import axios, { AxiosError } from "axios";
 import { useParams } from "next/navigation";
 import { TRetreatInfo } from "@/types";
 import { RetreatRegistrationComponent } from "@/components/retreat-registration";
+import RetreatRegistrationFormSkeleton from "@/components/retreat-regitration-skeleton";
 
 export default function RetreatPage() {
   const params = useParams<{ slug: string; }>();
@@ -40,7 +41,7 @@ export default function RetreatPage() {
     fetchRetreat();
   }, [slug]);
 
-  if (loading) return <p>로딩 중...</p>;
+  if (loading) return <RetreatRegistrationFormSkeleton />;
   if (error) return <p>에러: {error}</p>;
   if (!retreat) return <p>리트리트를 찾을 수 없습니다.</p>;
 
