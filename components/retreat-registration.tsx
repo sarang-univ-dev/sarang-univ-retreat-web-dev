@@ -39,7 +39,8 @@ import {
   Sun,
   Sunset,
   Bed,
-  TriangleAlert // TriangleAlert 아이콘 추가
+  TriangleAlert,
+  Star
 } from "lucide-react";
 
 interface RetreatRegistrationComponentProps {
@@ -137,6 +138,7 @@ export function RetreatRegistrationComponent({
   const [formData, setFormData] = useState<{
     univGroup: string;
     grade: string;
+    currentGbsLeader: string;
     name: string;
     phoneNumber: string;
     scheduleSelection: number[];
@@ -145,6 +147,7 @@ export function RetreatRegistrationComponent({
   }>({
     univGroup: "",
     grade: "",
+    currentGbsLeader: "",
     name: "",
     phoneNumber: "",
     scheduleSelection: [],
@@ -156,6 +159,7 @@ export function RetreatRegistrationComponent({
   const [formErrors, setFormErrors] = useState<{
     univGroup: string;
     grade: string;
+    currentGbsLeader: string;
     name: string;
     phoneNumber: string;
     scheduleSelection: string;
@@ -164,6 +168,7 @@ export function RetreatRegistrationComponent({
   }>({
     univGroup: "",
     grade: "",
+    currentGbsLeader: "",
     name: "",
     phoneNumber: "",
     scheduleSelection: "",
@@ -303,10 +308,17 @@ export function RetreatRegistrationComponent({
     setFormErrors({ ...formErrors, gender: "" });
   };
 
+  const handleCurrentGbsLeaderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setFormData({ ...formData, currentGbsLeader: value });
+    setFormErrors({ ...formErrors, currentGbsLeader: "" });
+  };
+
   const validateForm = (): boolean => {
     const errors = {
       univGroup: "",
       grade: "",
+      currentGbsLeader: "",
       name: "",
       phoneNumber: "",
       scheduleSelection: "",
@@ -321,6 +333,10 @@ export function RetreatRegistrationComponent({
     }
     if (!formData.grade) {
       errors.grade = "학년을 선택해주세요";
+      isValid = false;
+    }
+    if (!formData.currentGbsLeader.trim()) {
+      errors.currentGbsLeader = "현재 GBS/EBS 리더를 입력해주세요";
       isValid = false;
     }
     if (!formData.name.trim()) {
@@ -361,6 +377,7 @@ export function RetreatRegistrationComponent({
 
       const submissionData = {
         grade_id: Number(formData.grade),
+        current_gbs_leader: formData.currentGbsLeader,
         schedule_selection: formData.scheduleSelection,
         phone_number: formData.phoneNumber,
         name: formData.name,
@@ -505,6 +522,24 @@ export function RetreatRegistrationComponent({
             </Select>
             {formErrors.grade && (
               <p className="text-red-500 text-sm mt-1">{formErrors.grade}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="currentGbsLeader" className="flex items-center">
+              <Star className="mr-2" /> 현재 GBS/EBS 리더
+            </Label>
+            <Input
+              id="currentGbsLeader"
+              name="currentGbsLeader"
+              value={formData.currentGbsLeader}
+              onChange={handleCurrentGbsLeaderChange}
+              placeholder="현재 GBS/EBS 리더 이름을 입력해주세요"
+            />
+            {formErrors.currentGbsLeader && (
+              <p className="text-red-500 text-sm mt-1">
+                {formErrors.currentGbsLeader}
+              </p>
             )}
           </div>
 
