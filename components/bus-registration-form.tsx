@@ -24,8 +24,9 @@ import {
   X,
   DollarSign
 } from "lucide-react";
+import { formatDate } from "@/utils/formatDate";
 
-// Mock data for available buses by date
+// 날짜별 이용 가능한 버스 데이터
 const availableBusesByDate = {
   [format(new Date(), "yyyy-MM-dd")]: [
     {
@@ -35,7 +36,7 @@ const availableBusesByDate = {
       arrivalTime: "오전 09:30",
       from: "교회",
       to: "리트릿 센터",
-      price: 15
+      price: 15000
     },
     {
       id: "2",
@@ -44,18 +45,18 @@ const availableBusesByDate = {
       arrivalTime: "오후 06:30",
       from: "리트릿 센터",
       to: "교회",
-      price: 15
+      price: 15000
     }
   ],
   [format(addDays(new Date(), 1), "yyyy-MM-dd")]: [
     {
       id: "3",
-      direction: "리트릿행",
+      direction: "리트릿행", 
       departureTime: "오전 09:00",
       arrivalTime: "오전 10:30",
       from: "교회",
       to: "리트릿 센터",
-      price: 15
+      price: 15000
     },
     {
       id: "4",
@@ -64,7 +65,7 @@ const availableBusesByDate = {
       arrivalTime: "오후 05:30",
       from: "리트릿 센터",
       to: "교회",
-      price: 15
+      price: 15000
     }
   ],
   [format(addDays(new Date(), 2), "yyyy-MM-dd")]: [
@@ -75,7 +76,7 @@ const availableBusesByDate = {
       arrivalTime: "오전 11:30",
       from: "교회",
       to: "리트릿 센터",
-      price: 15
+      price: 15000
     },
     {
       id: "6",
@@ -84,7 +85,7 @@ const availableBusesByDate = {
       arrivalTime: "오후 04:30",
       from: "리트릿 센터",
       to: "교회",
-      price: 15
+      price: 15000
     }
   ]
 };
@@ -95,7 +96,7 @@ export function BusRegistrationFormComponent() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Form submitted", { selectedDate, selectedBuses });
+    console.log("폼 제출됨", { selectedDate, selectedBuses });
   };
 
   const dateOptions = [
@@ -128,23 +129,27 @@ export function BusRegistrationFormComponent() {
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl">Retreat Bus Registration</CardTitle>
+        <CardTitle className="text-2xl">수양회 버스 신청</CardTitle>
         <CardDescription>
-          Book your bus tickets for the church retreat
+          교회 수양회 버스 좌석을 예약하세요
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="Enter your full name" required />
+              <Label htmlFor="name" className="flex items-center gap-2">
+                이름
+              </Label>
+              <Input id="name" placeholder="이름을 입력하세요" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="flex items-center gap-2">
+                이메일
+              </Label>
               <Input
                 id="email"
-                placeholder="Enter your email"
+                placeholder="이메일을 입력하세요"
                 type="email"
                 required
               />
@@ -152,7 +157,10 @@ export function BusRegistrationFormComponent() {
           </div>
 
           <div className="space-y-2">
-            <Label>Travel Date</Label>
+            <Label className="flex items-center gap-2">
+              <CalendarDays className="h-5 w-5" />
+              이동 날짜
+            </Label>
             <RadioGroup
               value={selectedDate?.toISOString() || ""}
               onValueChange={(value) => setSelectedDate(new Date(value))}
@@ -178,10 +186,7 @@ export function BusRegistrationFormComponent() {
                         htmlFor={date.toISOString()}
                         className="flex items-center justify-between cursor-pointer"
                       >
-                        <div className="flex items-center space-x-2">
-                          <CalendarDays className="h-4 w-4" />
-                          <span>{format(date, "EEEE, MMMM d")}</span>
-                        </div>
+                        <span>{formatDate(date.toISOString())}</span>
                       </Label>
                     </CardContent>
                   </Card>
@@ -192,7 +197,10 @@ export function BusRegistrationFormComponent() {
 
           {selectedDate && (
             <div className="space-y-2">
-              <Label>Available Buses</Label>
+              <Label className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                이용 가능한 버스
+              </Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {availableBusesByDate[format(selectedDate, "yyyy-MM-dd")].map(
                   (bus) => (
@@ -206,7 +214,7 @@ export function BusRegistrationFormComponent() {
                       )}
                     >
                       <CardContent className="p-4">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center gap-4">
                           <Checkbox
                             id={bus.id}
                             checked={selectedBuses.includes(bus.id)}
@@ -217,30 +225,30 @@ export function BusRegistrationFormComponent() {
                             className="flex flex-col cursor-pointer flex-grow"
                           >
                             <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center space-x-2">
-                                {bus.direction === "to-retreat" ? (
+                              <div className="flex items-center gap-2">
+                                {bus.direction === "리트릿행" ? (
                                   <ArrowRight className="h-4 w-4" />
                                 ) : (
                                   <ArrowLeft className="h-4 w-4" />
                                 )}
-                                <span>
-                                  {bus.from} to {bus.to}
+                                <span className="font-medium">
+                                  {bus.from} → {bus.to}
                                 </span>
                               </div>
-                              <div className="flex items-center space-x-1">
+                              <div className="flex items-center gap-1">
                                 <DollarSign className="h-4 w-4" />
-                                <span>{bus.price}</span>
+                                <span>{bus.price.toLocaleString()}원</span>
                               </div>
                             </div>
-                            <div className="flex justify-between text-sm">
-                              <span>
-                                <Clock />
-                                Departure: {bus.departureTime}
-                              </span>
-                              <span>
-                                <Clock />
-                                Arrival: {bus.arrivalTime}
-                              </span>
+                            <div className="flex items-center gap-4 text-sm text-gray-600">
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-4 w-4" />
+                                출발: {bus.departureTime}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-4 w-4" />
+                                도착: {bus.arrivalTime}
+                              </div>
                             </div>
                           </Label>
                         </div>
@@ -255,7 +263,7 @@ export function BusRegistrationFormComponent() {
           {selectedBuses.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Your Selected Buses</CardTitle>
+                <CardTitle className="text-lg">선택한 버스</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -271,15 +279,14 @@ export function BusRegistrationFormComponent() {
                       >
                         <div>
                           <p className="font-semibold">
-                            {bus.from} to {bus.to}
+                            {bus.from} → {bus.to}
                           </p>
-                          <p className="text-sm">
-                            Departure: {bus.departureTime} - Arrival:{" "}
-                            {bus.arrivalTime}
+                          <p className="text-sm text-gray-600">
+                            출발: {bus.departureTime} - 도착: {bus.arrivalTime}
                           </p>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <span>${bus.price}</span>
+                        <div className="flex items-center gap-2">
+                          <span>{bus.price.toLocaleString()}원</span>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -300,8 +307,10 @@ export function BusRegistrationFormComponent() {
             <Card>
               <CardContent className="p-4">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold">Total Price:</span>
-                  <span className="text-lg font-bold">${totalPrice}</span>
+                  <span className="font-semibold">총 금액:</span>
+                  <span className="text-lg font-bold">
+                    {totalPrice.toLocaleString()}원
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -314,7 +323,7 @@ export function BusRegistrationFormComponent() {
           className="w-full"
           disabled={selectedBuses.length === 0 || !selectedDate}
         >
-          Register (${totalPrice})
+          신청하기 ({totalPrice.toLocaleString()}원)
         </Button>
       </CardFooter>
     </Card>
