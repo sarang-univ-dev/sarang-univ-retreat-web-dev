@@ -36,6 +36,22 @@ export type TSchedule = {
   type: string;
 };
 
+export type TRetreatBus = {
+  id: number;
+  retreat_id: number;
+  before_schedule_id?: number;
+  after_schedule_id?: number;
+  departure_time: string;
+  arrival_time: string;
+  price: number;
+  departure_location: string;
+  arrival_location: string;
+  capacity: number;
+  notes?: string;
+  created_at: Date;
+  updated_at: Date;
+};
+
 export type TPayment = {
   total_price: number;
   partial_price_per_event: number;
@@ -46,4 +62,5 @@ export type TRetreatInfo = {
   univ_group_and_grade: TUnivGroup[];
   schedule: TSchedule[];
   payment: TPayment;
+  retreatBuses: TRetreatBus[];
 };
