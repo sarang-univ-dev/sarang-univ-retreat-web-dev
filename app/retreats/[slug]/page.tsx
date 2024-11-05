@@ -43,7 +43,7 @@ export default function RetreatPage() {
 
   if (loading) return <RetreatRegistrationFormSkeleton />;
   if (error) return <p>에러: {error}</p>;
-  if (!retreat) return <p>리트리트를 찾을 수 없습니다.</p>;
+  if (!retreat) return <p>수양회를 찾을 수 없습니다.</p>;
 
   return <RetreatRegistrationComponent retreatSlug={slug} />;
 }

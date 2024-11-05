@@ -5,11 +5,12 @@ import axios from "axios";
 
 // 요청 바디의 예상 구조를 정의
 interface RegistrationData {
-  gender: "male" | "female";
+  gender: "MALE" | "FEMALE";
   grade_id: number;
   name: string;
   phone_number: string;
   schedule_selection: number[];
+  current_leader_name: string;
   // privacyConsent가 여전히 필요하다면 아래 줄의 주석을 해제하세요
   // privacyConsent?: boolean;
 }
@@ -36,18 +37,20 @@ export async function POST(
       grade_id,
       name,
       phone_number,
-      schedule_selection /* privacyConsent */
+      schedule_selection,
+      current_leader_name /* privacyConsent */
     } = data;
 
     // 기본 유효성 검사
     if (
       !gender ||
-      !["male", "female"].includes(gender) ||
+      !["MALE", "FEMALE"].includes(gender) ||
       !grade_id ||
       !name ||
       !phone_number ||
       !Array.isArray(schedule_selection) ||
-      schedule_selection.length === 0
+      schedule_selection.length === 0 ||
+      !current_leader_name
       // privacyConsent가 필요하다면 아래 조건을 추가하세요
       // || typeof privacyConsent !== 'boolean'
     ) {
@@ -80,7 +83,8 @@ export async function POST(
       schedule_selection: schedule_selection,
       phone_number: phone_number,
       name: name,
-      gender: gender
+      gender: gender,
+      current_leader_name: current_leader_name
     };
 
     // 외부 서버 URL 정의
@@ -100,6 +104,8 @@ export async function POST(
         }
       }
     );
+
+    console.log(JSON.stringify({ submissionData }, null, 2));
 
     // 외부 서버의 응답을 클라이언트로 전달
     return NextResponse.json(response.data, { status: response.status });
