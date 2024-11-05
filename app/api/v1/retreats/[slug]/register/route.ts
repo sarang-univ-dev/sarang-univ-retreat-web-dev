@@ -105,8 +105,6 @@ export async function POST(
       }
     );
 
-    console.log(JSON.stringify({ submissionData }, null, 2));
-
     // 외부 서버의 응답을 클라이언트로 전달
     return NextResponse.json(response.data, { status: response.status });
   } catch (error: unknown) {
