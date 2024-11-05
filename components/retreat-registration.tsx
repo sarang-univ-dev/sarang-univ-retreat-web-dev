@@ -44,7 +44,7 @@ import {
 } from "lucide-react";
 
 import { formatDate } from "@/utils/formatDate";
-import { useRegistration } from "@/context/retreatContext";
+import { useRegistration } from "@/context/retreatRegistrationContext";
 
 interface RetreatRegistrationComponentProps {
   retreatSlug: string;

@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { TRetreatInfo } from "@/types";
-import { useRegistration } from "@/context/retreatContext";
+import { useRegistration } from "@/context/retreatRegistrationContext";
 import { RegistrationComplete } from "@/components/registration-complete";
 export default function RegistrationSuccessPage() {
   const router = useRouter();

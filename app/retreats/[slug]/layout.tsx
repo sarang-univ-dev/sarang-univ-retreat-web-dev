@@ -1,6 +1,6 @@
 "use client";
 
-import { RegistrationProvider } from "@/context/retreatContext";
+import { RegistrationProvider } from "@/context/retreatRegistrationContext";
 
 export default function RootLayout({
   children
