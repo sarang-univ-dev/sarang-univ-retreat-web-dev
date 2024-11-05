@@ -88,6 +88,9 @@ export function RegistrationComplete({
                   <p className="text-sm text-muted-foreground mt-2">
                     * 문자 메세지에 있는 링크를 통해 버스 티켓 신청을 이어서 진행해주세요.
                   </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    * 군지체(카투사, 공익 제외) 및 수양회 EBS 신청은 각 부서 행정간사님에게 문의부탁드립니다.
+                  </p>
                 </div>
               </div>
             </div>
