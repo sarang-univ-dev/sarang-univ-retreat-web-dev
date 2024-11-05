@@ -74,8 +74,6 @@ const fetchRetreatData = async (slug: string): Promise<TRetreatInfo> => {
   }
 };
 
-
-
 // 그룹화된 날짜를 포맷팅된 문자열으로 변환 (로컬 시간 기준)
 const groupDates = (dates: string[]): string[] => {
   const sortedDates = [...dates].sort(
@@ -386,12 +384,13 @@ export function RetreatRegistrationComponent({
         setRegistrationData({
           name: formData.name,
           gender: formData.gender,
-          phoneNumber: formData.phoneNumber
+          phoneNumber: formData.phoneNumber,
+          price: totalPrice
         });
 
         router.push(`/retreats/${retreatSlug}/registration-success`);
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         router.push(`/retreats/${retreatSlug}/registration-failure`);
       }

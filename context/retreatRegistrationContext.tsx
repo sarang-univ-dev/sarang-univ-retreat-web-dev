@@ -6,6 +6,7 @@ interface RegistrationData {
   name: string;
   gender: string;
   phoneNumber: string;
+  price: number | null;
 }
 
 interface RegistrationContextType {

@@ -45,8 +45,10 @@ export default function RegistrationSuccessPage() {
   }
 
   return <RegistrationComplete 
-    name={registrationData.name}
-    gender={registrationData.gender} 
-    phone={registrationData.phoneNumber}
-  />;
+      name={registrationData.name}
+      gender={registrationData.gender}
+      phone={registrationData.phoneNumber}
+      price={registrationData.price}
+    />
+  ;
 }
