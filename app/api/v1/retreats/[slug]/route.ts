@@ -17,7 +17,7 @@ export async function GET(
   }
 
   try {
-    const response = await axios.get(`${SERVER_URL}/api/v1/retreats/${slug}`);
+    const response = await axios.get(`${SERVER_URL}/api/v1/retreat/${slug}/info`);
 
     if (response.status !== 200) {
       console.error("서버 오류:", response.data);
@@ -27,7 +27,7 @@ export async function GET(
       );
     }
 
-    const retreatData = response.data.retreat;
+    const retreatData = response.data.retreatInfo;
 
     return NextResponse.json(retreatData);
   } catch (error) {

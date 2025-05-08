@@ -22,7 +22,7 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
-import { TRetreatInfo, TGrade, TUnivGroup, TSchedule } from "../types";
+import { RetreatInfo, TRetreatRegistrationSchedule } from "../types";
 import RetreatCard from "./retreat-card";
 import { useRouter } from "next/navigation";
 
@@ -59,10 +59,12 @@ const EVENT_TYPE_MAP: Record<string, string> = {
 };
 
 // 실제 API 호출 함수 using axios
-const fetchRetreatData = async (slug: string): Promise<TRetreatInfo> => {
+const fetchRetreatData = async (slug: string): Promise<RetreatInfo> => {
   try {
-    const response = await axios.get(`/api/v1/retreats/${slug}`);
-    return response.data;
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/retreat/${slug}/info`
+    );
+    return response.data.retreatInfo;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(
@@ -114,10 +116,10 @@ const groupDates = (dates: string[]): string[] => {
 };
 
 export function RetreatRegistrationComponent({
-  retreatSlug: retreatSlug
+  retreatSlug
 }: RetreatRegistrationComponentProps) {
   const router = useRouter();
-  const [retreatData, setRetreatData] = useState<TRetreatInfo | null>(null);
+  const [retreatData, setRetreatData] = useState<RetreatInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -141,7 +143,9 @@ export function RetreatRegistrationComponent({
     privacyConsent: false,
     gender: ""
   });
-  const [availableGrades, setAvailableGrades] = useState<TGrade[]>([]);
+  const [availableGrades, setAvailableGrades] = useState<
+    RetreatInfo["univGroupAndGrade"][number]["grades"]
+  >([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [formErrors, setFormErrors] = useState<{
     univGroup: string;
@@ -184,15 +188,16 @@ export function RetreatRegistrationComponent({
   useEffect(() => {
     if (retreatData) {
       if (isAllScheduleSelected) {
-        setTotalPrice(retreatData.payment.total_price);
+        setTotalPrice(retreatData.payment[0].totalPrice);
       } else {
-        const selectedSchedules = retreatData.schedule.filter((schedule) =>
-          formData.scheduleSelection.includes(schedule.id)
+        const selectedSchedules = retreatData.schedule.filter(
+          (schedule: TRetreatRegistrationSchedule) =>
+            formData.scheduleSelection.includes(schedule.id)
         );
 
         const groupedByDate: Record<string, string[]> = {};
-        selectedSchedules.forEach((schedule) => {
-          const date = new Date(schedule.date).toLocaleDateString("ko-KR");
+        selectedSchedules.forEach((schedule: TRetreatRegistrationSchedule) => {
+          const date = new Date(schedule.time).toLocaleDateString("ko-KR");
           if (!groupedByDate[date]) {
             groupedByDate[date] = [];
           }
@@ -209,8 +214,8 @@ export function RetreatRegistrationComponent({
         });
 
         const calculatedPrice = Math.min(
-          eventCount * retreatData.payment.partial_price_per_event,
-          retreatData.payment.total_price
+          eventCount * retreatData.payment[0].partialPricePerSchedule,
+          retreatData.payment[0].totalPrice
         );
         setTotalPrice(calculatedPrice);
       }
@@ -234,10 +239,10 @@ export function RetreatRegistrationComponent({
   }
 
   const handleUnivGroupChange = (value: string) => {
-    const selectedGroup: TUnivGroup | undefined =
-      retreatData.univ_group_and_grade.find(
-        (group: TUnivGroup) => group.univ_group_id.toString() === value
-      );
+    const selectedGroup = retreatData.univGroupAndGrade.find(
+      (group: RetreatInfo["univGroupAndGrade"][number]) =>
+        group.univGroupId.toString() === value
+    );
     setAvailableGrades(selectedGroup ? selectedGroup.grades : []);
     setFormData({ ...formData, univGroup: value, grade: "" });
     setFormErrors({ ...formErrors, univGroup: "" });
@@ -278,7 +283,7 @@ export function RetreatRegistrationComponent({
   const handleAllScheduleChange = (checked: boolean) => {
     setIsAllScheduleSelected(checked);
     const allScheduleIds: number[] = retreatData.schedule.map(
-      (item: TSchedule) => item.id
+      (item: TRetreatRegistrationSchedule) => item.id
     );
     setFormData({
       ...formData,
@@ -377,7 +382,7 @@ export function RetreatRegistrationComponent({
 
       try {
         await axios.post(
-          `/api/v1/retreats/${retreatSlug}/register`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/retreat/${retreatSlug}/register`,
           submissionData
         );
 
@@ -397,7 +402,18 @@ export function RetreatRegistrationComponent({
     }
   };
 
-  const groupedDates = groupDates(retreatData.retreat.dates || []);
+  // Derive unique dates from the schedule for display purposes
+  const retreatDatesForDisplay = retreatData
+    ? Array.from(
+        new Set(
+          retreatData.schedule.map(
+            (s) => new Date(s.time).toISOString().split("T")[0]
+          )
+        )
+      ).sort()
+    : [];
+
+  const groupedDates = groupDates(retreatDatesForDisplay);
 
   const formattedGroupedDates = groupedDates.map((group) => {
     if (group.includes("~")) {
@@ -415,8 +431,8 @@ export function RetreatRegistrationComponent({
           name={retreatData.retreat.name}
           dates={formattedGroupedDates.join(", ")} // Join multiple groups with commas
           location={retreatData.retreat.location}
-          main_verse={retreatData.retreat.main_verse}
-          main_speaker={retreatData.retreat.main_speaker}
+          main_verse={retreatData.retreat.mainVerse}
+          main_speaker={retreatData.retreat.mainSpeaker}
           memo={retreatData.retreat.memo}
         />
       </div>
@@ -473,14 +489,25 @@ export function RetreatRegistrationComponent({
                 <SelectValue placeholder="부서를 선택해주세요" />
               </SelectTrigger>
               <SelectContent>
-                {retreatData.univ_group_and_grade.map((group: TUnivGroup) => (
-                  <SelectItem
-                    key={group.univ_group_id}
-                    value={group.univ_group_id.toString()}
-                  >
-                    {group.univ_group_number}부 {group.univ_group_name}
-                  </SelectItem>
-                ))}
+                {retreatData.univGroupAndGrade.map(
+                  (group: {
+                    univGroupId: number;
+                    univGroupName: string;
+                    univGroupNumber: number;
+                    grades: {
+                      gradeId: number;
+                      gradeName: string;
+                      gradeNumber: number;
+                    }[];
+                  }) => (
+                    <SelectItem
+                      key={group.univGroupId}
+                      value={group.univGroupId.toString()}
+                    >
+                      {group.univGroupNumber}부 {group.univGroupName}
+                    </SelectItem>
+                  )
+                )}
               </SelectContent>
             </Select>
             {formErrors.univGroup && (
@@ -507,12 +534,12 @@ export function RetreatRegistrationComponent({
                 <SelectValue placeholder="학년을 선택해주세요" />
               </SelectTrigger>
               <SelectContent>
-                {availableGrades.map((grade: TGrade) => (
+                {availableGrades.map((grade) => (
                   <SelectItem
-                    key={grade.grade_id}
-                    value={grade.grade_id.toString()}
+                    key={grade.gradeId}
+                    value={grade.gradeId.toString()}
                   >
-                    {`${grade.grade_number}학년 ${grade.grade_name}`}
+                    {`${grade.gradeNumber}학년 ${grade.gradeName}`}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -623,7 +650,7 @@ export function RetreatRegistrationComponent({
                 <TableHead className="text-center whitespace-nowrap sm:px-2 px-1">
                   일정 선택
                 </TableHead>
-                {retreatData.retreat.dates.map((date: string) => (
+                {retreatDatesForDisplay.map((date: string) => (
                   <TableHead
                     key={date}
                     className="text-center whitespace-nowrap sm:px-2 px-1"
@@ -643,18 +670,17 @@ export function RetreatRegistrationComponent({
                     {eventType === "SLEEP" && <Bed className="mr-2" />}
                     {EVENT_TYPE_MAP[eventType]}
                   </TableCell>
-                  {retreatData.retreat.dates.map((date: string) => {
-                    // Find the event based on date and type (로컬 시간 기준)
-                    const event: TSchedule | undefined =
+                  {retreatDatesForDisplay.map((date: string) => {
+                    const event: TRetreatRegistrationSchedule | undefined =
                       retreatData.schedule.find(
-                        (s: TSchedule) =>
-                          new Date(s.date).toLocaleDateString("ko-KR") ===
+                        (s: TRetreatRegistrationSchedule) =>
+                          new Date(s.time).toLocaleDateString("ko-KR") ===
                             new Date(date).toLocaleDateString("ko-KR") &&
                           s.type === eventType
                       );
                     return (
                       <TableCell
-                        key={date}
+                        key={`${date}-${eventType}`}
                         className="text-center p-2 sm:px-3 sm:py-2 whitespace-nowrap"
                       >
                         {event ? (
