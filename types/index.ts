@@ -199,11 +199,7 @@ export type RetreatInfo = {
     univGroupId: number;
     univGroupName: string;
     univGroupNumber: number;
-    grades: {
-      gradeId: number;
-      gradeName: string;
-      gradeNumber: number;
-    }[];
+    grades: Pick<TGrade, "id" | "name" | "number">[];
   }[];
   schedule: TRetreatRegistrationSchedule[];
   payment: TRetreatPaymentSchedule[];

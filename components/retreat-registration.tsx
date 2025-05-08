@@ -495,9 +495,9 @@ export function RetreatRegistrationComponent({
                     univGroupName: string;
                     univGroupNumber: number;
                     grades: {
-                      gradeId: number;
-                      gradeName: string;
-                      gradeNumber: number;
+                      id: number;
+                      name: string;
+                      number: number;
                     }[];
                   }) => (
                     <SelectItem
@@ -534,14 +534,13 @@ export function RetreatRegistrationComponent({
                 <SelectValue placeholder="학년을 선택해주세요" />
               </SelectTrigger>
               <SelectContent>
-                {availableGrades.map((grade) => (
-                  <SelectItem
-                    key={grade.gradeId}
-                    value={grade.gradeId.toString()}
-                  >
-                    {`${grade.gradeNumber}학년 ${grade.gradeName}`}
-                  </SelectItem>
-                ))}
+                {availableGrades.map(
+                  (grade: { id: number; name: string; number: number }) => (
+                    <SelectItem key={grade.id} value={grade.id.toString()}>
+                      {`${grade.number}학년 ${grade.name}`}
+                    </SelectItem>
+                  )
+                )}
               </SelectContent>
             </Select>
             {formErrors.grade && (
