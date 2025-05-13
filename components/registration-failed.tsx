@@ -3,7 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 
-export function RegistrationFailed() {
+interface RegistrationFailedProps {
+  failMessage?: string;
+}
+
+export function RegistrationFailed({ failMessage }: RegistrationFailedProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md mx-2">
@@ -14,9 +18,7 @@ export function RegistrationFailed() {
           <CardTitle className="text-2xl font-bold">신청 오류</CardTitle>
         </CardHeader>
         <CardContent className="text-center">
-          <p className="text-muted-foreground mb-4">
-            죄송합니다. 현재 등록을 완료할 수 없습니다. 다시 시도해주시기 바랍니다.
-          </p>
+          <p className="text-muted-foreground mb-4">{failMessage}</p>
         </CardContent>
       </Card>
     </div>

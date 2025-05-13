@@ -10,7 +10,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -19,7 +19,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { RetreatInfo, TRetreatRegistrationSchedule } from "../types";
@@ -40,7 +40,7 @@ import {
   Sunset,
   Bed,
   TriangleAlert,
-  Star
+  Star,
 } from "lucide-react";
 
 import { formatDate } from "@/utils/formatDate";
@@ -55,7 +55,7 @@ const EVENT_TYPE_MAP: Record<string, string> = {
   BREAKFAST: "아침",
   LUNCH: "점심",
   DINNER: "저녁",
-  SLEEP: "숙박"
+  SLEEP: "숙박",
 };
 
 // 실제 API 호출 함수 using axios
@@ -116,7 +116,7 @@ const groupDates = (dates: string[]): string[] => {
 };
 
 export function RetreatRegistrationComponent({
-  retreatSlug
+  retreatSlug,
 }: RetreatRegistrationComponentProps) {
   const router = useRouter();
   const [retreatData, setRetreatData] = useState<RetreatInfo | null>(null);
@@ -141,7 +141,7 @@ export function RetreatRegistrationComponent({
     phoneNumber: "",
     scheduleSelection: [],
     privacyConsent: false,
-    gender: ""
+    gender: "",
   });
   const [availableGrades, setAvailableGrades] = useState<
     RetreatInfo["univGroupAndGrade"][number]["grades"]
@@ -164,7 +164,7 @@ export function RetreatRegistrationComponent({
     phoneNumber: "",
     scheduleSelection: "",
     privacyConsent: "",
-    gender: ""
+    gender: "",
   });
 
   const [isAllScheduleSelected, setIsAllScheduleSelected] = useState(false);
@@ -258,7 +258,7 @@ export function RetreatRegistrationComponent({
       if (!phoneRegex.test(value)) {
         setFormErrors((prevErrors) => ({
           ...prevErrors,
-          phoneNumber: "010-1234-5678 형식으로 적어주세요"
+          phoneNumber: "010-1234-5678 형식으로 적어주세요",
         }));
       } else {
         setFormErrors((prevErrors) => ({ ...prevErrors, phoneNumber: "" }));
@@ -287,7 +287,7 @@ export function RetreatRegistrationComponent({
     );
     setFormData({
       ...formData,
-      scheduleSelection: checked ? allScheduleIds : []
+      scheduleSelection: checked ? allScheduleIds : [],
     });
     setFormErrors((prevErrors) => ({ ...prevErrors, scheduleSelection: "" }));
   };
@@ -319,7 +319,7 @@ export function RetreatRegistrationComponent({
       phoneNumber: "",
       scheduleSelection: "",
       privacyConsent: "",
-      gender: ""
+      gender: "",
     };
     let isValid = true;
 
@@ -377,12 +377,12 @@ export function RetreatRegistrationComponent({
         schedule_selection: formData.scheduleSelection,
         phone_number: formData.phoneNumber,
         name: formData.name,
-        gender: formData.gender
+        gender: formData.gender,
       };
 
       try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/retreat/${retreatSlug}/register`,
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/retreat/${retreatSlug}/registration`,
           submissionData
         );
 
@@ -390,14 +390,19 @@ export function RetreatRegistrationComponent({
           name: formData.name,
           gender: formData.gender,
           phoneNumber: formData.phoneNumber,
-          price: totalPrice
+          price: totalPrice,
         });
-
+        const univGroup = formData.univGroup;
         router.push(`/retreats/${retreatSlug}/registration-success`);
-
+        //TODO: also send 부서 details and 계좌번호
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (error) {
-        router.push(`/retreats/${retreatSlug}/registration-failure`);
+      } catch (error: any) {
+        const statusMessage = error.response?.statusText || "Unknown error";
+        router.push(
+          `/retreats/${retreatSlug}/registration-failure?message=${encodeURIComponent(
+            statusMessage
+          )}`
+        );
       }
     }
   };
