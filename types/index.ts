@@ -44,6 +44,7 @@ export type TRetreat = {
   mainVerse: string;
   mainSpeaker: string;
   memo?: string;
+  poster_url?: string;
   qrMetadata?: { width: number; height: number; x: number; y: number };
   createdAt: Date;
   updatedAt: Date;

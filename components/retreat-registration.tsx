@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
@@ -22,7 +24,7 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
-import { RetreatInfo, TRetreatRegistrationSchedule } from "../types";
+import type { RetreatInfo, TRetreatRegistrationSchedule } from "../types";
 import RetreatCard from "./retreat-card";
 import { useRouter } from "next/navigation";
 
@@ -45,6 +47,7 @@ import {
 
 import { formatDate } from "@/utils/formatDate";
 import { useRegistration } from "@/context/retreatRegistrationContext";
+import { server } from "@/utils/axios";
 
 interface RetreatRegistrationComponentProps {
   retreatSlug: string;
@@ -61,9 +64,7 @@ const EVENT_TYPE_MAP: Record<string, string> = {
 // 실제 API 호출 함수 using axios
 const fetchRetreatData = async (slug: string): Promise<RetreatInfo> => {
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/retreat/${slug}/info`
-    );
+    const response = await server.get(`/api/v1/retreat/${slug}/info`);
     return response.data.retreatInfo;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -382,7 +383,7 @@ export function RetreatRegistrationComponent({
 
       try {
         await axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/v1/retreat/${retreatSlug}/register`,
+          `https://dev.api.sarang-univ.com/api/v1/retreat/${retreatSlug}/register`,
           submissionData
         );
 

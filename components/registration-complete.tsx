@@ -1,28 +1,56 @@
-// File: components/registration-complete.tsx
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, CreditCard, Wallet, User, Copy } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface RegistrationCompleteProps {
   name: string | null;
   gender: string | null;
   phone: string | null;
-  price: number | null;
+  price: number | string | null;
+  userType: string | null;
 }
 
 export function RegistrationComplete({
   name,
   gender,
   phone,
-  price
+  price,
+  userType
 }: RegistrationCompleteProps) {
-  // Function to convert gender to Korean
+  const { toast } = useToast();
+
+  // 성별을 한글로 변환하는 함수
   const getGenderText = (gender: string | null): string => {
-    if (gender === "male") return "형제";
-    if (gender === "female") return "자매";
+    if (gender === "MALE") return "형제";
+    if (gender === "FEMALE") return "자매";
     return "";
+  };
+
+  // 사용자 유형 텍스트 가져오기
+  const getUserTypeText = (userType: string | null): string => {
+    if (userType === "NEW_COMER") return "수양회 EBS";
+    if (userType === "SOLDIER") return "군지체";
+    return "";
+  };
+
+  // 특별 신청 유형인지 확인
+  const isSpecialType = userType === "NEW_COMER" || userType === "SOLDIER";
+
+  // 클립보드 복사 함수
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast({
+          description: "클립보드로 복사되었습니다",
+          duration: 2000
+        });
+      })
+      .catch((err) => {
+        console.error("클립보드 복사 실패:", err);
+      });
   };
 
   return (
@@ -35,64 +63,87 @@ export function RegistrationComplete({
           <CardTitle className="text-2xl font-bold">수양회 신청 완료</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          <p className="mb-6">
-            <span className="font-semibold">{name}</span>{" "}
-            {getGenderText(gender)}님,{" "}
-            <span className="font-semibold">{phone}</span>{" "}
-            <span className="text-muted-foreground">
-              으로 수양회 신청 접수 문자가 발송되었습니다. 이후 입금 과정을
-              진행해주세요.
-            </span>
-          </p>
+          {isSpecialType ? (
+            <p className="mb-6">
+              <span className="font-semibold">{name}</span>{" "}
+              {getGenderText(gender)}님,{" "}
+              <span className="text-muted-foreground">
+                {getUserTypeText(userType)}로 수양회 신청이 접수되었습니다.{" "}
+                {getUserTypeText(userType)}가 확인이 된 이후 입금 절차가
+                진행되기 때문에 잠시만 기다려주시면 감사하겠습니다.
+              </span>
+            </p>
+          ) : (
+            <p className="mb-6">
+              <span className="font-semibold">{name}</span>{" "}
+              {getGenderText(gender)}님,{" "}
+              <span className="font-semibold">{phone}</span>{" "}
+              <span className="text-muted-foreground">
+                으로 수양회 신청 접수 문자가 발송되었습니다. 이후 입금 과정을
+                진행해주세요.
+              </span>
+            </p>
+          )}
 
           <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold text-lg mb-2">입금 안내</h3>
-                <div className="space-y-2">
-                  <p className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4" />
-                    <span className="font-medium">입금 계좌:</span>{" "}
-                    <span>신한은행 110-123-456789</span>
-                    <button
-                      onClick={() =>
-                        navigator.clipboard.writeText("110-123-456789")
-                      }
-                      className="p-1 hover:bg-gray-100 rounded-md"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Wallet className="h-4 w-4" />
-                    <span className="font-medium">입금 금액:</span>{" "}
-                    {price?.toLocaleString()}원
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    <span className="font-medium">입금자명:</span>{" "}
-                    <span>{name}</span>
-                    <button
-                      onClick={() => navigator.clipboard.writeText(name || "")}
-                      className="p-1 hover:bg-gray-100 rounded-md"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    * 입금자명을 확인해주시기 바랍니다.
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    * 입금 시각을 기준으로 수양회 참석 여부가 결정됩니다.
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    * 문자 메세지에 있는 링크를 통해 버스 티켓 신청을 이어서 진행해주세요.
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    * 군지체(카투사, 공익 제외) 및 수양회 EBS 신청은 각 부서 행정간사님에게 문의부탁드립니다.
-                  </p>
+              {getUserTypeText(userType) && (
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">신청 정보</h3>
+                  <div className="space-y-2">
+                    <p className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      <span className="font-medium">신청 유형:</span>{" "}
+                      <span>{getUserTypeText(userType)}</span>
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {!isSpecialType && (
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">입금 안내</h3>
+                  <div className="space-y-2">
+                    <p className="flex items-center gap-2">
+                      <CreditCard className="h-4 w-4" />
+                      <span className="font-medium">입금 계좌:</span>{" "}
+                      <span>신한은행 110-123-456789</span>
+                      <button
+                        onClick={() => copyToClipboard("110-123-456789")}
+                        className="p-1 hover:bg-gray-100 rounded-md"
+                        type="button"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Wallet className="h-4 w-4" />
+                      <span className="font-medium">입금 금액:</span>{" "}
+                      {typeof price === "number"
+                        ? price.toLocaleString() + "원"
+                        : price}
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      <span className="font-medium">입금자명:</span>{" "}
+                      <span>{name}</span>
+                      <button
+                        onClick={() => copyToClipboard(name || "")}
+                        className="p-1 hover:bg-gray-100 rounded-md"
+                        type="button"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      * 입금자명을 확인해주시기 바랍니다.
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      * 입금 시각을 기준으로 수양회 참석 여부가 결정됩니다.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

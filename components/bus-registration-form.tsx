@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +10,7 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,14 +27,14 @@ import {
   Coffee,
   Utensils,
   Moon,
-  Bus,
+  Bus
 } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import {
   Tabs,
   // TabsContent,
   TabsList,
-  TabsTrigger,
+  TabsTrigger
 } from "@/components/ui/tabs";
 
 // Bus 데이터 타입 정의
@@ -76,7 +78,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 2,
@@ -91,7 +93,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 3,
@@ -106,7 +108,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 4,
@@ -121,7 +123,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 5,
@@ -136,7 +138,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 6,
@@ -151,7 +153,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 7,
@@ -166,7 +168,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 8,
@@ -181,8 +183,8 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
-  },
+    updated_at: "2024-11-07T13:06:11.336Z"
+  }
 ];
 
 const registerSchedules: RegisterSchedule[] = [
@@ -191,92 +193,92 @@ const registerSchedules: RegisterSchedule[] = [
     retreat_id: 1,
     date: "2024-12-04",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 2,
     retreat_id: 1,
     date: "2024-12-04",
     type: "DINNER",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 3,
     retreat_id: 1,
     date: "2024-12-04",
     type: "SLEEP",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 4,
     retreat_id: 1,
     date: "2024-12-05",
     type: "BREAKFAST",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 5,
     retreat_id: 1,
     date: "2024-12-05",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 6,
     retreat_id: 1,
     date: "2024-12-05",
     type: "DINNER",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 7,
     retreat_id: 1,
     date: "2024-12-05",
     type: "SLEEP",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 8,
     retreat_id: 1,
     date: "2024-12-06",
     type: "BREAKFAST",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 9,
     retreat_id: 1,
     date: "2024-12-06",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 10,
     retreat_id: 1,
     date: "2024-12-06",
     type: "DINNER",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 11,
     retreat_id: 1,
     date: "2024-12-06",
     type: "SLEEP",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 12,
     retreat_id: 1,
     date: "2024-12-07",
     type: "BREAKFAST",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 13,
     retreat_id: 1,
     date: "2024-12-07",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z",
-  },
+    created_at: "2024-11-07T13:06:11.172Z"
+  }
 ];
 
 export function BusRegistrationFormComponent() {
@@ -332,7 +334,7 @@ export function BusRegistrationFormComponent() {
           .sort((a, b) => a.departure_time.localeCompare(b.departure_time)); // 출발 시간 순 정렬
         return {
           transition,
-          buses: relevantBuses,
+          buses: relevantBuses
         };
       })
       .filter((transition) => transition.buses.length > 0);
@@ -368,7 +370,7 @@ export function BusRegistrationFormComponent() {
     BREAKFAST: <Coffee className="w-5 h-5" />,
     LUNCH: <Utensils className="w-5 h-5" />,
     DINNER: <Utensils className="w-5 h-5" />,
-    SLEEP: <Moon className="w-5 h-5" />,
+    SLEEP: <Moon className="w-5 h-5" />
   };
 
   return (
@@ -446,8 +448,10 @@ export function BusRegistrationFormComponent() {
                           (transition.transition.before === schedule.id &&
                             transition.transition.after ===
                               (sortedSchedules[index + 1]?.id || null)) ||
-                          (transition.transition.before === schedule.id && !transition.transition.after) ||
-                          (!transition.transition.before && transition.transition.after === schedule.id)
+                          (transition.transition.before === schedule.id &&
+                            !transition.transition.after) ||
+                          (!transition.transition.before &&
+                            transition.transition.after === schedule.id)
                       );
 
                       // Only render the schedule if there are buses for the transition
@@ -459,7 +463,8 @@ export function BusRegistrationFormComponent() {
                           <div className="flex items-center gap-2">
                             {eventIcons[schedule.type]}
                             <span className="font-semibold">
-                              {schedule.type.charAt(0) + schedule.type.slice(1).toLowerCase()}
+                              {schedule.type.charAt(0) +
+                                schedule.type.slice(1).toLowerCase()}
                             </span>
                           </div>
 
@@ -470,7 +475,9 @@ export function BusRegistrationFormComponent() {
                           <div className="mt-2">
                             <div className="flex items-center gap-2 mb-2">
                               <Bus className="h-5 w-5" />
-                              <span className="font-medium">이동을 위한 버스 선택</span>
+                              <span className="font-medium">
+                                이동을 위한 버스 선택
+                              </span>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {transitionBuses.buses.map((bus) => (
@@ -488,7 +495,9 @@ export function BusRegistrationFormComponent() {
                                       <Checkbox
                                         id={`bus-${bus.id}`}
                                         checked={selectedBuses.includes(bus.id)}
-                                        onCheckedChange={() => handleBusSelection(bus.id)}
+                                        onCheckedChange={() =>
+                                          handleBusSelection(bus.id)
+                                        }
                                       />
                                       <Label
                                         htmlFor={`bus-${bus.id}`}
@@ -496,24 +505,29 @@ export function BusRegistrationFormComponent() {
                                       >
                                         <div className="flex items-center justify-between mb-2">
                                           <div className="flex items-center gap-2">
-                                            {bus.type === "FROM_CHURCH_TO_RETREAT" ? (
+                                            {bus.type ===
+                                            "FROM_CHURCH_TO_RETREAT" ? (
                                               <ArrowRight className="h-4 w-4" />
                                             ) : (
                                               <ArrowLeft className="h-4 w-4" />
                                             )}
                                             <span className="font-medium">
-                                              {bus.departure_location} → {bus.arrival_location}
+                                              {bus.departure_location} →{" "}
+                                              {bus.arrival_location}
                                             </span>
                                           </div>
                                           <div className="flex items-center gap-1">
                                             <DollarSign className="h-4 w-4" />
-                                            <span>{bus.price.toLocaleString()}원</span>
+                                            <span>
+                                              {bus.price.toLocaleString()}원
+                                            </span>
                                           </div>
                                         </div>
                                         <div className="flex items-center gap-4 text-sm text-gray-600">
                                           <div className="flex items-center gap-1">
                                             <Clock className="h-4 w-4" />
-                                            출발: {bus.departure_time.slice(0, 5)}
+                                            출발:{" "}
+                                            {bus.departure_time.slice(0, 5)}
                                           </div>
                                           <div className="flex items-center gap-1">
                                             <Clock className="h-4 w-4" />
@@ -541,7 +555,9 @@ export function BusRegistrationFormComponent() {
                           </span>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {busesByTransition[sortedSchedules.length + 1].buses.map((bus) => (
+                          {busesByTransition[
+                            sortedSchedules.length + 1
+                          ].buses.map((bus) => (
                             <Card
                               key={bus.id}
                               className={cn(
@@ -556,7 +572,9 @@ export function BusRegistrationFormComponent() {
                                   <Checkbox
                                     id={`bus-${bus.id}`}
                                     checked={selectedBuses.includes(bus.id)}
-                                    onCheckedChange={() => handleBusSelection(bus.id)}
+                                    onCheckedChange={() =>
+                                      handleBusSelection(bus.id)
+                                    }
                                   />
                                   <Label
                                     htmlFor={`bus-${bus.id}`}
@@ -577,7 +595,9 @@ export function BusRegistrationFormComponent() {
                                       </div>
                                       <div className="flex items-center gap-1">
                                         <DollarSign className="h-4 w-4" />
-                                        <span>{bus.price.toLocaleString()}원</span>
+                                        <span>
+                                          {bus.price.toLocaleString()}원
+                                        </span>
                                       </div>
                                     </div>
                                     <div className="flex items-center gap-4 text-sm text-gray-600">
