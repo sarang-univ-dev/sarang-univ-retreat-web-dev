@@ -10,6 +10,7 @@ interface RegistrationCompleteProps {
   phone: string | null;
   price: number | string | null;
   userType: string | null;
+  depositAccount: string | null;
 }
 
 export function RegistrationComplete({
@@ -18,6 +19,7 @@ export function RegistrationComplete({
   phone,
   price,
   userType,
+  depositAccount,
 }: RegistrationCompleteProps) {
   const { toast } = useToast();
 
@@ -107,9 +109,11 @@ export function RegistrationComplete({
                     <p className="flex items-center gap-2">
                       <CreditCard className="h-4 w-4" />
                       <span className="font-medium">입금 계좌:</span>{" "}
-                      <span>신한은행 110-123-456789</span>
+                      <span>{depositAccount}</span>
                       <button
-                        onClick={() => copyToClipboard("110-123-456789")}
+                        onClick={() =>
+                          copyToClipboard(depositAccount ?? "null")
+                        }
                         className="p-1 hover:bg-gray-100 rounded-md"
                         type="button"
                       >
