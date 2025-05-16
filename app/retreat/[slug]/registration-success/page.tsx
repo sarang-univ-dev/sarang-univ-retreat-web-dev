@@ -60,11 +60,13 @@ export default function RegistrationSuccessPage() {
         const response = await server.get(
           `/api/v1/retreat/${params.slug}/univ-group-info`
         );
-        const bankAccount = JSON.stringify(
+        const bankAccount =
           response.data.retreatUnivGroup[registrationData?.univGroup - 1]
-            .information.deposit_account
-        );
-        setDepositAccount(bankAccount);
+            .information.deposit_account;
+        const accountHolder =
+          response.data.retreatUnivGroup[registrationData?.univGroup - 1]
+            .information.deposit_account_holder;
+        setDepositAccount(bankAccount + " " + accountHolder);
       } catch (error) {
         console.error("Failed to fetch univ group info", error);
       }

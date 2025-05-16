@@ -341,54 +341,54 @@ export function RetreatRegistrationForm({
       userType: formData.userType,
     };
 
-    try {
-      // 모의 제출 성공 - 실제 API 호출 없이 처리
-      console.log("제출 데이터:", submissionData);
+    //try {
+    // 모의 제출 성공 - 실제 API 호출 없이 처리
+    console.log("제출 데이터:", submissionData);
 
-      // const res = await server.post(
-      //   "/api/v1/retreat/arise-n-shine/registration",
-      //   submissionData
-      // );
+    const response = await server.post(
+      `/api/v1/retreat/${retreatSlug}/registration`,
+      submissionData
+    );
 
-      //THROW ERROR TEST RUN
-      // throw {
-      //   response: {
-      //     status: 400,
-      //     data: {
-      //       message: "이미 신청한 내역이 있습니다.",
-      //     },
-      //   },
-      // };
+    //THROW ERROR TEST RUN
+    // throw {
+    //   response: {
+    //     status: 400,
+    //     data: {
+    //       message: "이미 신청한 내역이 있습니다.",
+    //     },
+    //   },
+    // };
 
-      // API 호출 지연 시뮬레이션
-      setTimeout(() => {
-        // 성공 페이지를 위해 localStorage에 등록 데이터 저장
-        localStorage.setItem(
-          "registrationData",
-          JSON.stringify({
-            name: formData.name,
-            gender: formData.gender,
-            phoneNumber: formData.phoneNumber,
-            price:
-              formData.userType === "NEW_COMER" ||
-              formData.userType === "SOLDIER"
-                ? "입금 대기"
-                : totalPrice,
-            userType: formData.userType,
-            univGroup: formData.univGroup,
-          })
-        );
+    // API 호출 지연 시뮬레이션
+    //setTimeout(() => {
+    // 성공 페이지를 위해 localStorage에 등록 데이터 저장
 
-        router.push(`/retreat/${retreatSlug}/registration-success`);
-      }, 1000);
-    } catch (error: any) {
-      console.error("등록 오류:", error);
+    if (response.status >= 200 && response.status <= 399) {
+      localStorage.setItem(
+        "registrationData",
+        JSON.stringify({
+          name: formData.name,
+          gender: formData.gender,
+          phoneNumber: formData.phoneNumber,
+          price:
+            formData.userType === "NEW_COMER" || formData.userType === "SOLDIER"
+              ? "입금 대기"
+              : totalPrice,
+          userType: formData.userType,
+          univGroup: formData.univGroup,
+        })
+      );
+
+      router.push(`/retreat/${retreatSlug}/registration-success`);
+    } else {
+      console.error("response message: " + response.data.message);
 
       // 실패 정보를 localStorage에 저장
       localStorage.setItem(
         "registrationFailureData",
         JSON.stringify({
-          errorMessage: error.response.data.message,
+          errorMessage: response.data.message,
           timestamp: new Date().toISOString(),
           retreatName: retreatData.retreat.name,
         })
@@ -396,6 +396,11 @@ export function RetreatRegistrationForm({
 
       router.push(`/retreat/${retreatSlug}/registration-failure`);
     }
+
+    //}, 1000);
+    //} catch (error: any) {
+
+    //}
   };
 
   // 표시 목적으로 일정에서 고유한 날짜 추출
