@@ -12,6 +12,7 @@ interface RegistrationData {
   price: number | string;
   userType: string | null;
   univGroup: number;
+  registrationType: string | null;
 }
 
 export default function RegistrationSuccessPage() {
@@ -98,6 +99,7 @@ export default function RegistrationSuccessPage() {
       price={registrationData.price}
       userType={registrationData.userType}
       depositAccount={depositAccount}
+      registrationType={registrationData.registrationType}
     />
   );
 }

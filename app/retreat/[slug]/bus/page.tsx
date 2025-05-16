@@ -125,6 +125,9 @@ export default function BusRegisterPage() {
   // if (!retreat) return <p>리트리트를 찾을 수 없습니다.</p>;
 
   return retreatData ? (
-    <BusRegistrationFormComponent retreatData={retreatData} />
+    <BusRegistrationFormComponent
+      retreatData={retreatData}
+      retreatSlug={slug}
+    />
   ) : null;
 }

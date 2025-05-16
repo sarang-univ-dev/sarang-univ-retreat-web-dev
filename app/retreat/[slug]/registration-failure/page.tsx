@@ -11,6 +11,7 @@ interface FailureData {
   errorMessage: string;
   timestamp: string;
   retreatName: string;
+  registrationType: string;
 }
 
 export default function RegistrationFailurePage() {
@@ -105,10 +106,19 @@ export default function RegistrationFailurePage() {
                   </p>
                 </div>
               )}
-
-              <Link href={`/retreat/${params.slug}`}>
-                <Button className="w-full">다시 시도하기</Button>
-              </Link>
+              <div>
+                {failureData?.registrationType === "retreat-registration" ? (
+                  <Link href={`/retreat/${params.slug}`}>
+                    <Button className="w-full">다시 시도하기</Button>
+                  </Link>
+                ) : failureData?.registrationType === "bus-registration" ? (
+                  <Link href={`/retreat/${params.slug}/bus`}>
+                    <Button className="w-full">다시 시도하기</Button>
+                  </Link>
+                ) : (
+                  ""
+                )}
+              </div>
             </>
           )}
         </CardContent>

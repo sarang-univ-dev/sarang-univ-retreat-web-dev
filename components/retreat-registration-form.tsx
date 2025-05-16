@@ -377,6 +377,7 @@ export function RetreatRegistrationForm({
               : totalPrice,
           userType: formData.userType,
           univGroup: formData.univGroup,
+          registrationType: "retreat-registration",
         })
       );
 
@@ -391,6 +392,7 @@ export function RetreatRegistrationForm({
           errorMessage: response.data.message,
           timestamp: new Date().toISOString(),
           retreatName: retreatData.retreat.name,
+          registrationType: "retreat-registration",
         })
       );
 

@@ -45,6 +45,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { server } from "@/utils/axios";
+import { useRouter } from "next/navigation";
 
 // Bus 데이터 타입 정의
 type Bus = {
@@ -292,11 +294,14 @@ const registerSchedules: RegisterSchedule[] = [
 
 interface BusRegistrationFormProps {
   retreatData: RetreatInfo;
+  retreatSlug: string;
 }
 
 export function BusRegistrationFormComponent({
   retreatData,
+  retreatSlug,
 }: BusRegistrationFormProps) {
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedBuses, setSelectedBuses] = useState<number[]>([]);
   const [name, setName] = useState("");
@@ -304,10 +309,12 @@ export function BusRegistrationFormComponent({
   const [formData, setFormData] = useState<{
     univGroup: string;
     grade: string;
+    phoneNumber: string;
     gender: string;
   }>({
     univGroup: "",
     grade: "",
+    phoneNumber: "",
     gender: "",
   });
   const [availableGrades, setAvailableGrades] = useState<
@@ -367,10 +374,52 @@ export function BusRegistrationFormComponent({
       .filter((transition) => transition.buses.length > 0);
   }, [selectedDate, sortedSchedules]);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     console.log("폼 제출됨", { name, email, selectedDate, selectedBuses });
+
     // 여기에 실제 제출 로직 추가
+    try {
+      const submissionData = {
+        name: name,
+        phoneNumber: formData.phoneNumber,
+        gender: formData.gender,
+        gradeId: formData.grade,
+        retreatId: retreatData.retreat.id,
+        shuttleBusIds: selectedBuses,
+        isAdminContact: false,
+      };
+      // const response = await server.post(
+      //   `/api/v1/retreat/${retreatSlug}/shuttle-bus/register`,
+      //   submissionData
+      // );
+      localStorage.setItem(
+        "registrationData",
+        JSON.stringify({
+          name: name,
+          gender: formData.gender,
+          phoneNumber: formData.phoneNumber,
+          price: totalPrice,
+          userType: "",
+          univGroup: formData.univGroup,
+          registrationType: "bus-registration",
+        })
+      );
+      router.push(`/retreat/${retreatSlug}/registration-success`);
+    } catch (error: any) {
+      console.error("error message: " + error.response?.data?.message);
+
+      localStorage.setItem(
+        "registrationFailureData",
+        JSON.stringify({
+          errorMessage: error.response?.data?.message,
+          timestamp: new Date().toISOString(),
+          retreatName: retreatData.retreat.name,
+          registrationType: "bus-registration",
+        })
+      );
+      router.push(`/retreat/${retreatSlug}/registration-failure`);
+    }
   };
 
   const handleBusSelection = (busId: number) => {
@@ -412,6 +461,24 @@ export function BusRegistrationFormComponent({
   const handleGenderChange = (value: string) => {
     setFormData({ ...formData, gender: value });
     //setFormErrors({ ...formErrors, gender: "" });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    //setFormErrors({ ...formErrors, [name]: "" });
+
+    if (name === "phoneNumber") {
+      const phoneRegex = /^010-\d{4}-\d{4}$/;
+      if (!phoneRegex.test(value)) {
+        // setFormErrors((prevErrors) => ({
+        //   ...prevErrors,
+        //   phoneNumber: "010-1234-5678 형식으로 적어주세요",
+        // }));
+      } else {
+        //setFormErrors((prevErrors) => ({ ...prevErrors, phoneNumber: "" }));
+      }
+    }
   };
 
   return (
@@ -523,6 +590,27 @@ export function BusRegistrationFormComponent({
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phoneNumber" className="flex items-center">
+                전화번호
+              </Label>
+              <p className="text-sm text-muted-foreground mb-2">
+                문자 수신이 가능한 번호로 입력해주시기 바랍니다. 가능한 번호가
+                없다면 각 부서 행정간사님에게 요청부탁드립니다.
+              </p>
+              <Input
+                id="phoneNumber"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleInputChange}
+                placeholder="010-1234-5678"
+              />
+              {/* {formErrors.phoneNumber && (
+            <p className="text-red-500 text-sm mt-1">
+              {formErrors.phoneNumber}
+            </p>
+          )} */}
             </div>
           </div>
 
@@ -800,22 +888,20 @@ export function BusRegistrationFormComponent({
               </CardContent>
             </Card>
           )}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={
+              selectedBuses.length === 0 ||
+              !selectedDate ||
+              !name.trim() ||
+              !email.trim()
+            }
+          >
+            신청하기 ({totalPrice.toLocaleString()}원)
+          </Button>
         </form>
       </CardContent>
-      <CardFooter>
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={
-            selectedBuses.length === 0 ||
-            !selectedDate ||
-            !name.trim() ||
-            !email.trim()
-          }
-        >
-          신청하기 ({totalPrice.toLocaleString()}원)
-        </Button>
-      </CardFooter>
     </Card>
   );
 }
