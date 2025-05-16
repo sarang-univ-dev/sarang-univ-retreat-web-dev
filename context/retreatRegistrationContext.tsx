@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState } from 'react';
+import type React from "react";
+import { createContext, useContext, useState } from "react";
 
 interface RegistrationData {
   name: string;
@@ -14,13 +15,22 @@ interface RegistrationContextType {
   setRegistrationData: (data: RegistrationData | null) => void;
 }
 
-const RegistrationContext = createContext<RegistrationContextType | undefined>(undefined);
+const RegistrationContext = createContext<RegistrationContextType | undefined>(
+  undefined
+);
 
-export function RegistrationProvider({ children }: { children: React.ReactNode }) {
-  const [registrationData, setRegistrationData] = useState<RegistrationData | null>(null);
+export function RegistrationProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [registrationData, setRegistrationData] =
+    useState<RegistrationData | null>(null);
 
   return (
-    <RegistrationContext.Provider value={{ registrationData, setRegistrationData }}>
+    <RegistrationContext.Provider
+      value={{ registrationData, setRegistrationData }}
+    >
       {children}
     </RegistrationContext.Provider>
   );
@@ -29,7 +39,9 @@ export function RegistrationProvider({ children }: { children: React.ReactNode }
 export function useRegistration() {
   const context = useContext(RegistrationContext);
   if (context === undefined) {
-    throw new Error('useRegistration must be used within a RegistrationProvider');
+    throw new Error(
+      "useRegistration must be used within a RegistrationProvider"
+    );
   }
   return context;
 }
