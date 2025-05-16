@@ -15,8 +15,6 @@ const fetchRetreatData = async (slug: string): Promise<RetreatInfo> => {
   try {
     const response = await server.get(`/api/v1/retreat/${slug}/info`);
 
-    // eslint-disable-next-line no-console
-    console.log("response.data.retreatInfo", response.data.retreatInfo);
     return response.data.retreatInfo;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -104,11 +102,12 @@ export default function RetreatPage() {
     // "M/D(요일)" 형식으로 날짜 포맷팅
     const formatDate = (dateStr: string) => {
       const date = new Date(dateStr);
+      const year = date.getFullYear();
       const month = date.getMonth() + 1;
       const day = date.getDate();
       const weekdays = ["주일", "월", "화", "수", "목", "금", "토"];
       const dayOfWeek = weekdays[date.getDay()];
-      return `${month}/${day}(${dayOfWeek})`;
+      return `${year}년 ${month}/${day}(${dayOfWeek})`;
     };
 
     // 연속된 날짜 그룹화
@@ -144,10 +143,24 @@ export default function RetreatPage() {
         result.push(`${formatDate(start)} ~ ${formatDate(end)}`);
       }
 
-      return result;
+      return result.map(date => `주후 ${date}`);
     };
 
     return groupDates(dates).join(", ");
+  };
+
+  // 현재 신청 기간 이름 조회
+  const getCurrentRegistrationPeriodName = (data: RetreatInfo) => {
+    const now = new Date();
+    const currentPeriod = data.payment.find((payment) => {
+      const startAt = new Date(payment.startAt);
+      const endAt = new Date(payment.endAt);
+
+      // payment 기간에 있는 name 반환
+      return now >= startAt && now <= endAt;
+    });
+
+    return currentPeriod?.name;
   };
 
   if (loading) {
@@ -171,10 +184,6 @@ export default function RetreatPage() {
     );
   }
 
-  console.log("entered retreat page");
-
-  console.log(JSON.stringify(retreatData, null, 2));
-
   return (
     <div className="container mx-auto p-4">
       <div className="mb-8">
@@ -186,6 +195,9 @@ export default function RetreatPage() {
           main_speaker={retreatData.retreat.mainSpeaker}
           memo={retreatData.retreat.memo}
           poster_url={retreatData.retreat.poster_url}
+          retreat_registration_name={
+            getCurrentRegistrationPeriodName(retreatData) || ""
+          }
         />
       </div>
 
