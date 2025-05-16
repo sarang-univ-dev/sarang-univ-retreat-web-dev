@@ -60,6 +60,7 @@ export type TRetreatUnivGroup = {
 export type TRetreatPaymentSchedule = {
   id: number;
   retreatId: number;
+  name: string;
   totalPrice: number;
   partialPricePerSchedule: number;
   startAt: Date;
