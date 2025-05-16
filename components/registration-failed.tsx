@@ -15,7 +15,8 @@ export function RegistrationFailed() {
         </CardHeader>
         <CardContent className="text-center">
           <p className="text-muted-foreground mb-4">
-            죄송합니다. 현재 등록을 완료할 수 없습니다. 다시 시도해주시기 바랍니다.
+            죄송합니다. 현재 등록을 완료할 수 없습니다. 다시 시도해주시기
+            바랍니다.
           </p>
         </CardContent>
       </Card>
