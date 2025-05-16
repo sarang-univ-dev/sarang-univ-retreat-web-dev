@@ -27,6 +27,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/utils/formatDate";
 import type { RetreatInfo, TRetreatRegistrationSchedule } from "@/types";
+import { server } from "@/utils/axios";
 
 // lucide-react 아이콘 추가
 import {
@@ -335,14 +336,29 @@ export function RetreatRegistrationForm({
       gender: formData.gender,
       gradeId: Number(formData.grade),
       retreatId: retreatData.retreat.id,
-      retreatRegistrationScheduleIds: formData.scheduleSelection,
       currentLeaderName: formData.currentLeaderName,
+      retreatRegistrationScheduleIds: formData.scheduleSelection,
       userType: formData.userType,
     };
 
     try {
       // 모의 제출 성공 - 실제 API 호출 없이 처리
       console.log("제출 데이터:", submissionData);
+
+      // const res = await server.post(
+      //   "/api/v1/retreat/arise-n-shine/registration",
+      //   submissionData
+      // );
+
+      //THROW ERROR TEST RUN
+      // throw {
+      //   response: {
+      //     status: 400,
+      //     data: {
+      //       message: "이미 신청한 내역이 있습니다.",
+      //     },
+      //   },
+      // };
 
       // API 호출 지연 시뮬레이션
       setTimeout(() => {
@@ -365,15 +381,14 @@ export function RetreatRegistrationForm({
 
         router.push(`/retreat/${retreatSlug}/registration-success`);
       }, 1000);
-    } catch (error) {
+    } catch (error: any) {
       console.error("등록 오류:", error);
 
       // 실패 정보를 localStorage에 저장
       localStorage.setItem(
         "registrationFailureData",
         JSON.stringify({
-          errorMessage: "신청 처리 중 오류가 발생했습니다.",
-          errorCode: "REGISTRATION_FAILED",
+          errorMessage: error.response.data.message,
           timestamp: new Date().toISOString(),
           retreatName: retreatData.retreat.name,
         })

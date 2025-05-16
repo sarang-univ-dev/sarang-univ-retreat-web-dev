@@ -393,17 +393,11 @@ export function RetreatRegistrationComponent({
           phoneNumber: formData.phoneNumber,
           price: totalPrice,
         });
-        const univGroup = formData.univGroup;
         router.push(`/retreats/${retreatSlug}/registration-success`);
-        //TODO: also send 부서 details and 계좌번호
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error: any) {
         const statusMessage = error.response?.statusText || "Unknown error";
-        router.push(
-          `/retreats/${retreatSlug}/registration-failure?message=${encodeURIComponent(
-            statusMessage
-          )}`
-        );
+        router.push(`/retreats/${retreatSlug}/registration-failure`);
       }
     }
   };

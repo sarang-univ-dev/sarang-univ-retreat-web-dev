@@ -9,7 +9,6 @@ import { useParams, useSearchParams } from "next/navigation";
 
 interface FailureData {
   errorMessage: string;
-  errorCode: string;
   timestamp: string;
   retreatName: string;
 }
@@ -100,7 +99,6 @@ export default function RegistrationFailurePage() {
 
               {failureData && (
                 <div className="mb-6 text-sm text-gray-500">
-                  <p>오류 코드: {failureData.errorCode}</p>
                   <p>수양회: {failureData.retreatName}</p>
                   <p>
                     시간: {new Date(failureData.timestamp).toLocaleString()}
