@@ -8,9 +8,8 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,14 +27,13 @@ import {
   Coffee,
   Utensils,
   Moon,
-  Bus,
+  Bus
 } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import {
   Tabs,
-  // TabsContent,
   TabsList,
-  TabsTrigger,
+  TabsTrigger
 } from "@/components/ui/tabs";
 
 import {
@@ -43,9 +41,8 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
-import { server } from "@/utils/axios";
 import { useRouter } from "next/navigation";
 
 // Bus 데이터 타입 정의
@@ -89,7 +86,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 2,
@@ -104,7 +101,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 3,
@@ -119,7 +116,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 4,
@@ -134,7 +131,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 5,
@@ -149,7 +146,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 6,
@@ -164,7 +161,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 7,
@@ -179,7 +176,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
+    updated_at: "2024-11-07T13:06:11.336Z"
   },
   {
     id: 8,
@@ -194,8 +191,8 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z",
-  },
+    updated_at: "2024-11-07T13:06:11.336Z"
+  }
 ];
 
 const registerSchedules: RegisterSchedule[] = [
@@ -204,92 +201,92 @@ const registerSchedules: RegisterSchedule[] = [
     retreat_id: 1,
     date: "2024-12-04",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 2,
     retreat_id: 1,
     date: "2024-12-04",
     type: "DINNER",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 3,
     retreat_id: 1,
     date: "2024-12-04",
     type: "SLEEP",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 4,
     retreat_id: 1,
     date: "2024-12-05",
     type: "BREAKFAST",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 5,
     retreat_id: 1,
     date: "2024-12-05",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 6,
     retreat_id: 1,
     date: "2024-12-05",
     type: "DINNER",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 7,
     retreat_id: 1,
     date: "2024-12-05",
     type: "SLEEP",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 8,
     retreat_id: 1,
     date: "2024-12-06",
     type: "BREAKFAST",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 9,
     retreat_id: 1,
     date: "2024-12-06",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 10,
     retreat_id: 1,
     date: "2024-12-06",
     type: "DINNER",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 11,
     retreat_id: 1,
     date: "2024-12-06",
     type: "SLEEP",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 12,
     retreat_id: 1,
     date: "2024-12-07",
     type: "BREAKFAST",
-    created_at: "2024-11-07T13:06:11.172Z",
+    created_at: "2024-11-07T13:06:11.172Z"
   },
   {
     id: 13,
     retreat_id: 1,
     date: "2024-12-07",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z",
-  },
+    created_at: "2024-11-07T13:06:11.172Z"
+  }
 ];
 
 interface BusRegistrationFormProps {
@@ -299,7 +296,7 @@ interface BusRegistrationFormProps {
 
 export function BusRegistrationFormComponent({
   retreatData,
-  retreatSlug,
+  retreatSlug
 }: BusRegistrationFormProps) {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -315,7 +312,7 @@ export function BusRegistrationFormComponent({
     univGroup: "",
     grade: "",
     phoneNumber: "",
-    gender: "",
+    gender: ""
   });
   const [availableGrades, setAvailableGrades] = useState<
     RetreatInfo["univGroupAndGrade"][number]["grades"]
@@ -368,7 +365,7 @@ export function BusRegistrationFormComponent({
           .sort((a, b) => a.departure_time.localeCompare(b.departure_time)); // 출발 시간 순 정렬
         return {
           transition,
-          buses: relevantBuses,
+          buses: relevantBuses
         };
       })
       .filter((transition) => transition.buses.length > 0);
@@ -380,6 +377,8 @@ export function BusRegistrationFormComponent({
 
     // 여기에 실제 제출 로직 추가
     try {
+      // TODO: 이 ESLint 주석 제거하고 submissionData 사용하거나 변수 선언 제거하기
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const submissionData = {
         name: name,
         phoneNumber: formData.phoneNumber,
@@ -387,7 +386,7 @@ export function BusRegistrationFormComponent({
         gradeId: formData.grade,
         retreatId: retreatData.retreat.id,
         shuttleBusIds: selectedBuses,
-        isAdminContact: false,
+        isAdminContact: false
       };
       // const response = await server.post(
       //   `/api/v1/retreat/${retreatSlug}/shuttle-bus/register`,
@@ -402,20 +401,23 @@ export function BusRegistrationFormComponent({
           price: totalPrice,
           userType: "",
           univGroup: formData.univGroup,
-          registrationType: "bus-registration",
+          registrationType: "bus-registration"
         })
       );
       router.push(`/retreat/${retreatSlug}/registration-success`);
-    } catch (error: any) {
-      console.error("error message: " + error.response?.data?.message);
+    } catch (error) {
+      // TODO: 이 ESLint 주석 제거하고 error의 타입을 명시적으로 지정하기
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      console.error("error message: " + (error as any).response?.data?.message);
 
       localStorage.setItem(
         "registrationFailureData",
         JSON.stringify({
-          errorMessage: error.response?.data?.message,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          errorMessage: (error as any).response?.data?.message,
           timestamp: new Date().toISOString(),
           retreatName: retreatData.retreat.name,
-          registrationType: "bus-registration",
+          registrationType: "bus-registration"
         })
       );
       router.push(`/retreat/${retreatSlug}/registration-failure`);
@@ -446,7 +448,7 @@ export function BusRegistrationFormComponent({
     BREAKFAST: <Coffee className="w-5 h-5" />,
     LUNCH: <Utensils className="w-5 h-5" />,
     DINNER: <Utensils className="w-5 h-5" />,
-    SLEEP: <Moon className="w-5 h-5" />,
+    SLEEP: <Moon className="w-5 h-5" />
   };
 
   const handleUnivGroupChange = (value: string) => {
