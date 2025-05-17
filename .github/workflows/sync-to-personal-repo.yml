@@ -12,47 +12,39 @@ jobs:
     if: github.repository == 'Sarang-Univ/sarang-univ-retreat-web'
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
       - name: Set up SSH key
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Add personal repo as remote
+      - name: Create temporary directory
+        run: mkdir -p /tmp/repo-sync
+
+      - name: Get branch name
+        id: branch
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+
+      - name: Clone and sync repositories
+        working-directory: /tmp/repo-sync
         run: |
-          git remote add personal git@github.com:sarang-univ-dev/sarang-univ-retreat-web.git
-
-      - name: Verify Remote URLs
-        run: git remote -v
-
-      - name: Create and sync with personal account
-        run: |
-          BRANCH=${GITHUB_REF#refs/heads/}
-
-          # 원격 저장소의 파일들 가져오기
-          mkdir -p /tmp/sarang-repo-content
-          cp -r * /tmp/sarang-repo-content/ 2>/dev/null || true
-          cp -r .* /tmp/sarang-repo-content/ 2>/dev/null || true
-
-          # 임시 브랜치 생성
-          git checkout --orphan temp-branch
-
-          # 기존 파일 정리 및 백업 파일 복원
-          git rm -rf . --quiet
-          cp -r /tmp/sarang-repo-content/* . 2>/dev/null || true
-          cp -r /tmp/sarang-repo-content/.* . 2>/dev/null || true
+          # 원본 저장소 복제
+          git clone --branch ${{ steps.branch.outputs.BRANCH_NAME }} https://github.com/Sarang-Univ/sarang-univ-retreat-web.git source-repo
+          cd source-repo
 
           # personal 계정으로 설정
           git config user.name "sarang-univ-dev"
           git config user.email "sarang-univ-dev@users.noreply.github.com"
 
-          # 모든 파일 추가 및 커밋
-          git add -A
-          git commit -m "Sync from Sarang-Univ repository (${BRANCH} branch)"
+          # personal 저장소 설정
+          git remote add personal git@github.com:sarang-univ-dev/sarang-univ-retreat-web.git
 
-          # personal 저장소로 강제 푸시
-          git push personal temp-branch:$BRANCH --force
+          # 현재 상태를 새 커밋으로 만들기
+          CURRENT_BRANCH=${{ steps.branch.outputs.BRANCH_NAME }}
+          git checkout -b temp-sync-branch
+
+          # 모든 변경 사항을 단일 커밋으로 만들기
+          git add -A
+          git commit --allow-empty -m "Sync from Sarang-Univ repository ($CURRENT_BRANCH branch)"
+
+          # Personal 저장소의 브랜치로 강제 푸시
+          git push personal temp-sync-branch:$CURRENT_BRANCH --force
