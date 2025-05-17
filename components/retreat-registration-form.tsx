@@ -341,28 +341,12 @@ export function RetreatRegistrationForm({
       userType: formData.userType,
     };
 
-    //try {
-    // 모의 제출 성공 - 실제 API 호출 없이 처리
-    console.log("제출 데이터:", submissionData);
+    try {
 
     const response = await server.post(
       `/api/v1/retreat/${retreatSlug}/registration`,
       submissionData
     );
-
-    //THROW ERROR TEST RUN
-    // throw {
-    //   response: {
-    //     status: 400,
-    //     data: {
-    //       message: "이미 신청한 내역이 있습니다.",
-    //     },
-    //   },
-    // };
-
-    // API 호출 지연 시뮬레이션
-    //setTimeout(() => {
-    // 성공 페이지를 위해 localStorage에 등록 데이터 저장
 
     if (response.status >= 200 && response.status <= 399) {
       localStorage.setItem(
@@ -400,7 +384,22 @@ export function RetreatRegistrationForm({
     }
 
     //}, 1000);
-    //} catch (error: any) {
+    } catch (error: unknown) {
+      console.error("error: " + JSON.stringify(error, null, 2));
+
+      // 실패 정보를 localStorage에 저장
+      localStorage.setItem(
+        "registrationFailureData",
+        JSON.stringify({
+          errorMessage: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString(),
+          retreatName: retreatData.retreat.name,
+          registrationType: "retreat-registration",
+        })
+      );
+
+      router.push(`/retreat/${retreatSlug}/registration-failure`);
+    }
 
     //}
   };
