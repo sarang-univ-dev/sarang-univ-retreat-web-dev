@@ -12,7 +12,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -22,7 +22,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/utils/formatDate";
@@ -43,7 +43,7 @@ import {
   Sunset,
   Bed,
   TriangleAlert,
-  Star,
+  Star
 } from "lucide-react";
 
 // 이벤트 타입을 한글로 매핑
@@ -51,7 +51,7 @@ const EVENT_TYPE_MAP: Record<string, string> = {
   BREAKFAST: "아침",
   LUNCH: "점심",
   DINNER: "저녁",
-  SLEEP: "숙박",
+  SLEEP: "숙박"
 };
 
 interface RetreatRegistrationFormProps {
@@ -61,7 +61,7 @@ interface RetreatRegistrationFormProps {
 
 export function RetreatRegistrationForm({
   retreatData,
-  retreatSlug,
+  retreatSlug
 }: RetreatRegistrationFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -86,7 +86,7 @@ export function RetreatRegistrationForm({
     scheduleSelection: [],
     privacyConsent: false,
     gender: "",
-    userType: null,
+    userType: null
   });
 
   console.log(JSON.stringify(retreatData, null, 2));
@@ -114,7 +114,7 @@ export function RetreatRegistrationForm({
     scheduleSelection: "",
     privacyConsent: "",
     gender: "",
-    userType: "",
+    userType: ""
   });
 
   const [isAllScheduleSelected, setIsAllScheduleSelected] = useState(false);
@@ -175,7 +175,7 @@ export function RetreatRegistrationForm({
       if (!phoneRegex.test(value)) {
         setFormErrors((prevErrors) => ({
           ...prevErrors,
-          phoneNumber: "010-1234-5678 형식으로 적어주세요",
+          phoneNumber: "010-1234-5678 형식으로 적어주세요"
         }));
       } else {
         setFormErrors((prevErrors) => ({ ...prevErrors, phoneNumber: "" }));
@@ -204,7 +204,7 @@ export function RetreatRegistrationForm({
     );
     setFormData({
       ...formData,
-      scheduleSelection: checked ? allScheduleIds : [],
+      scheduleSelection: checked ? allScheduleIds : []
     });
     setFormErrors((prevErrors) => ({ ...prevErrors, scheduleSelection: "" }));
   };
@@ -242,7 +242,7 @@ export function RetreatRegistrationForm({
       scheduleSelection: "",
       privacyConsent: "",
       gender: "",
-      userType: "",
+      userType: ""
     };
     let isValid = true;
     let firstErrorElement: HTMLElement | null = null;
@@ -311,7 +311,7 @@ export function RetreatRegistrationForm({
       setTimeout(() => {
         firstErrorElement?.scrollIntoView({
           behavior: "smooth",
-          block: "center",
+          block: "center"
         });
       }, 100);
     }
@@ -338,52 +338,52 @@ export function RetreatRegistrationForm({
       retreatId: retreatData.retreat.id,
       currentLeaderName: formData.currentLeaderName,
       retreatRegistrationScheduleIds: formData.scheduleSelection,
-      userType: formData.userType,
+      userType: formData.userType
     };
 
     try {
-
-    const response = await server.post(
-      `/api/v1/retreat/${retreatSlug}/registration`,
-      submissionData
-    );
-
-    if (response.status >= 200 && response.status <= 399) {
-      localStorage.setItem(
-        "registrationData",
-        JSON.stringify({
-          name: formData.name,
-          gender: formData.gender,
-          phoneNumber: formData.phoneNumber,
-          price:
-            formData.userType === "NEW_COMER" || formData.userType === "SOLDIER"
-              ? "입금 대기"
-              : totalPrice,
-          userType: formData.userType,
-          univGroup: formData.univGroup,
-          registrationType: "retreat-registration",
-        })
+      const response = await server.post(
+        `/api/v1/retreat/${retreatSlug}/registration`,
+        submissionData
       );
 
-      router.push(`/retreat/${retreatSlug}/registration-success`);
-    } else {
-      console.error("response message: " + response.data.message);
+      if (response.status >= 200 && response.status <= 399) {
+        localStorage.setItem(
+          "registrationData",
+          JSON.stringify({
+            name: formData.name,
+            gender: formData.gender,
+            phoneNumber: formData.phoneNumber,
+            price:
+              formData.userType === "NEW_COMER" ||
+              formData.userType === "SOLDIER"
+                ? "입금 대기"
+                : totalPrice,
+            userType: formData.userType,
+            univGroup: formData.univGroup,
+            registrationType: "retreat-registration"
+          })
+        );
 
-      // 실패 정보를 localStorage에 저장
-      localStorage.setItem(
-        "registrationFailureData",
-        JSON.stringify({
-          errorMessage: response.data.message,
-          timestamp: new Date().toISOString(),
-          retreatName: retreatData.retreat.name,
-          registrationType: "retreat-registration",
-        })
-      );
+        router.push(`/retreat/${retreatSlug}/registration-success`);
+      } else {
+        console.error("response message: " + response.data.message);
 
-      router.push(`/retreat/${retreatSlug}/registration-failure`);
-    }
+        // 실패 정보를 localStorage에 저장
+        localStorage.setItem(
+          "registrationFailureData",
+          JSON.stringify({
+            errorMessage: response.data.message,
+            timestamp: new Date().toISOString(),
+            retreatName: retreatData.retreat.name,
+            registrationType: "retreat-registration"
+          })
+        );
 
-    //}, 1000);
+        router.push(`/retreat/${retreatSlug}/registration-failure`);
+      }
+
+      //}, 1000);
     } catch (error: unknown) {
       console.error("error: " + JSON.stringify(error, null, 2));
 
@@ -394,7 +394,7 @@ export function RetreatRegistrationForm({
           errorMessage: error instanceof Error ? error.message : String(error),
           timestamp: new Date().toISOString(),
           retreatName: retreatData.retreat.name,
-          registrationType: "retreat-registration",
+          registrationType: "retreat-registration"
         })
       );
 
