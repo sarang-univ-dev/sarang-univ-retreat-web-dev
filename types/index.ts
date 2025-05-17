@@ -228,5 +228,5 @@ export type ShuttleBusInfo = {
     grades: Pick<TGrade, "id" | "name" | "number">[];
   }[];
   schedule: TRetreatRegistrationSchedule[];
-  bus: TShuttleBuses[];
+  shuttleBuses: TShuttleBuses[];
 };
