@@ -17,18 +17,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set git user to personal account
-        run: |
-          git config user.name "sarang-univ-dev"
-          git config user.email "sarang-univ-dev@users.noreply.github.com"
-
-      - name: Rewrite all commits to personal author
-        shell: bash
-        run: |
-          BRANCH=${GITHUB_REF#refs/heads/}
-          git checkout "$BRANCH"
-          git rebase --root --exec "git commit --amend --no-edit --reset-author"
-
       - name: Set up SSH key
         uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -41,7 +29,22 @@ jobs:
       - name: Verify Remote URLs
         run: git remote -v
 
-      - name: Force push to personal repo
+      - name: Create single commit with personal account
         run: |
           BRANCH=${GITHUB_REF#refs/heads/}
-          git push personal "$BRANCH":refs/heads/"$BRANCH" --force
+
+          # 임시 브랜치 생성
+          git checkout -b temp-branch
+
+          # personal 계정으로 설정
+          git config user.name "sarang-univ-dev"
+          git config user.email "sarang-univ-dev@users.noreply.github.com"
+
+          # 모든 파일 초기화 후 커밋
+          git rm -rf .
+          git checkout $BRANCH -- .
+          git add .
+          git commit -m "Sync from Sarang-Univ repository"
+
+          # personal 저장소로 강제 푸시
+          git push personal temp-branch:$BRANCH --force
