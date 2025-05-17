@@ -12,25 +12,23 @@ jobs:
     if: github.repository == 'Sarang-Univ/sarang-univ-retreat-web'
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up SSH key
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Create temporary directory
-        run: mkdir -p /tmp/repo-sync
-
       - name: Get branch name
         id: branch
         run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
 
-      - name: Clone and sync repositories
-        working-directory: /tmp/repo-sync
+      - name: Sync to personal repository
         run: |
-          # 원본 저장소 복제
-          git clone --branch ${{ steps.branch.outputs.BRANCH_NAME }} https://github.com/Sarang-Univ/sarang-univ-retreat-web.git source-repo
-          cd source-repo
-
           # personal 계정으로 설정
           git config user.name "sarang-univ-dev"
           git config user.email "sarang-univ-dev@users.noreply.github.com"
@@ -38,13 +36,13 @@ jobs:
           # personal 저장소 설정
           git remote add personal git@github.com:sarang-univ-dev/sarang-univ-retreat-web.git
 
-          # 현재 상태를 새 커밋으로 만들기
+          # 현재 브랜치 확인
           CURRENT_BRANCH=${{ steps.branch.outputs.BRANCH_NAME }}
-          git checkout -b temp-sync-branch
+          git checkout $CURRENT_BRANCH
 
-          # 모든 변경 사항을 단일 커밋으로 만들기
+          # 모든 변경 사항을 단일 커밋으로 만들기 (기존 커밋 유지)
           git add -A
           git commit --allow-empty -m "Sync from Sarang-Univ repository ($CURRENT_BRANCH branch)"
 
           # Personal 저장소의 브랜치로 강제 푸시
-          git push personal temp-sync-branch:$CURRENT_BRANCH --force
+          git push personal $CURRENT_BRANCH:$CURRENT_BRANCH --force
