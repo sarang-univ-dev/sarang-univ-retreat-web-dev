@@ -656,10 +656,16 @@ retreatSlug
                                             </div>
                                         );
                                     })}
+                                    {isPartialParticipation && (
+                                        <div className="mt-4 text-sm text-red-500">
+                                            부분참 셔틀버스는 저녁 시간 이후에 운행되기 때문에, 저녁 식사를 신청한 경우 일정 변동 처리를 위해 각 부서 행정간사님에게 문의해주세요.
+                                        </div>
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>
                     )}
+
 
                     {/* 총 금액 표시 */}
                     {formData.shuttleBusIds.length > 0 && (
