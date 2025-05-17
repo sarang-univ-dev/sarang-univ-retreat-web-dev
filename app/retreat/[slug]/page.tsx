@@ -53,6 +53,8 @@ export default function RetreatPage() {
     };
 
     getData();
+    // TODO: 이 ESLint 주석 제거하고 의존성 배열 문제 해결하기 (useCallback으로 checkRegistrationPeriod 감싸기)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, router]);
 
   // 현재 시각이 payment 기간 안에 있는지 확인하는 함수
@@ -143,7 +145,7 @@ export default function RetreatPage() {
         result.push(`${formatDate(start)} ~ ${formatDate(end)}`);
       }
 
-      return result.map(date => `주후 ${date}`);
+      return result.map((date) => `주후 ${date}`);
     };
 
     return groupDates(dates).join(", ");

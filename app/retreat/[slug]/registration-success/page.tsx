@@ -21,7 +21,7 @@ export default function RegistrationSuccessPage() {
   const [registrationData, setRegistrationData] =
     useState<RegistrationData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [depositAccount, setDepositAccount] = useState<any>(null);
+  const [depositAccount, setDepositAccount] = useState<string | null>(null);
 
   useEffect(() => {
     // localStorage에서 등록 데이터 가져오기

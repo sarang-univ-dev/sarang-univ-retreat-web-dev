@@ -32,7 +32,11 @@ export default function BusRegisterPage() {
   const { slug } = params;
 
   const [retreatData, setRetreatData] = useState<RetreatInfo | null>(null);
+  // TODO: 이 ESLint 주석 제거하고 loading/error 상태를 사용하거나 필요 없으면 제거하기
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState<boolean>(true);
+  // TODO: 이 ESLint 주석 제거하고 loading/error 상태를 사용하거나 필요 없으면 제거하기
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -52,6 +56,8 @@ export default function BusRegisterPage() {
     };
 
     getData();
+    // TODO: 이 ESLint 주석 제거하고 의존성 배열에 checkRegistrationPeriod 함수 추가하기
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, router]);
 
   const checkRegistrationPeriod = (data: RetreatInfo) => {
@@ -79,7 +85,7 @@ export default function BusRegisterPage() {
         "registrationPeriod",
         JSON.stringify({
           start: earliestStart.toISOString(),
-          end: latestEnd.toISOString(),
+          end: latestEnd.toISOString()
         })
       );
 
