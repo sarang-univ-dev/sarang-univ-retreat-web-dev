@@ -29,22 +29,30 @@ jobs:
       - name: Verify Remote URLs
         run: git remote -v
 
-      - name: Create single commit with personal account
+      - name: Create and sync with personal account
         run: |
           BRANCH=${GITHUB_REF#refs/heads/}
 
+          # 원격 저장소의 파일들 가져오기
+          mkdir -p /tmp/sarang-repo-content
+          cp -r * /tmp/sarang-repo-content/ 2>/dev/null || true
+          cp -r .* /tmp/sarang-repo-content/ 2>/dev/null || true
+
           # 임시 브랜치 생성
-          git checkout -b temp-branch
+          git checkout --orphan temp-branch
+
+          # 기존 파일 정리 및 백업 파일 복원
+          git rm -rf . --quiet
+          cp -r /tmp/sarang-repo-content/* . 2>/dev/null || true
+          cp -r /tmp/sarang-repo-content/.* . 2>/dev/null || true
 
           # personal 계정으로 설정
           git config user.name "sarang-univ-dev"
           git config user.email "sarang-univ-dev@users.noreply.github.com"
 
-          # 모든 파일 초기화 후 커밋
-          git rm -rf .
-          git checkout $BRANCH -- .
-          git add .
-          git commit -m "Sync from Sarang-Univ repository"
+          # 모든 파일 추가 및 커밋
+          git add -A
+          git commit -m "Sync from Sarang-Univ repository (${BRANCH} branch)"
 
           # personal 저장소로 강제 푸시
           git push personal temp-branch:$BRANCH --force
