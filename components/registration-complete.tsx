@@ -10,6 +10,8 @@ interface RegistrationCompleteProps {
   phone: string | null;
   price: number | string | null;
   userType: string | null;
+  depositAccount: string | null;
+  registrationType: string | null;
 }
 
 export function RegistrationComplete({
@@ -17,7 +19,9 @@ export function RegistrationComplete({
   gender,
   phone,
   price,
-  userType
+  userType,
+  depositAccount,
+  registrationType,
 }: RegistrationCompleteProps) {
   const { toast } = useToast();
 
@@ -45,7 +49,7 @@ export function RegistrationComplete({
       .then(() => {
         toast({
           description: "클립보드로 복사되었습니다",
-          duration: 2000
+          duration: 2000,
         });
       })
       .catch((err) => {
@@ -60,7 +64,13 @@ export function RegistrationComplete({
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
             <CheckCircle className="h-6 w-6 text-green-600" />
           </div>
-          <CardTitle className="text-2xl font-bold">수양회 신청 완료</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            {registrationType === "retreat-registration"
+              ? "수양회 신청 완료"
+              : registrationType === "bus-registration"
+              ? "버스 신청 완료"
+              : ""}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {isSpecialType ? (
@@ -79,8 +89,11 @@ export function RegistrationComplete({
               {getGenderText(gender)}님,{" "}
               <span className="font-semibold">{phone}</span>{" "}
               <span className="text-muted-foreground">
-                으로 수양회 신청 접수 문자가 발송되었습니다. 이후 입금 과정을
-                진행해주세요.
+                {registrationType === "retreat-registration"
+                  ? "으로 수양회 신청 접수 문자가 발송되었습니다. 이후 입금 과정을 진행해주세요."
+                  : registrationType === "bus-registration"
+                  ? "으로 버스 신청 접수 문자가 발송되었습니다. 이후 입금 과정을 진행해주세요."
+                  : ""}
               </span>
             </p>
           )}
@@ -107,9 +120,11 @@ export function RegistrationComplete({
                     <p className="flex items-center gap-2">
                       <CreditCard className="h-4 w-4" />
                       <span className="font-medium">입금 계좌:</span>{" "}
-                      <span>신한은행 110-123-456789</span>
+                      <span>{depositAccount}</span>
                       <button
-                        onClick={() => copyToClipboard("110-123-456789")}
+                        onClick={() =>
+                          copyToClipboard(depositAccount ?? "null")
+                        }
                         className="p-1 hover:bg-gray-100 rounded-md"
                         type="button"
                       >
@@ -139,7 +154,9 @@ export function RegistrationComplete({
                       * 입금자명을 확인해주시기 바랍니다.
                     </p>
                     <p className="text-sm text-muted-foreground mt-2">
-                      * 입금 시각을 기준으로 수양회 참석 여부가 결정됩니다.
+                      {registrationType === "retreat-registration"
+                        ? "* 입금 시각을 기준으로 수양회 참석 여부가 결정됩니다."
+                        : ""}
                     </p>
                   </div>
                 </div>

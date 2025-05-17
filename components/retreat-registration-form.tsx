@@ -12,7 +12,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -22,11 +22,12 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/utils/formatDate";
 import type { RetreatInfo, TRetreatRegistrationSchedule } from "@/types";
+import { server } from "@/utils/axios";
 
 // lucide-react 아이콘 추가
 import {
@@ -42,7 +43,7 @@ import {
   Sunset,
   Bed,
   TriangleAlert,
-  Star
+  Star,
 } from "lucide-react";
 
 // 이벤트 타입을 한글로 매핑
@@ -50,7 +51,7 @@ const EVENT_TYPE_MAP: Record<string, string> = {
   BREAKFAST: "아침",
   LUNCH: "점심",
   DINNER: "저녁",
-  SLEEP: "숙박"
+  SLEEP: "숙박",
 };
 
 interface RetreatRegistrationFormProps {
@@ -60,7 +61,7 @@ interface RetreatRegistrationFormProps {
 
 export function RetreatRegistrationForm({
   retreatData,
-  retreatSlug
+  retreatSlug,
 }: RetreatRegistrationFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -85,7 +86,7 @@ export function RetreatRegistrationForm({
     scheduleSelection: [],
     privacyConsent: false,
     gender: "",
-    userType: null
+    userType: null,
   });
 
   console.log(JSON.stringify(retreatData, null, 2));
@@ -113,7 +114,7 @@ export function RetreatRegistrationForm({
     scheduleSelection: "",
     privacyConsent: "",
     gender: "",
-    userType: ""
+    userType: "",
   });
 
   const [isAllScheduleSelected, setIsAllScheduleSelected] = useState(false);
@@ -174,7 +175,7 @@ export function RetreatRegistrationForm({
       if (!phoneRegex.test(value)) {
         setFormErrors((prevErrors) => ({
           ...prevErrors,
-          phoneNumber: "010-1234-5678 형식으로 적어주세요"
+          phoneNumber: "010-1234-5678 형식으로 적어주세요",
         }));
       } else {
         setFormErrors((prevErrors) => ({ ...prevErrors, phoneNumber: "" }));
@@ -203,7 +204,7 @@ export function RetreatRegistrationForm({
     );
     setFormData({
       ...formData,
-      scheduleSelection: checked ? allScheduleIds : []
+      scheduleSelection: checked ? allScheduleIds : [],
     });
     setFormErrors((prevErrors) => ({ ...prevErrors, scheduleSelection: "" }));
   };
@@ -241,7 +242,7 @@ export function RetreatRegistrationForm({
       scheduleSelection: "",
       privacyConsent: "",
       gender: "",
-      userType: ""
+      userType: "",
     };
     let isValid = true;
     let firstErrorElement: HTMLElement | null = null;
@@ -310,7 +311,7 @@ export function RetreatRegistrationForm({
       setTimeout(() => {
         firstErrorElement?.scrollIntoView({
           behavior: "smooth",
-          block: "center"
+          block: "center",
         });
       }, 100);
     }
@@ -335,51 +336,72 @@ export function RetreatRegistrationForm({
       gender: formData.gender,
       gradeId: Number(formData.grade),
       retreatId: retreatData.retreat.id,
-      retreatRegistrationScheduleIds: formData.scheduleSelection,
       currentLeaderName: formData.currentLeaderName,
-      userType: formData.userType
+      retreatRegistrationScheduleIds: formData.scheduleSelection,
+      userType: formData.userType,
     };
 
     try {
-      // 모의 제출 성공 - 실제 API 호출 없이 처리
-      console.log("제출 데이터:", submissionData);
 
-      // API 호출 지연 시뮬레이션
-      setTimeout(() => {
-        // 성공 페이지를 위해 localStorage에 등록 데이터 저장
-        localStorage.setItem(
-          "registrationData",
-          JSON.stringify({
-            name: formData.name,
-            gender: formData.gender,
-            phoneNumber: formData.phoneNumber,
-            price:
-              formData.userType === "NEW_COMER" ||
-              formData.userType === "SOLDIER"
-                ? "입금 대기"
-                : totalPrice,
-            userType: formData.userType
-          })
-        );
+    const response = await server.post(
+      `/api/v1/retreat/${retreatSlug}/registration`,
+      submissionData
+    );
 
-        router.push(`/retreat/${retreatSlug}/registration-success`);
-      }, 1000);
-    } catch (error) {
-      console.error("등록 오류:", error);
+    if (response.status >= 200 && response.status <= 399) {
+      localStorage.setItem(
+        "registrationData",
+        JSON.stringify({
+          name: formData.name,
+          gender: formData.gender,
+          phoneNumber: formData.phoneNumber,
+          price:
+            formData.userType === "NEW_COMER" || formData.userType === "SOLDIER"
+              ? "입금 대기"
+              : totalPrice,
+          userType: formData.userType,
+          univGroup: formData.univGroup,
+          registrationType: "retreat-registration",
+        })
+      );
+
+      router.push(`/retreat/${retreatSlug}/registration-success`);
+    } else {
+      console.error("response message: " + response.data.message);
 
       // 실패 정보를 localStorage에 저장
       localStorage.setItem(
         "registrationFailureData",
         JSON.stringify({
-          errorMessage: "신청 처리 중 오류가 발생했습니다.",
-          errorCode: "REGISTRATION_FAILED",
+          errorMessage: response.data.message,
           timestamp: new Date().toISOString(),
-          retreatName: retreatData.retreat.name
+          retreatName: retreatData.retreat.name,
+          registrationType: "retreat-registration",
         })
       );
 
       router.push(`/retreat/${retreatSlug}/registration-failure`);
     }
+
+    //}, 1000);
+    } catch (error: unknown) {
+      console.error("error: " + JSON.stringify(error, null, 2));
+
+      // 실패 정보를 localStorage에 저장
+      localStorage.setItem(
+        "registrationFailureData",
+        JSON.stringify({
+          errorMessage: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString(),
+          retreatName: retreatData.retreat.name,
+          registrationType: "retreat-registration",
+        })
+      );
+
+      router.push(`/retreat/${retreatSlug}/registration-failure`);
+    }
+
+    //}
   };
 
   // 표시 목적으로 일정에서 고유한 날짜 추출
@@ -723,7 +745,7 @@ export function RetreatRegistrationForm({
       </Button>
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
             <h3 className="text-lg font-bold mb-4">신청 정보 확인</h3>
             <div className="space-y-2 mb-4">
               <p>

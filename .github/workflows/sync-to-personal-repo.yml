@@ -17,6 +17,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set git user to personal account
+        run: |
+          git config user.name "sarang-univ-dev"
+          git config user.email "sarang-univ-dev@users.noreply.github.com"
+
+      - name: Rewrite all commits to personal author
+        shell: bash
+        run: |
+          BRANCH=${GITHUB_REF#refs/heads/}
+          git checkout "$BRANCH"
+          git rebase --root --exec "git commit --amend --no-edit --reset-author"
+
       - name: Set up SSH key
         uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -31,4 +43,5 @@ jobs:
 
       - name: Force push to personal repo
         run: |
-          git push personal ${GITHUB_REF}:refs/heads/${GITHUB_REF#refs/heads/} --force
+          BRANCH=${GITHUB_REF#refs/heads/}
+          git push personal "$BRANCH":refs/heads/"$BRANCH" --force

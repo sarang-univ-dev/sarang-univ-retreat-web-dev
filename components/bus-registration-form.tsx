@@ -10,12 +10,13 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
+import type { RetreatInfo } from "@/types";
 // import { format, addDays, parseISO } from "date-fns";
 import {
   ArrowRight,
@@ -27,15 +28,25 @@ import {
   Coffee,
   Utensils,
   Moon,
-  Bus
+  Bus,
 } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import {
   Tabs,
   // TabsContent,
   TabsList,
-  TabsTrigger
+  TabsTrigger,
 } from "@/components/ui/tabs";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { server } from "@/utils/axios";
+import { useRouter } from "next/navigation";
 
 // Bus 데이터 타입 정의
 type Bus = {
@@ -78,7 +89,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z"
+    updated_at: "2024-11-07T13:06:11.336Z",
   },
   {
     id: 2,
@@ -93,7 +104,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z"
+    updated_at: "2024-11-07T13:06:11.336Z",
   },
   {
     id: 3,
@@ -108,7 +119,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z"
+    updated_at: "2024-11-07T13:06:11.336Z",
   },
   {
     id: 4,
@@ -123,7 +134,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z"
+    updated_at: "2024-11-07T13:06:11.336Z",
   },
   {
     id: 5,
@@ -138,7 +149,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z"
+    updated_at: "2024-11-07T13:06:11.336Z",
   },
   {
     id: 6,
@@ -153,7 +164,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_CHURCH_TO_RETREAT",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z"
+    updated_at: "2024-11-07T13:06:11.336Z",
   },
   {
     id: 7,
@@ -168,7 +179,7 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z"
+    updated_at: "2024-11-07T13:06:11.336Z",
   },
   {
     id: 8,
@@ -183,8 +194,8 @@ const buses: Bus[] = [
     notes: null,
     type: "FROM_RETREAT_TO_CHURCH",
     created_at: "2024-11-07T13:06:11.336Z",
-    updated_at: "2024-11-07T13:06:11.336Z"
-  }
+    updated_at: "2024-11-07T13:06:11.336Z",
+  },
 ];
 
 const registerSchedules: RegisterSchedule[] = [
@@ -193,99 +204,122 @@ const registerSchedules: RegisterSchedule[] = [
     retreat_id: 1,
     date: "2024-12-04",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 2,
     retreat_id: 1,
     date: "2024-12-04",
     type: "DINNER",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 3,
     retreat_id: 1,
     date: "2024-12-04",
     type: "SLEEP",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 4,
     retreat_id: 1,
     date: "2024-12-05",
     type: "BREAKFAST",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 5,
     retreat_id: 1,
     date: "2024-12-05",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 6,
     retreat_id: 1,
     date: "2024-12-05",
     type: "DINNER",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 7,
     retreat_id: 1,
     date: "2024-12-05",
     type: "SLEEP",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 8,
     retreat_id: 1,
     date: "2024-12-06",
     type: "BREAKFAST",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 9,
     retreat_id: 1,
     date: "2024-12-06",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 10,
     retreat_id: 1,
     date: "2024-12-06",
     type: "DINNER",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 11,
     retreat_id: 1,
     date: "2024-12-06",
     type: "SLEEP",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 12,
     retreat_id: 1,
     date: "2024-12-07",
     type: "BREAKFAST",
-    created_at: "2024-11-07T13:06:11.172Z"
+    created_at: "2024-11-07T13:06:11.172Z",
   },
   {
     id: 13,
     retreat_id: 1,
     date: "2024-12-07",
     type: "LUNCH",
-    created_at: "2024-11-07T13:06:11.172Z"
-  }
+    created_at: "2024-11-07T13:06:11.172Z",
+  },
 ];
 
-export function BusRegistrationFormComponent() {
+interface BusRegistrationFormProps {
+  retreatData: RetreatInfo;
+  retreatSlug: string;
+}
+
+export function BusRegistrationFormComponent({
+  retreatData,
+  retreatSlug,
+}: BusRegistrationFormProps) {
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedBuses, setSelectedBuses] = useState<number[]>([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [formData, setFormData] = useState<{
+    univGroup: string;
+    grade: string;
+    phoneNumber: string;
+    gender: string;
+  }>({
+    univGroup: "",
+    grade: "",
+    phoneNumber: "",
+    gender: "",
+  });
+  const [availableGrades, setAvailableGrades] = useState<
+    RetreatInfo["univGroupAndGrade"][number]["grades"]
+  >([]);
 
   // 날짜별 스케줄을 정리
   const schedulesByDate = useMemo(() => {
@@ -334,16 +368,58 @@ export function BusRegistrationFormComponent() {
           .sort((a, b) => a.departure_time.localeCompare(b.departure_time)); // 출발 시간 순 정렬
         return {
           transition,
-          buses: relevantBuses
+          buses: relevantBuses,
         };
       })
       .filter((transition) => transition.buses.length > 0);
   }, [selectedDate, sortedSchedules]);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     console.log("폼 제출됨", { name, email, selectedDate, selectedBuses });
+
     // 여기에 실제 제출 로직 추가
+    try {
+      const submissionData = {
+        name: name,
+        phoneNumber: formData.phoneNumber,
+        gender: formData.gender,
+        gradeId: formData.grade,
+        retreatId: retreatData.retreat.id,
+        shuttleBusIds: selectedBuses,
+        isAdminContact: false,
+      };
+      // const response = await server.post(
+      //   `/api/v1/retreat/${retreatSlug}/shuttle-bus/register`,
+      //   submissionData
+      // );
+      localStorage.setItem(
+        "registrationData",
+        JSON.stringify({
+          name: name,
+          gender: formData.gender,
+          phoneNumber: formData.phoneNumber,
+          price: totalPrice,
+          userType: "",
+          univGroup: formData.univGroup,
+          registrationType: "bus-registration",
+        })
+      );
+      router.push(`/retreat/${retreatSlug}/registration-success`);
+    } catch (error: any) {
+      console.error("error message: " + error.response?.data?.message);
+
+      localStorage.setItem(
+        "registrationFailureData",
+        JSON.stringify({
+          errorMessage: error.response?.data?.message,
+          timestamp: new Date().toISOString(),
+          retreatName: retreatData.retreat.name,
+          registrationType: "bus-registration",
+        })
+      );
+      router.push(`/retreat/${retreatSlug}/registration-failure`);
+    }
   };
 
   const handleBusSelection = (busId: number) => {
@@ -370,7 +446,39 @@ export function BusRegistrationFormComponent() {
     BREAKFAST: <Coffee className="w-5 h-5" />,
     LUNCH: <Utensils className="w-5 h-5" />,
     DINNER: <Utensils className="w-5 h-5" />,
-    SLEEP: <Moon className="w-5 h-5" />
+    SLEEP: <Moon className="w-5 h-5" />,
+  };
+
+  const handleUnivGroupChange = (value: string) => {
+    const selectedGroup = retreatData.univGroupAndGrade.find(
+      (group) => group.univGroupId.toString() === value
+    );
+    setAvailableGrades(selectedGroup ? selectedGroup.grades : []);
+    setFormData({ ...formData, univGroup: value, grade: "" });
+    //setFormErrors({ ...formErrors, univGroup: "" });
+  };
+
+  const handleGenderChange = (value: string) => {
+    setFormData({ ...formData, gender: value });
+    //setFormErrors({ ...formErrors, gender: "" });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    //setFormErrors({ ...formErrors, [name]: "" });
+
+    if (name === "phoneNumber") {
+      const phoneRegex = /^010-\d{4}-\d{4}$/;
+      if (!phoneRegex.test(value)) {
+        // setFormErrors((prevErrors) => ({
+        //   ...prevErrors,
+        //   phoneNumber: "010-1234-5678 형식으로 적어주세요",
+        // }));
+      } else {
+        //setFormErrors((prevErrors) => ({ ...prevErrors, phoneNumber: "" }));
+      }
+    }
   };
 
   return (
@@ -395,6 +503,81 @@ export function BusRegistrationFormComponent() {
                 required
               />
             </div>
+            <div>
+              <Label htmlFor="univGroup" className="flex items-center">
+                부서
+              </Label>
+              <Select
+                onValueChange={handleUnivGroupChange}
+                value={formData.univGroup}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="부서를 선택해주세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {retreatData.univGroupAndGrade.map((group) => (
+                    <SelectItem
+                      key={group.univGroupId}
+                      value={group.univGroupId.toString()}
+                    >
+                      {group.univGroupNumber}부 {group.univGroupName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {/* {formErrors.univGroup && (
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors.univGroup}
+                </p>
+              )} */}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="grade" className="flex items-center">
+                학년
+              </Label>
+              <Select
+                onValueChange={(value: string) => {
+                  setFormData({ ...formData, grade: value });
+                  //setFormErrors((prevErrors) => ({ ...prevErrors, grade: "" }));
+                }}
+                value={formData.grade}
+                disabled={!formData.univGroup}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="학년을 선택해주세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableGrades.map((grade) => (
+                    <SelectItem key={grade.id} value={grade.id.toString()}>
+                      {`${grade.number}학년 ${grade.name}`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {/* {formErrors.grade && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.grade}</p>
+              )} */}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="gender" className="flex items-center">
+                성별
+              </Label>
+              <Select
+                onValueChange={handleGenderChange}
+                value={formData.gender}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="성별을 선택해주세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MALE">남</SelectItem>
+                  <SelectItem value="FEMALE">여</SelectItem>
+                </SelectContent>
+              </Select>
+              {/* {formErrors.gender && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.gender}</p>
+              )} */}
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email" className="flex items-center gap-2">
                 이메일
@@ -407,6 +590,27 @@ export function BusRegistrationFormComponent() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phoneNumber" className="flex items-center">
+                전화번호
+              </Label>
+              <p className="text-sm text-muted-foreground mb-2">
+                문자 수신이 가능한 번호로 입력해주시기 바랍니다. 가능한 번호가
+                없다면 각 부서 행정간사님에게 요청부탁드립니다.
+              </p>
+              <Input
+                id="phoneNumber"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleInputChange}
+                placeholder="010-1234-5678"
+              />
+              {/* {formErrors.phoneNumber && (
+            <p className="text-red-500 text-sm mt-1">
+              {formErrors.phoneNumber}
+            </p>
+          )} */}
             </div>
           </div>
 
@@ -684,22 +888,20 @@ export function BusRegistrationFormComponent() {
               </CardContent>
             </Card>
           )}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={
+              selectedBuses.length === 0 ||
+              !selectedDate ||
+              !name.trim() ||
+              !email.trim()
+            }
+          >
+            신청하기 ({totalPrice.toLocaleString()}원)
+          </Button>
         </form>
       </CardContent>
-      <CardFooter>
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={
-            selectedBuses.length === 0 ||
-            !selectedDate ||
-            !name.trim() ||
-            !email.trim()
-          }
-        >
-          신청하기 ({totalPrice.toLocaleString()}원)
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

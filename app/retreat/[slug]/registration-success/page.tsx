@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { RegistrationComplete } from "@/components/registration-complete";
+import { server } from "@/utils/axios";
 
 interface RegistrationData {
   name: string;
@@ -10,6 +11,8 @@ interface RegistrationData {
   phoneNumber: string;
   price: number | string;
   userType: string | null;
+  univGroup: number;
+  registrationType: string | null;
 }
 
 export default function RegistrationSuccessPage() {
@@ -18,6 +21,7 @@ export default function RegistrationSuccessPage() {
   const [registrationData, setRegistrationData] =
     useState<RegistrationData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [depositAccount, setDepositAccount] = useState<any>(null);
 
   useEffect(() => {
     // localStorage에서 등록 데이터 가져오기
@@ -39,10 +43,37 @@ export default function RegistrationSuccessPage() {
     }
 
     // 데이터 검색 후 localStorage 정리
-    return () => {
-      localStorage.removeItem("registrationData");
-    };
+    // return () => {
+    //   localStorage.removeItem("registrationData");
+    // };
   }, [router, params.slug]);
+
+  useEffect(() => {
+    if (registrationData) {
+      localStorage.removeItem("registrationData");
+    }
+  }, [registrationData]);
+
+  useEffect(() => {
+    if (!registrationData) return;
+    const fetchBankAccount = async () => {
+      try {
+        const response = await server.get(
+          `/api/v1/retreat/${params.slug}/univ-group-info`
+        );
+        const bankAccount =
+          response.data.retreatUnivGroup[registrationData?.univGroup - 1]
+            .information.deposit_account;
+        const accountHolder =
+          response.data.retreatUnivGroup[registrationData?.univGroup - 1]
+            .information.deposit_account_holder;
+        setDepositAccount(bankAccount + " " + accountHolder);
+      } catch (error) {
+        console.error("Failed to fetch univ group info", error);
+      }
+    };
+    fetchBankAccount();
+  }, [params.slug, registrationData]);
 
   if (loading) {
     return (
@@ -67,6 +98,8 @@ export default function RegistrationSuccessPage() {
       phone={registrationData.phoneNumber}
       price={registrationData.price}
       userType={registrationData.userType}
+      depositAccount={depositAccount}
+      registrationType={registrationData.registrationType}
     />
   );
 }
