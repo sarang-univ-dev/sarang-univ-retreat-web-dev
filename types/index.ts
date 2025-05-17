@@ -68,6 +68,18 @@ export type TRetreatPaymentSchedule = {
   createdAt: Date;
 };
 
+export type TShuttleBuses = {
+  id: number;
+  retreatId: number;
+  name: string;
+  direction: string;
+  price: number;
+  departureTime: Date;
+  arrivalTime: Date;
+  adminUserIds: number[];
+  createdAt: Date;
+};
+
 export type TRetreatRegistrationSchedule = {
   id: number;
   retreatId: number;
@@ -205,4 +217,16 @@ export type RetreatInfo = {
   }[];
   schedule: TRetreatRegistrationSchedule[];
   payment: TRetreatPaymentSchedule[];
+};
+
+export type ShuttleBusInfo = {
+  retreat: TRetreat;
+  univGroupAndGrade: {
+    univGroupId: number;
+    univGroupName: string;
+    univGroupNumber: number;
+    grades: Pick<TGrade, "id" | "name" | "number">[];
+  }[];
+  schedule: TRetreatRegistrationSchedule[];
+  bus: TShuttleBuses[];
 };
