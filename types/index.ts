@@ -227,6 +227,6 @@ export type ShuttleBusInfo = {
     univGroupNumber: number;
     grades: Pick<TGrade, "id" | "name" | "number">[];
   }[];
-  schedule: TRetreatRegistrationSchedule[];
+  retreatRegisterSchedules: TRetreatRegistrationSchedule[];
   shuttleBuses: TShuttleBuses[];
 };
