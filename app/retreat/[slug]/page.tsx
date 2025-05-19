@@ -196,7 +196,7 @@ export default function RetreatPage() {
           main_verse={retreatData.retreat.mainVerse}
           main_speaker={retreatData.retreat.mainSpeaker}
           memo={retreatData.retreat.memo}
-          poster_url={retreatData.retreat.poster_url}
+          poster_url={retreatData.retreat.posterUrl}
           retreat_registration_name={
             getCurrentRegistrationPeriodName(retreatData) || ""
           }
