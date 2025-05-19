@@ -44,7 +44,7 @@ export type TRetreat = {
   mainVerse: string;
   mainSpeaker: string;
   memo?: string;
-  poster_url?: string;
+  posterUrl?: string;
   qrMetadata?: { width: number; height: number; x: number; y: number };
   createdAt: Date;
   updatedAt: Date;
@@ -53,7 +53,18 @@ export type TRetreat = {
 export type TRetreatUnivGroup = {
   retreatId: number;
   univGroupId: number;
-  information?: JSONValue;
+  information?: {
+    admin_staff_name?: string;
+    admin_staff_phone_number?: string;
+    deposit_account?: string;
+    deposit_account_holder?: string;
+    new_comer_staff_name?: string;
+    new_comer_staff_phone_number?: string;
+    soldier_staff_name?: string;
+    soldier_staff_phone_number?: string;
+    shuttle_bus_deposit_account?: string;
+    shuttle_bus_deposit_account_holder?: string;
+  };
   createdAt: Date;
 };
 
@@ -87,9 +98,21 @@ export type TUserRetreatRegistration = {
   paymentConfirmedAt?: Date;
   currentLeaderName: string;
   qrUrl?: string;
-  attendedAt?: Date;
+  gbsId?: number;
+  dormitoryId?: number;
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type TUserRetreatRegistrationMemo = {
+  id: number;
+  userRetreatRegistrationId: number;
+  memoType: UserRetreatRegistrationMemoType;
+  memo: string;
+  createdUserId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
 };
 
 export type TUserRetreatRegistrationSchedule = {
@@ -136,6 +159,97 @@ export type TUserRetreatRole = {
   role: UserRole;
   createdAt: Date;
 };
+
+export type TRetreatShuttleBus = {
+  id: number;
+  retreatId: number;
+  name: string;
+  direction: RetreatShuttleBusDirection;
+  price: number;
+  departureTime: Date;
+  arrivalTime?: Date;
+  adminUserIds?: number[];
+  createdAt: Date;
+};
+
+export type TUserRetreatShuttleBusRegistration = {
+  id: number;
+  userId: number;
+  retreatId: number;
+  price: number;
+  shuttleBusPaymentStatus: UserRetreatShuttleBusPaymentStatus;
+  isAdminContact: boolean;
+  paymentConfirmedUserId?: number;
+  paymentConfirmedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type TUserRetreatShuttleBusRegistrationMemo = {
+  id: number;
+  userRetreatShuttleBusRegistrationId: number;
+  memoType: UserRetreatShuttleBusRegistrationMemoType;
+  memo: string;
+  createdUserId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
+};
+
+export type TUserRetreatShuttleBusRegistrationHistory = {
+  id: number;
+  userRetreatShuttleBusRegistrationId: number;
+  beforeShuttleBusIds: number[];
+  beforePrice: number;
+  afterShuttleBusIds: number[];
+  afterPrice: number;
+  createdUserId: number;
+  createdAt: Date;
+  resolvedUserId?: number;
+  resolvedAt?: Date;
+};
+
+export type TUserRetreatShuttleBusRegistrationHistoryMemo = {
+  id: number;
+  userRetreatShuttleBusRegistrationId: number;
+  memoType: UserRetreatShuttleBusRegistrationHistoryMemoType;
+  memo: string;
+  createdUserId: number;
+  createdAt: Date;
+  resolvedUserId?: number;
+  resolvedAt?: Date;
+};
+
+export type TUserRetreatShuttleBusRegistrationSchedule = {
+  id: number;
+  userRetreatShuttleBusRegistrationId: number;
+  retreatShuttleBusId: number;
+  confirmedAt?: Date;
+  confirmedUserId?: number;
+  createdAt: Date;
+  deletedAt?: Date;
+};
+
+export type TRetreatGBS = {
+  id: number;
+  retreatId: number;
+  number: number;
+  memo?: string;
+  location?: string;
+  leaderUserIds: number[];
+  createdAt: Date;
+};
+
+export type TRetreatDormitory = {
+  id: number;
+  retreatId: number;
+  name: string;
+  memo?: string;
+  gender: Gender;
+  optimalCapacity: number;
+  maxCapacity?: number;
+  createdAt: Date;
+};
 // #endregion
 
 // #region Server Types
@@ -144,7 +258,9 @@ export type UserInfo = {
   name: string;
   phoneNumber: string;
   gender: Gender;
+  gradeId: number;
   gradeNumber: number;
+  univGroupId: number;
   univGroupNumber: number;
 };
 
@@ -175,8 +291,15 @@ export enum UserRetreatRegistrationPaymentStatus {
   REFUNDED = "REFUNDED"
 }
 
+export enum UserRetreatRegistrationMemoType {
+  UNIV_GROUP_ADMIN_STAFF = "UNIV_GROUP_ADMIN_STAFF",
+  ACCOUNT_STAFF = "ACCOUNT_STAFF",
+  LINEUP_STAFF = "LINEUP_STAFF",
+  DORMITORY_STAFF = "DORMITORY_STAFF"
+}
+
 export enum UserRetreatRegistrationHistoryMemoType {
-  UNIV_GROUP_STAFF = "UNIV_GROUP_STAFF",
+  UNIV_GROUP_ADMIN_STAFF = "UNIV_GROUP_ADMIN_STAFF",
   DORMITORY_TEAM_MEMBER = "DORMITORY_TEAM_MEMBER",
   ACCOUNT_STAFF = "ACCOUNT_STAFF",
   LINEUP_STAFF = "LINEUP_STAFF",
@@ -187,12 +310,39 @@ export enum UserRole {
   UNIV_GROUP_ADMIN_STAFF = "UNIV_GROUP_ADMIN_STAFF",
   UNIV_GROUP_ACCOUNT_MEMBER = "UNIV_GROUP_ACCOUNT_MEMBER",
   ACCOUNT_STAFF = "ACCOUNT_STAFF",
-  UNIV_GROUP_LINEUP_MEMBER = "UNIV_GROUP_LINEUP_MEMBER",
   LINEUP_STAFF = "LINEUP_STAFF",
   UNIV_GROUP_DORMITORY_MEMBER = "UNIV_GROUP_DORMITORY_MEMBER",
-  DORMITORY_STAFF = "DORMITORY_STAFF"
+  DORMITORY_STAFF = "DORMITORY_STAFF",
+  SHUTTLE_BUS_BOARDING_STAFF = "SHUTTLE_BUS_BOARDING_STAFF",
+  SHUTTLE_BUS_ACCOUNT_MEMBER = "SHUTTLE_BUS_ACCOUNT_MEMBER"
 }
 
+export enum RetreatShuttleBusDirection {
+  FROM_CHURCH_TO_RETREAT = "FROM_CHURCH_TO_RETREAT",
+  FROM_RETREAT_TO_CHURCH = "FROM_RETREAT_TO_CHURCH"
+}
+
+export enum UserRetreatShuttleBusRegistrationMemoType {
+  UNIV_GROUP_ADMIN_STAFF = "UNIV_GROUP_ADMIN_STAFF",
+  ACCOUNT_STAFF = "ACCOUNT_STAFF",
+  LINEUP_STAFF = "LINEUP_STAFF",
+  DORMITORY_STAFF = "DORMITORY_STAFF",
+  SHUTTLE_BUS_ACCOUNT_MEMBER = "SHUTTLE_BUS_ACCOUNT_MEMBER",
+  SHUTTLE_BUS_BOARDING_STAFF = "SHUTTLE_BUS_BOARDING_STAFF"
+}
+
+export enum UserRetreatShuttleBusPaymentStatus {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  REFUND_REQUEST = "REFUND_REQUEST",
+  REFUNDED = "REFUNDED"
+}
+
+// TODO: 셔틀 버스 명단에 없는데 탑승한 경우 메모만 생성 (SHUTTLE_BUS_STAFF에 대해)
+export enum UserRetreatShuttleBusRegistrationHistoryMemoType {
+  UNIV_GROUP_ADMIN_STAFF = "UNIV_GROUP_ADMIN_STAFF",
+  SHUTTLE_BUS_BOARDING_STAFF = "SHUTTLE_BUS_BOARDING_STAFF"
+}
 // #endregion
 
 export type RetreatInfo = {

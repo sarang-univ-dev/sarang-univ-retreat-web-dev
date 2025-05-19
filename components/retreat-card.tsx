@@ -41,10 +41,10 @@ function RetreatCard({
               src={poster_url || "/placeholder.svg"}
               alt={`${name} 포스터`}
               fill
-              className="object-cover opacity-40"
+              className="object-cover opacity-90"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/60"></div>
           </div>
         )}
 

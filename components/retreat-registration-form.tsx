@@ -707,8 +707,9 @@ export function RetreatRegistrationForm({
         )}
 
         <p className="text-sm text-muted-foreground mt-3 mb-3">
-          부분참 저녁셔틀 탑승 시 저녁식사를 하지 않기 때문에 해당 요일 숙박부터
-          체크해주시기 바랍니다.
+          사랑의교회에서 출발하는 부분참 저녁 셔틀을 이용하시는 경우, 도착
+          시간이 저녁 식사 이후이므로 해당 요일의 <b>숙박부터</b> 체크해주시기
+          바랍니다. (잘못 체크하신 경우 부분 환불은 불가합니다.)
         </p>
 
         <div className="space-y-2 mt-4 mb-4 pt-4">
