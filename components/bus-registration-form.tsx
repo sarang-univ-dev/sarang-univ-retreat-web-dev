@@ -11,6 +11,7 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
+
 } from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
@@ -29,6 +30,7 @@ import {
     Utensils,
     Moon,
     Bus,
+
 } from "lucide-react";
 import {formatDate} from "@/utils/formatDate";
 import {
@@ -355,6 +357,7 @@ retreatSlug
                             {formErrors.name && (
                                 <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
                             )}
+
                         </div>
 
                         <div className="space-y-2 min-h-[88px]">

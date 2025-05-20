@@ -12,7 +12,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -22,7 +22,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/utils/formatDate";
@@ -43,7 +43,7 @@ import {
   Sunset,
   Bed,
   TriangleAlert,
-  Star,
+  Star
 } from "lucide-react";
 
 // 이벤트 타입을 한글로 매핑
@@ -51,7 +51,7 @@ const EVENT_TYPE_MAP: Record<string, string> = {
   BREAKFAST: "아침",
   LUNCH: "점심",
   DINNER: "저녁",
-  SLEEP: "숙박",
+  SLEEP: "숙박"
 };
 
 interface RetreatRegistrationFormProps {
@@ -61,11 +61,17 @@ interface RetreatRegistrationFormProps {
 
 export function RetreatRegistrationForm({
   retreatData,
-  retreatSlug,
+  retreatSlug
 }: RetreatRegistrationFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [scheduleChangeConsent, setScheduleChangeConsent] = useState(false);
+  const [refundPolicyConsent, setRefundPolicyConsent] = useState(false);
+  const [modalErrors, setModalErrors] = useState({
+    scheduleChangeConsent: "",
+    refundPolicyConsent: ""
+  });
 
   const [formData, setFormData] = useState<{
     univGroup: string;
@@ -86,7 +92,7 @@ export function RetreatRegistrationForm({
     scheduleSelection: [],
     privacyConsent: false,
     gender: "",
-    userType: null,
+    userType: null
   });
 
   console.log(JSON.stringify(retreatData, null, 2));
@@ -114,42 +120,49 @@ export function RetreatRegistrationForm({
     scheduleSelection: "",
     privacyConsent: "",
     gender: "",
-    userType: "",
+    userType: ""
   });
 
   const [isAllScheduleSelected, setIsAllScheduleSelected] = useState(false);
 
+  // 현재 날짜에 유효한 payment를 찾는 함수
+  const findCurrentPayment = () => {
+    const currentDate = new Date();
+    const validPayment = retreatData.payment.find(
+      (payment) =>
+        new Date(payment.startAt) <= currentDate &&
+        new Date(payment.endAt) >= currentDate
+    );
+
+    if (validPayment) {
+      return validPayment;
+    } else {
+      // 유효한 payment가 없으면 가장 최신의 payment를 반환
+      return retreatData.payment.reduce((latest, current) => {
+        return new Date(current.endAt) > new Date(latest.endAt)
+          ? current
+          : latest;
+      });
+    }
+  };
+
   useEffect(() => {
     if (retreatData) {
       if (isAllScheduleSelected) {
-        setTotalPrice(retreatData.payment[0].totalPrice);
+        const currentPayment = findCurrentPayment();
+        setTotalPrice(currentPayment.totalPrice);
       } else {
         const selectedSchedules = retreatData.schedule.filter(
           (schedule: TRetreatRegistrationSchedule) =>
             formData.scheduleSelection.includes(schedule.id)
         );
 
-        const groupedByDate: Record<string, string[]> = {};
-        selectedSchedules.forEach((schedule: TRetreatRegistrationSchedule) => {
-          const date = new Date(schedule.time).toLocaleDateString("ko-KR");
-          if (!groupedByDate[date]) {
-            groupedByDate[date] = [];
-          }
-          groupedByDate[date].push(schedule.type);
-        });
-
-        let eventCount = 0;
-        Object.values(groupedByDate).forEach((types) => {
-          if (types.includes("DINNER") && types.includes("SLEEP")) {
-            eventCount += types.length - 1;
-          } else {
-            eventCount += types.length;
-          }
-        });
+        const eventCount = selectedSchedules.length;
+        const currentPayment = findCurrentPayment();
 
         const calculatedPrice = Math.min(
-          eventCount * retreatData.payment[0].partialPricePerSchedule,
-          retreatData.payment[0].totalPrice
+          eventCount * currentPayment.partialPricePerSchedule,
+          currentPayment.totalPrice
         );
         setTotalPrice(calculatedPrice);
       }
@@ -175,7 +188,7 @@ export function RetreatRegistrationForm({
       if (!phoneRegex.test(value)) {
         setFormErrors((prevErrors) => ({
           ...prevErrors,
-          phoneNumber: "010-1234-5678 형식으로 적어주세요",
+          phoneNumber: "010-1234-5678 형식으로 적어주세요"
         }));
       } else {
         setFormErrors((prevErrors) => ({ ...prevErrors, phoneNumber: "" }));
@@ -204,7 +217,7 @@ export function RetreatRegistrationForm({
     );
     setFormData({
       ...formData,
-      scheduleSelection: checked ? allScheduleIds : [],
+      scheduleSelection: checked ? allScheduleIds : []
     });
     setFormErrors((prevErrors) => ({ ...prevErrors, scheduleSelection: "" }));
   };
@@ -242,7 +255,7 @@ export function RetreatRegistrationForm({
       scheduleSelection: "",
       privacyConsent: "",
       gender: "",
-      userType: "",
+      userType: ""
     };
     let isValid = true;
     let firstErrorElement: HTMLElement | null = null;
@@ -311,7 +324,7 @@ export function RetreatRegistrationForm({
       setTimeout(() => {
         firstErrorElement?.scrollIntoView({
           behavior: "smooth",
-          block: "center",
+          block: "center"
         });
       }, 100);
     }
@@ -327,6 +340,29 @@ export function RetreatRegistrationForm({
   };
 
   const confirmSubmission = async () => {
+    // 체크박스 유효성 검사
+    const errors = {
+      scheduleChangeConsent: "",
+      refundPolicyConsent: ""
+    };
+    let isValid = true;
+
+    if (!scheduleChangeConsent) {
+      errors.scheduleChangeConsent = "해당 내용을 읽고 체크박스에 체크해주세요";
+      isValid = false;
+    }
+
+    if (!refundPolicyConsent) {
+      errors.refundPolicyConsent = "해당 내용을 읽고 체크박스에 체크해주세요";
+      isValid = false;
+    }
+
+    setModalErrors(errors);
+
+    if (!isValid) {
+      return;
+    }
+
     setShowConfirmModal(false);
     setIsSubmitting(true);
 
@@ -338,67 +374,68 @@ export function RetreatRegistrationForm({
       retreatId: retreatData.retreat.id,
       currentLeaderName: formData.currentLeaderName,
       retreatRegistrationScheduleIds: formData.scheduleSelection,
-      userType: formData.userType,
+      userType: formData.userType
     };
 
-    //try {
-    // 모의 제출 성공 - 실제 API 호출 없이 처리
-    console.log("제출 데이터:", submissionData);
-
-    const response = await server.post(
-      `/api/v1/retreat/${retreatSlug}/registration`,
-      submissionData
-    );
-
-    //THROW ERROR TEST RUN
-    // throw {
-    //   response: {
-    //     status: 400,
-    //     data: {
-    //       message: "이미 신청한 내역이 있습니다.",
-    //     },
-    //   },
-    // };
-
-    // API 호출 지연 시뮬레이션
-    //setTimeout(() => {
-    // 성공 페이지를 위해 localStorage에 등록 데이터 저장
-
-    if (response.status >= 200 && response.status <= 399) {
-      localStorage.setItem(
-        "registrationData",
-        JSON.stringify({
-          name: formData.name,
-          gender: formData.gender,
-          phoneNumber: formData.phoneNumber,
-          price:
-            formData.userType === "NEW_COMER" || formData.userType === "SOLDIER"
-              ? "입금 대기"
-              : totalPrice,
-          userType: formData.userType,
-          univGroup: formData.univGroup,
-        })
+    try {
+      const response = await server.post(
+        `/api/v1/retreat/${retreatSlug}/registration`,
+        submissionData
       );
 
-      router.push(`/retreat/${retreatSlug}/registration-success`);
-    } else {
-      console.error("response message: " + response.data.message);
+      if (response.status >= 200 && response.status <= 399) {
+        localStorage.setItem(
+          "registrationData",
+          JSON.stringify({
+            name: formData.name,
+            gender: formData.gender,
+            phoneNumber: formData.phoneNumber,
+            price:
+              formData.userType === "NEW_COMER" ||
+              formData.userType === "SOLDIER"
+                ? "입금 대기"
+                : totalPrice,
+            userType: formData.userType,
+            univGroup: formData.univGroup,
+            registrationType: "retreat-registration"
+          })
+        );
+
+        router.push(`/retreat/${retreatSlug}/registration-success`);
+      } else {
+        console.error("response message: " + response.data.message);
+
+        // 실패 정보를 localStorage에 저장
+        localStorage.setItem(
+          "registrationFailureData",
+          JSON.stringify({
+            errorMessage: response.data.message,
+            timestamp: new Date().toISOString(),
+            retreatName: retreatData.retreat.name,
+            registrationType: "retreat-registration"
+          })
+        );
+
+        router.push(`/retreat/${retreatSlug}/registration-failure`);
+      }
+
+      //}, 1000);
+    } catch (error: unknown) {
+      console.error("error: " + JSON.stringify(error, null, 2));
 
       // 실패 정보를 localStorage에 저장
       localStorage.setItem(
         "registrationFailureData",
         JSON.stringify({
-          errorMessage: response.data.message,
+          errorMessage: error instanceof Error ? error.message : String(error),
           timestamp: new Date().toISOString(),
           retreatName: retreatData.retreat.name,
+          registrationType: "retreat-registration"
         })
       );
 
       router.push(`/retreat/${retreatSlug}/registration-failure`);
     }
-
-    //}, 1000);
-    //} catch (error: any) {
 
     //}
   };
@@ -670,8 +707,9 @@ export function RetreatRegistrationForm({
         )}
 
         <p className="text-sm text-muted-foreground mt-3 mb-3">
-          부분참으로 참여하는 경우 저녁식사를 하지 않기 때문에 해당 요일
-          숙박부터 체크해주시기 바랍니다.
+          사랑의교회에서 출발하는 부분참 저녁 셔틀을 이용하시는 경우, 도착
+          시간이 저녁 식사 이후이므로 해당 요일의 <b>숙박부터</b> 체크해주시기
+          바랍니다. (잘못 체크하신 경우 부분 환불은 불가합니다.)
         </p>
 
         <div className="space-y-2 mt-4 mb-4 pt-4">
@@ -690,11 +728,15 @@ export function RetreatRegistrationForm({
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="NEW_COMER" id="userType-newcomer" />
-              <Label htmlFor="userType-newcomer">수양회 EBS</Label>
+              <Label htmlFor="userType-newcomer">
+                새가족 (부서에서 등반하지 않은 지체)
+              </Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="SOLDIER" id="userType-soldier" />
-              <Label htmlFor="userType-soldier">군지체</Label>
+              <Label htmlFor="userType-soldier">
+                현역 군지체 (공익, 직업군인, 카투사 제외)
+              </Label>
             </div>
           </RadioGroup>
           {formErrors.userType && (
@@ -744,7 +786,7 @@ export function RetreatRegistrationForm({
       </Button>
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
             <h3 className="text-lg font-bold mb-4">신청 정보 확인</h3>
             <div className="space-y-2 mb-4">
               <p>
@@ -755,9 +797,60 @@ export function RetreatRegistrationForm({
                 {formData.phoneNumber}
               </p>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
+
+            <p className="text-sm text-muted-foreground mb-4 whitespace-normal break-keep wrap-break-word">
               위 정보가 정확한지 확인해주세요. 신청 후에는 수정이 어렵습니다.
             </p>
+
+            <div className="space-y-4 mb-4">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="scheduleChangeConsent"
+                    checked={scheduleChangeConsent}
+                    onCheckedChange={(checked) =>
+                      setScheduleChangeConsent(checked as boolean)
+                    }
+                  />
+                  <label
+                    htmlFor="scheduleChangeConsent"
+                    className="text-sm font-medium leading-none whitespace-normal break-keep wrap-break-word"
+                  >
+                    일정 변동 등 문의는 각 부서 행정간사님에게 해주시기
+                    바랍니다.
+                  </label>
+                </div>
+                {modalErrors.scheduleChangeConsent && (
+                  <p className="text-red-500 text-sm ml-6">
+                    {modalErrors.scheduleChangeConsent}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="refundPolicyConsent"
+                    checked={refundPolicyConsent}
+                    onCheckedChange={(checked) =>
+                      setRefundPolicyConsent(checked as boolean)
+                    }
+                  />
+                  <label
+                    htmlFor="refundPolicyConsent"
+                    className="text-sm font-medium leading-none whitespace-normal break-keep wrap-break-word"
+                  >
+                    수양회 등록비 환불은 불가합니다.
+                  </label>
+                </div>
+                {modalErrors.refundPolicyConsent && (
+                  <p className="text-red-500 text-sm ml-6">
+                    {modalErrors.refundPolicyConsent}
+                  </p>
+                )}
+              </div>
+            </div>
+
             <div className="flex justify-end gap-2">
               <Button
                 variant="outline"

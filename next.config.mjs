@@ -2,13 +2,25 @@
 const nextConfig = {
   env: {
     NEXT_PUBLIC_SERVER_URL:
-      process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:4000"
+      process.env.NEXT_PUBLIC_SERVER_URL || "https://dev.api.sarang-univ.com"
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+        port: "",
+        pathname: "**"
+      }
+    ]
   },
   async rewrites() {
+    const serverUrl =
+      process.env.NEXT_PUBLIC_SERVER_URL || "https://dev.api.sarang-univ.com";
     return [
       {
         source: "/api/:path*",
-        destination: process.env.NEXT_PUBLIC_SERVER_URL + "/api/:path*"
+        destination: serverUrl + "/api/:path*"
       }
     ];
   }

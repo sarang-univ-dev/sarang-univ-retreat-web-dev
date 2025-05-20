@@ -12,6 +12,7 @@ interface RegistrationData {
   price: number | string;
   userType: string | null;
   univGroup: number;
+  registrationType: string | null;
 }
 
 export default function RegistrationSuccessPage() {
@@ -20,7 +21,7 @@ export default function RegistrationSuccessPage() {
   const [registrationData, setRegistrationData] =
     useState<RegistrationData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [depositAccount, setDepositAccount] = useState<any>(null);
+  const [depositAccount, setDepositAccount] = useState<string | null>(null);
 
   useEffect(() => {
     // localStorage에서 등록 데이터 가져오기
@@ -98,6 +99,7 @@ export default function RegistrationSuccessPage() {
       price={registrationData.price}
       userType={registrationData.userType}
       depositAccount={depositAccount}
+      registrationType={registrationData.registrationType}
     />
   );
 }
