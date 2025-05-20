@@ -2,7 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, CreditCard, Wallet, User, Copy } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+//import { useToast } from "@/hooks/use-toast";
+import { useToastStore } from "@/store/toast-store";
 
 interface RegistrationCompleteProps {
   name: string | null;
@@ -23,7 +24,8 @@ export function RegistrationComplete({
   depositAccount,
   registrationType,
 }: RegistrationCompleteProps) {
-  const { toast } = useToast();
+  //const { toast } = useToast();
+  const addToast = useToastStore((state) => state.add);
 
   // 성별을 한글로 변환하는 함수
   const getGenderText = (gender: string | null): string => {
@@ -47,12 +49,17 @@ export function RegistrationComplete({
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        toast({
-          description: "클립보드로 복사되었습니다",
-          duration: 2000,
+        addToast({
+          title: "클립보드로 복사되었습니다",
+          //description: "클립보드로 복사되었습니다",
+          variant: "success",
         });
       })
       .catch((err) => {
+        addToast({
+          title: "복사 실패했습니다",
+          variant: "destructive",
+        });
         console.error("클립보드 복사 실패:", err);
       });
   };
