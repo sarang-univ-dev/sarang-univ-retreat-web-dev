@@ -22,7 +22,7 @@ export function RegistrationComplete({
   price,
   userType,
   depositAccount,
-  registrationType,
+  registrationType
 }: RegistrationCompleteProps) {
   //const { toast } = useToast();
   const addToast = useToastStore((state) => state.add);
@@ -36,7 +36,7 @@ export function RegistrationComplete({
 
   // 사용자 유형 텍스트 가져오기
   const getUserTypeText = (userType: string | null): string => {
-    if (userType === "NEW_COMER") return "수양회 EBS";
+    if (userType === "NEW_COMER") return "새가족";
     if (userType === "SOLDIER") return "군지체";
     return "";
   };
@@ -52,13 +52,13 @@ export function RegistrationComplete({
         addToast({
           title: "클립보드로 복사되었습니다",
           //description: "클립보드로 복사되었습니다",
-          variant: "success",
+          variant: "success"
         });
       })
       .catch((err) => {
         addToast({
           title: "복사 실패했습니다",
-          variant: "destructive",
+          variant: "destructive"
         });
         console.error("클립보드 복사 실패:", err);
       });
@@ -66,7 +66,7 @@ export function RegistrationComplete({
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-2">
+      <Card className="w-full max-w-md mx-2 break-keep break-words">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
             <CheckCircle className="h-6 w-6 text-green-600" />
@@ -141,14 +141,16 @@ export function RegistrationComplete({
                     <p className="flex items-center gap-2">
                       <Wallet className="h-4 w-4" />
                       <span className="font-medium">입금 금액:</span>{" "}
-                      {typeof price === "number"
-                        ? price.toLocaleString() + "원"
-                        : price}
+                      <span className="whitespace-nowrap">
+                        {typeof price === "number"
+                          ? price.toLocaleString() + "원"
+                          : price}
+                      </span>
                     </p>
                     <p className="flex items-center gap-2">
                       <User className="h-4 w-4" />
                       <span className="font-medium">입금자명:</span>{" "}
-                      <span>{name}</span>
+                      <span className="whitespace-nowrap">{name}</span>
                       <button
                         onClick={() => copyToClipboard(name || "")}
                         className="p-1 hover:bg-gray-100 rounded-md"

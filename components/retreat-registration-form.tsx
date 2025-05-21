@@ -28,6 +28,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/utils/formatDate";
 import type { RetreatInfo, TRetreatRegistrationSchedule } from "@/types";
 import { server } from "@/utils/axios";
+import { getErrorMessage, logError } from "@/utils/errorHandler";
 
 // lucide-react 아이콘 추가
 import {
@@ -419,13 +420,16 @@ export function RetreatRegistrationForm({
 
       //}, 1000);
     } catch (error: unknown) {
-      console.error("error: " + JSON.stringify(error, null, 2));
+      logError(error, "retreat-registration");
+
+      // 에러 메시지 추출
+      const errorMessage = getErrorMessage(error);
 
       // 실패 정보를 localStorage에 저장
       localStorage.setItem(
         "registrationFailureData",
         JSON.stringify({
-          errorMessage: error instanceof Error ? error.message : String(error),
+          errorMessage: errorMessage,
           timestamp: new Date().toISOString(),
           retreatName: retreatData.retreat.name,
           registrationType: "retreat-registration"
