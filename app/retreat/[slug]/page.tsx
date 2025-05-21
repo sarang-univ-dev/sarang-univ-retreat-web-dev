@@ -228,8 +228,6 @@ export default function RetreatPage() {
     );
   }
 
-  console.log(formatDates(retreatData.schedule));
-
   return (
     <div className="container mx-auto p-4">
       <div className="mb-8">

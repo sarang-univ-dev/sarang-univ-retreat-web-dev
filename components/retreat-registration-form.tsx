@@ -95,8 +95,6 @@ export function RetreatRegistrationForm({
     userType: null
   });
 
-  console.log(JSON.stringify(retreatData, null, 2));
-
   const [availableGrades, setAvailableGrades] = useState<
     RetreatInfo["univGroupAndGrade"][number]["grades"]
   >([]);
@@ -605,8 +603,8 @@ export function RetreatRegistrationForm({
             전화번호
           </Label>
           <p className="text-sm text-muted-foreground mb-2">
-            문자 수신이 가능한 번호로 입력해주시기 바랍니다. 가능한 번호가
-            없다면 각 부서 행정간사님에게 요청부탁드립니다.
+            문자 수신이 가능한 번호로 입력해주시기 바랍니다. 수신 가능 번호가
+            없다면 각 부서 행정간사님에게 문의해주시기 바랍니다.
           </p>
           <Input
             id="phoneNumber"
