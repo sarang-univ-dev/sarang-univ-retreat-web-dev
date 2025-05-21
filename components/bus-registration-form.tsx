@@ -373,7 +373,6 @@ export function BusRegistrationFormComponent({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("폼 제출됨", { name, email, selectedDate, selectedBuses });
 
     // 여기에 실제 제출 로직 추가
     try {
