@@ -2,7 +2,8 @@ import type React from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { ToastProvider } from "@/components/toast-provider";
+import Toast from "@/components/Toast";
+//import { ToastProvider } from "@/components/toast-provider";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -18,16 +19,16 @@ import { ToastProvider } from "@/components/toast-provider";
 const pretendard = localFont({
   src: "./fonts/PretendardVariable.woff2",
   display: "swap",
-  weight: "45 920"
+  weight: "45 920",
 });
 
 export const metadata: Metadata = {
   title: "사랑의교회 대학부 수양회 신청",
-  description: "사랑의교회 대학부 수양회 신청 페이지입니다."
+  description: "사랑의교회 대학부 수양회 신청 페이지입니다.",
 };
 
 export default function RootLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
@@ -35,7 +36,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${pretendard.className} antialiased`}>
         {children}
-        <ToastProvider />
+        <Toast />
       </body>
     </html>
   );
