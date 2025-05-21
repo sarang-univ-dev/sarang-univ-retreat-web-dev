@@ -228,6 +228,10 @@ export default function RetreatPage() {
     );
   }
 
+  console.log(
+    "Made By 사랑의교회 대학부 여름연합수양회 전산팀\ncredits to 희서, 주호, 성욱, 상묵, 혜성, 진영, 예빈"
+  );
+
   return (
     <div className="container mx-auto p-4">
       <div className="mb-8">
