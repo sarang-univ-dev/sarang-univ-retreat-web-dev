@@ -19,37 +19,12 @@ export default function RegistrationFailurePage() {
   const searchParams = useSearchParams();
   const [failureData, setFailureData] = useState<FailureData | null>(null);
   const [isPeriodClosed, setIsPeriodClosed] = useState(false);
-  const [registrationPeriod, setRegistrationPeriod] = useState<string | null>(
-    null
-  );
 
   useEffect(() => {
     // URL 파라미터에서 실패 유형 확인
     const reason = searchParams.get("reason");
     if (reason === "period-closed") {
       setIsPeriodClosed(true);
-
-      // localStorage에서 등록 기간 정보 가져오기
-      const periodData = localStorage.getItem("registrationPeriod");
-      if (periodData) {
-        try {
-          const { start, end } = JSON.parse(periodData);
-
-          // 날짜 포맷팅 함수
-          const formatDate = (dateStr: string) => {
-            const date = new Date(dateStr);
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            return `${year}년 ${month}월 ${day}일`;
-          };
-
-          setRegistrationPeriod(`${formatDate(start)} ~ ${formatDate(end)}`);
-        } catch (error) {
-          console.error("등록 기간 정보 파싱 오류:", error);
-        }
-      }
-
       return;
     }
 
