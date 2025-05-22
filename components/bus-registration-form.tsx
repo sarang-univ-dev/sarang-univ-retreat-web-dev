@@ -29,7 +29,7 @@ import {
     Coffee,
     Utensils,
     Moon,
-    Bus,
+    Bus, TriangleAlert, UserCheck, User, UserRoundCheck, Phone, Hash, Users, Calendar,
 
 } from "lucide-react";
 import {formatDate} from "@/utils/formatDate";
@@ -60,99 +60,34 @@ interface BusRegistrationFormProps {
 
 
 export function BusRegistrationFormComponent({
-retreatData,
-busData,
-retreatSlug
-}: BusRegistrationFormProps) {
+                                                 retreatData,
+                                                 busData,
+                                                 retreatSlug
+                                             }: BusRegistrationFormProps) {
+    const router = useRouter();
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [availableGrades, setAvailableGrades] = useState<RetreatInfo["univGroupAndGrade"][number]["grades"]>([]);
 
-  const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedBuses, setSelectedBuses] = useState<number[]>([]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [formData, setFormData] = useState<{
-    univGroup: string;
-    grade: string;
-    phoneNumber: string;
-    gender: string;
-  }>({
-    univGroup: "",
-    grade: "",
-    phoneNumber: "",
-    gender: ""
-  });
-  const [availableGrades, setAvailableGrades] = useState<
-    RetreatInfo["univGroupAndGrade"][number]["grades"]
-  >([]);
-
-  // 날짜별 스케줄을 정리
-  const schedulesByDate = useMemo(() => {
-    return registerSchedules.reduce((acc, schedule) => {
-      if (!acc[schedule.date]) {
-        acc[schedule.date] = [];
-      }
-      acc[schedule.date].push(schedule);
-      return acc;
-    }, {} as Record<string, RegisterSchedule[]>);
-  }, []);
-
-  // 사용 가능한 날짜 목록
-  const availableDates = useMemo(() => {
-    return Object.keys(schedulesByDate).sort();
-  }, [schedulesByDate]);
-
-  // 선택한 날짜의 스케줄을 정렬
-  const sortedSchedules = useMemo(() => {
-    if (!selectedDate) return [];
-    return schedulesByDate[selectedDate].sort((a, b) => a.id - b.id);
-  }, [selectedDate, schedulesByDate]);
-
-  // 선택한 날짜의 스케줄 간 버스 기
-  const busesByTransition = useMemo(() => {
-    if (!selectedDate) return [];
-
-    const transitions: { before: number | null; after: number | null }[] = [];
-
-    // 정렬된 스케줄을 기반으로 전환 목록 생성
-    for (let i = 0; i <= sortedSchedules.length; i++) {
-      const before = i === 0 ? null : sortedSchedules[i - 1].id;
-      const after = i < sortedSchedules.length ? sortedSchedules[i].id : null;
-      transitions.push({ before, after });
-    }
-
-    // 각 전환에 해당하는 버스 찾기 및 출발 시간 순 정렬
-    return transitions
-      .map((transition) => {
-        const relevantBuses = buses
-          .filter(
-            (bus) =>
-              bus.before_schedule_id === transition.before &&
-              bus.after_schedule_id === transition.after
-          )
-          .sort((a, b) => a.departure_time.localeCompare(b.departure_time)); // 출발 시간 순 정렬
-        return {
-          transition,
-          buses: relevantBuses
-        };
-      })
-      .filter((transition) => transition.buses.length > 0);
-  }, [selectedDate, sortedSchedules]);
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-
-    // 여기에 실제 제출 로직 추가
-    try {
-      // TODO: 이 ESLint 주석 제거하고 submissionData 사용하거나 변수 선언 제거하기
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const submissionData = {
-        name: name,
-        phoneNumber: formData.phoneNumber,
-        gender: formData.gender,
-        gradeId: formData.grade,
-        retreatId: retreatData.retreat.id,
-        shuttleBusIds: selectedBuses,
-        isAdminContact: false
+    const [formData, setFormData] = useState<{
+        name: string;
+        phoneNumber: string;
+        gender: string;
+        univGroup: string;
+        grade: string;
+        retreatId: number;
+        shuttleBusIds: number[];
+        isAdminContact: boolean;
+        privacyConsent: boolean;
+    }>({
+        name: "",
+        phoneNumber: "",
+        gender: "",
+        univGroup: "",
+        grade: "",
+        retreatId: -1,
+        shuttleBusIds: [],
+        isAdminContact: false,
+        privacyConsent: false
     });
 
     const [formErrors, setFormErrors] = useState<{
@@ -161,12 +96,14 @@ retreatSlug
         gender: string;
         univGroup: string;
         grade: string;
+        privacyConsent: string;
     }>({
         name: "",
         phoneNumber: "",
         gender: "",
         univGroup: "",
         grade: "",
+        privacyConsent: "",
     });
 
     // 전화번호 유효성 체크
@@ -215,7 +152,8 @@ retreatSlug
             grade: "",
             name: "",
             phoneNumber: "",
-            gender: ""
+            gender: "",
+            privacyConsent: "",
         };
         let isValid = true;
         let firstErrorElement: HTMLElement | null = null;
@@ -257,6 +195,12 @@ retreatSlug
             isValid = false;
             if (!firstErrorElement)
                 firstErrorElement = document.getElementById("gender");
+        }
+        if (!formData.privacyConsent) {
+            errors.privacyConsent = "개인정보 수집 및 이용에 동의해주세요";
+            isValid = false;
+            if (!firstErrorElement)
+                firstErrorElement = document.getElementById("privacyConsent");
         }
 
         setFormErrors(errors);
@@ -318,6 +262,11 @@ retreatSlug
                 setFormErrors((prevErrors) => ({ ...prevErrors, phoneNumber: "" }));
             }
         }
+    };
+
+    const handlePrivacyConsentChange = (checked: boolean) => {
+        setFormData({ ...formData, privacyConsent: checked });
+        setFormErrors((prevErrors) => ({ ...prevErrors, privacyConsent: "" }));
     };
 
     const handleGenderChange = (value: string) => {
@@ -408,10 +357,40 @@ retreatSlug
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    <Card className="mb-6">
+                        <CardContent className="pt-6">
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="privacyConsent"
+                                    checked={formData.privacyConsent}
+                                    onCheckedChange={handlePrivacyConsentChange}
+                                />
+                                <div className="flex gap-1.5 items-center">
+                                    <TriangleAlert className="text-red-500" size={20} />
+                                    <label
+                                        htmlFor="privacyConsent"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        개인정보 수집 및 이용에 동의합니다
+                                    </label>
+                                </div>
+                            </div>
+                            {formErrors.privacyConsent && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {formErrors.privacyConsent}
+                                </p>
+                            )}
+                        </CardContent>
+                    </Card>
                     {/* 사용자 정보 입력 */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <h2 className="text-2xl font-bold flex items-center">
+                            <UserCheck className="mr-2" size={24}/>
+                            기본 정보 입력
+                        </h2>
                         <div className="space-y-2 min-h-[88px]">
                             <Label htmlFor="name" className="flex items-center gap-2">
+                                <User className="mr-2" />
                                 이름
                             </Label>
                             <Input
@@ -429,6 +408,7 @@ retreatSlug
 
                         <div className="space-y-2 min-h-[88px]">
                             <Label htmlFor="phone" className="flex items-center gap-2">
+                                <Phone className="mr-2" />
                                 전화번호
                             </Label>
                             <Input
@@ -448,6 +428,7 @@ retreatSlug
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-2 min-h-[88px]">
                             <Label htmlFor="univGroup" className="flex items-center">
+                                <Users className="mr-2" />
                                 부서
                             </Label>
                             <Select
@@ -475,6 +456,7 @@ retreatSlug
 
                         <div className="space-y-2 min-h-[88px]">
                             <Label htmlFor="grade" className="flex items-center">
+                                <Hash className="mr-2" />
                                 학년
                             </Label>
                             <Select
@@ -503,6 +485,7 @@ retreatSlug
 
                         <div className="space-y-2 min-h-[88px]">
                             <Label htmlFor="gender" className="flex items-center">
+                                <UserRoundCheck className="mr-2" />
                                 성별
                             </Label>
                             <Select
@@ -526,10 +509,10 @@ retreatSlug
 
                     {/* 날짜 선택 - Tabs 컴포넌트 사용 */}
                     <div className="space-y-2">
-                        <Label className="flex items-center gap-2">
-                            <CalendarDays className="h-5 w-5"/>
+                        <h2 className="text-2xl font-bold flex items-center mb-4">
+                            <Calendar className="mr-2" size={24} />
                             이동 날짜
-                        </Label>
+                        </h2>
                         <Tabs
                             value={selectedDate || availableDates[0]}
                             onValueChange={(value) => setSelectedDate(value)}
@@ -548,17 +531,17 @@ retreatSlug
                     {selectedDate && (
                         <div className="space-y-6">
                             <Card>
-                                <CardHeader>
+                                <div className="flex flex-col space-y-1.5 p-6 pb-4">
                                     <CardTitle className="text-lg">
                                         스케줄 및 이용 가능한 버스
                                     </CardTitle>
-                                </CardHeader>
+                                </div>
                                 <CardContent>
                                     <div className="space-y-4">
                                         {
                                             <div>
                                                 {/* Separator line */}
-                                                <hr className="my-4 border-t border-gray-300"/>
+                                                {/*<hr className="my-4 border-t border-gray-300"/>*/}
 
                                                 {/* 다음 스케줄로의 전환에 해당하는 버스 선택 카드 */}
                                                 <div className="mt-2">
@@ -604,22 +587,30 @@ retreatSlug
                                                                                     className="flex items-center justify-between mb-2">
                                                                                     <div
                                                                                         className="flex items-center gap-2">
-                                                                                        {bus.direction ===
-                                                                                        "FROM_CHURCH_TO_RETREAT" ? (
-                                                                                            <ArrowRight
-                                                                                                className="h-4 w-4"/>
-                                                                                        ) : (
-                                                                                            <ArrowLeft
-                                                                                                className="h-4 w-4"/>
-                                                                                        )}
                                                                                         <span className="font-medium">
                                                                                             {bus.name}
                                                                                         </span>
+                                                                                        {bus.direction ===
+                                                                                        "FROM_CHURCH_TO_RETREAT" ? (
+                                                                                            <div
+                                                                                                className="whitespace-nowrap space-x-2 inline-flex items-center">
+                                                                                                <span>{"(서초 사랑의교회"}</span>
+                                                                                                <ArrowRight
+                                                                                                    className="h-4 w-4"/>
+                                                                                                <span>{busData.retreat.location})</span>
+                                                                                            </div>
+                                                                                        ) : (
+                                                                                            <div
+                                                                                                className="whitespace-nowrap space-x-2 inline-flex items-center">
+                                                                                                <span>({busData.retreat.location}</span>
+                                                                                                <ArrowRight
+                                                                                                    className="h-4 w-4"/>
+                                                                                                <span>{"서초 사랑의교회)"}</span>
+                                                                                            </div>
+                                                                                        )}
                                                                                     </div>
                                                                                     <div
                                                                                         className="flex items-center gap-1">
-                                                                                        <DollarSign
-                                                                                            className="h-4 w-4"/>
                                                                                         <span>
                                                                                           {bus.price.toLocaleString()}원
                                                                                         </span>
@@ -636,7 +627,7 @@ retreatSlug
                                                                                             ? new Date(bus.departureTime).toLocaleTimeString("ko-KR", {
                                                                                                 hour: "2-digit",
                                                                                                 minute: "2-digit",
-                                                                                                hour12: false,
+                                                                                                hour12: true,
                                                                                             })
                                                                                             : "미정"}
                                                                                         {/*{bus.departureTime?.slice(0, 5)}*/}
@@ -650,7 +641,7 @@ retreatSlug
                                                                                             ? new Date(bus.arrivalTime).toLocaleTimeString("ko-KR", {
                                                                                                 hour: "2-digit",
                                                                                                 minute: "2-digit",
-                                                                                                hour12: false,
+                                                                                                hour12: true,
                                                                                             })
                                                                                             : "미정"}
                                                                                     </div>
@@ -696,7 +687,7 @@ retreatSlug
                                                             ? new Date(bus.departureTime).toLocaleTimeString("ko-KR", {
                                                                 hour: "2-digit",
                                                                 minute: "2-digit",
-                                                                hour12: false,
+                                                                hour12: true,
                                                             })
                                                             : "미정"}
                                                         - 도착:{" "}
@@ -704,7 +695,7 @@ retreatSlug
                                                             ? new Date(bus.arrivalTime).toLocaleTimeString("ko-KR", {
                                                                 hour: "2-digit",
                                                                 minute: "2-digit",
-                                                                hour12: false,
+                                                                hour12: true,
                                                             })
                                                             : "미정"}
                                                     </p>
