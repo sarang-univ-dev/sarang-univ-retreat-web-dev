@@ -28,6 +28,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/utils/formatDate";
 import type { RetreatInfo, TRetreatRegistrationSchedule } from "@/types";
 import { server } from "@/utils/axios";
+import { getErrorMessage, logError } from "@/utils/errorHandler";
 
 // lucide-react 아이콘 추가
 import {
@@ -94,8 +95,6 @@ export function RetreatRegistrationForm({
     gender: "",
     userType: null
   });
-
-  console.log(JSON.stringify(retreatData, null, 2));
 
   const [availableGrades, setAvailableGrades] = useState<
     RetreatInfo["univGroupAndGrade"][number]["grades"]
@@ -421,13 +420,16 @@ export function RetreatRegistrationForm({
 
       //}, 1000);
     } catch (error: unknown) {
-      console.error("error: " + JSON.stringify(error, null, 2));
+      logError(error, "retreat-registration");
+
+      // 에러 메시지 추출
+      const errorMessage = getErrorMessage(error);
 
       // 실패 정보를 localStorage에 저장
       localStorage.setItem(
         "registrationFailureData",
         JSON.stringify({
-          errorMessage: error instanceof Error ? error.message : String(error),
+          errorMessage: errorMessage,
           timestamp: new Date().toISOString(),
           retreatName: retreatData.retreat.name,
           registrationType: "retreat-registration"
@@ -604,9 +606,9 @@ export function RetreatRegistrationForm({
             <Phone className="mr-2" />
             전화번호
           </Label>
-          <p className="text-sm text-muted-foreground mb-2">
-            문자 수신이 가능한 번호로 입력해주시기 바랍니다. 가능한 번호가
-            없다면 각 부서 행정간사님에게 요청부탁드립니다.
+          <p className="text-sm text-muted-foreground mb-2 break-keep break-words">
+            문자 수신이 가능한 번호로 입력해주시기 바랍니다. 수신 가능 번호가
+            없다면 각 부서 행정간사님에게 문의해주시기 바랍니다.
           </p>
           <Input
             id="phoneNumber"
@@ -628,6 +630,18 @@ export function RetreatRegistrationForm({
           <Calendar className="mr-2" size={24} />
           수양회 일정 선택
         </h2>
+        <p className="text-sm text-muted-foreground mt-3 mb-3 break-keep break-words">
+          <b>
+            <u>부분참 셔틀버스</u>
+          </b>{" "}
+          이용시, 저녁 식사 이후에 도착하게 됩니다. 해당 요일의{" "}
+          <b>
+            <u>숙박부터</u>
+          </b>{" "}
+          체크해주시기 바랍니다.
+          <br />
+          (잘못 체크한 경우 환불 불가)
+        </p>
         <div className="flex items-center space-x-2 mb-4">
           <Checkbox
             id="allSchedule"
@@ -705,18 +719,14 @@ export function RetreatRegistrationForm({
             {formErrors.scheduleSelection}
           </p>
         )}
-
-        <p className="text-sm text-muted-foreground mt-3 mb-3">
-          사랑의교회에서 출발하는 부분참 저녁 셔틀을 이용하시는 경우, 도착
-          시간이 저녁 식사 이후이므로 해당 요일의 <b>숙박부터</b> 체크해주시기
-          바랍니다. (잘못 체크하신 경우 부분 환불은 불가합니다.)
-        </p>
-
         <div className="space-y-2 mt-4 mb-4 pt-4">
           <Label htmlFor="userType" className="flex items-center">
             <UserCheck className="mr-2" />
             신청 유형
           </Label>
+          <p className="text-sm text-muted-foreground mb-2 break-keep break-words">
+            복음 GBS 신청은 각 부서 새가족 간사님을 통해 신청해주시기 바랍니다.
+          </p>
           <RadioGroup
             value={formData.userType === null ? "NONE" : formData.userType}
             onValueChange={handleUserTypeChange}

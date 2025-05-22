@@ -64,27 +64,94 @@ retreatData,
 busData,
 retreatSlug
 }: BusRegistrationFormProps) {
-    const router = useRouter();
-    const [selectedDate, setSelectedDate] = useState<string | null>(null);
-    const [availableGrades, setAvailableGrades] = useState<RetreatInfo["univGroupAndGrade"][number]["grades"]>([]);
 
-    const [formData, setFormData] = useState<{
-        name: string;
-        phoneNumber: string;
-        gender: string;
-        univGroup: string;
-        grade: string;
-        retreatId: number;
-        shuttleBusIds: number[];
-        isAdminContact: boolean
-    }>({
-        name: "",
-        phoneNumber: "",
-        gender: "",
-        univGroup: "",
-        grade: "",
-        retreatId: -1,
-        shuttleBusIds: [],
+  const router = useRouter();
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedBuses, setSelectedBuses] = useState<number[]>([]);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [formData, setFormData] = useState<{
+    univGroup: string;
+    grade: string;
+    phoneNumber: string;
+    gender: string;
+  }>({
+    univGroup: "",
+    grade: "",
+    phoneNumber: "",
+    gender: ""
+  });
+  const [availableGrades, setAvailableGrades] = useState<
+    RetreatInfo["univGroupAndGrade"][number]["grades"]
+  >([]);
+
+  // 날짜별 스케줄을 정리
+  const schedulesByDate = useMemo(() => {
+    return registerSchedules.reduce((acc, schedule) => {
+      if (!acc[schedule.date]) {
+        acc[schedule.date] = [];
+      }
+      acc[schedule.date].push(schedule);
+      return acc;
+    }, {} as Record<string, RegisterSchedule[]>);
+  }, []);
+
+  // 사용 가능한 날짜 목록
+  const availableDates = useMemo(() => {
+    return Object.keys(schedulesByDate).sort();
+  }, [schedulesByDate]);
+
+  // 선택한 날짜의 스케줄을 정렬
+  const sortedSchedules = useMemo(() => {
+    if (!selectedDate) return [];
+    return schedulesByDate[selectedDate].sort((a, b) => a.id - b.id);
+  }, [selectedDate, schedulesByDate]);
+
+  // 선택한 날짜의 스케줄 간 버스 기
+  const busesByTransition = useMemo(() => {
+    if (!selectedDate) return [];
+
+    const transitions: { before: number | null; after: number | null }[] = [];
+
+    // 정렬된 스케줄을 기반으로 전환 목록 생성
+    for (let i = 0; i <= sortedSchedules.length; i++) {
+      const before = i === 0 ? null : sortedSchedules[i - 1].id;
+      const after = i < sortedSchedules.length ? sortedSchedules[i].id : null;
+      transitions.push({ before, after });
+    }
+
+    // 각 전환에 해당하는 버스 찾기 및 출발 시간 순 정렬
+    return transitions
+      .map((transition) => {
+        const relevantBuses = buses
+          .filter(
+            (bus) =>
+              bus.before_schedule_id === transition.before &&
+              bus.after_schedule_id === transition.after
+          )
+          .sort((a, b) => a.departure_time.localeCompare(b.departure_time)); // 출발 시간 순 정렬
+        return {
+          transition,
+          buses: relevantBuses
+        };
+      })
+      .filter((transition) => transition.buses.length > 0);
+  }, [selectedDate, sortedSchedules]);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    // 여기에 실제 제출 로직 추가
+    try {
+      // TODO: 이 ESLint 주석 제거하고 submissionData 사용하거나 변수 선언 제거하기
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const submissionData = {
+        name: name,
+        phoneNumber: formData.phoneNumber,
+        gender: formData.gender,
+        gradeId: formData.grade,
+        retreatId: retreatData.retreat.id,
+        shuttleBusIds: selectedBuses,
         isAdminContact: false
     });
 
