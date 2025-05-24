@@ -26,7 +26,7 @@ export function RegistrationComplete({
   univGroup,
   gradeId,
   depositAccount,
-  registrationType,
+  registrationType
 }: RegistrationCompleteProps) {
   //const { toast } = useToast();
   const addToast = useToastStore((state) => state.add);
@@ -55,13 +55,13 @@ export function RegistrationComplete({
       .then(() => {
         addToast({
           title: "클립보드로 복사되었습니다",
-          variant: "success",
+          variant: "success"
         });
       })
       .catch((err) => {
         addToast({
           title: "복사 실패했습니다",
-          variant: "destructive",
+          variant: "destructive"
         });
         console.error("클립보드 복사 실패:", err);
       });
@@ -163,7 +163,11 @@ export function RegistrationComplete({
                         {univGroup + "부" + gradeId + name}
                       </span>
                       <button
-                        onClick={() => copyToClipboard(name || "")}
+                        onClick={() =>
+                          copyToClipboard(
+                            univGroup + "부" + gradeId + name || ""
+                          )
+                        }
                         className="p-1 hover:bg-gray-100 rounded-md"
                         type="button"
                       >
