@@ -858,7 +858,7 @@ export function RetreatRegistrationForm({
                     htmlFor="refundPolicyConsent"
                     className="text-sm font-medium leading-none whitespace-normal break-keep wrap-break-word"
                   >
-                    수양회 등록비 환불은 불가합니다.
+                    수양회 등록비 환불 불가에 동의합니다.
                   </label>
                 </div>
                 {modalErrors.refundPolicyConsent && (
