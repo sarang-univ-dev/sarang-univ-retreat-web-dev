@@ -11,6 +11,8 @@ interface RegistrationCompleteProps {
   phone: string | null;
   price: number | string | null;
   userType: string | null;
+  univGroup: number | null;
+  gradeId: number;
   depositAccount: string | null;
   registrationType: string | null;
 }
@@ -21,8 +23,10 @@ export function RegistrationComplete({
   phone,
   price,
   userType,
+  univGroup,
+  gradeId,
   depositAccount,
-  registrationType
+  registrationType,
 }: RegistrationCompleteProps) {
   //const { toast } = useToast();
   const addToast = useToastStore((state) => state.add);
@@ -51,14 +55,13 @@ export function RegistrationComplete({
       .then(() => {
         addToast({
           title: "클립보드로 복사되었습니다",
-          //description: "클립보드로 복사되었습니다",
-          variant: "success"
+          variant: "success",
         });
       })
       .catch((err) => {
         addToast({
           title: "복사 실패했습니다",
-          variant: "destructive"
+          variant: "destructive",
         });
         console.error("클립보드 복사 실패:", err);
       });
@@ -66,12 +69,12 @@ export function RegistrationComplete({
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-2 break-keep break-words">
+      <Card className="sm:w-full w-4/5 max-w-md mx-2 break-keep break-words">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
             <CheckCircle className="h-6 w-6 text-green-600" />
           </div>
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className="text-xl font-bold sm:text-2xl">
             {registrationType === "retreat-registration"
               ? "수양회 신청 완료"
               : registrationType === "bus-registration"
@@ -79,7 +82,7 @@ export function RegistrationComplete({
               : ""}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-2 sm:text-base text-sm">
           {isSpecialType ? (
             <p className="mb-6">
               <span className="font-semibold">{name}</span>{" "}
@@ -122,21 +125,27 @@ export function RegistrationComplete({
 
               {!isSpecialType && (
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">입금 안내</h3>
+                  <h3 className="font-semibold sm:text-lg text-base mb-2">
+                    입금 안내
+                  </h3>
                   <div className="space-y-2">
-                    <p className="flex items-center gap-2">
-                      <CreditCard className="h-4 w-4" />
-                      <span className="font-medium">입금 계좌:</span>{" "}
-                      <span>{depositAccount}</span>
-                      <button
-                        onClick={() =>
-                          copyToClipboard(depositAccount ?? "null")
-                        }
-                        className="p-1 hover:bg-gray-100 rounded-md"
-                        type="button"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </button>
+                    <p className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-2">
+                      <span className="flex items-center gap-2">
+                        <CreditCard className="h-4 w-4" />
+                        <span className="font-medium">입금 계좌:</span>
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <span>{depositAccount}</span>
+                        <button
+                          onClick={() =>
+                            copyToClipboard(depositAccount ?? "null")
+                          }
+                          className="p-1 hover:bg-gray-100 rounded-md"
+                          type="button"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </button>
+                      </span>
                     </p>
                     <p className="flex items-center gap-2">
                       <Wallet className="h-4 w-4" />
@@ -150,7 +159,9 @@ export function RegistrationComplete({
                     <p className="flex items-center gap-2">
                       <User className="h-4 w-4" />
                       <span className="font-medium">입금자명:</span>{" "}
-                      <span className="whitespace-nowrap">{name}</span>
+                      <span className="whitespace-nowrap">
+                        {univGroup + "부" + gradeId + name}
+                      </span>
                       <button
                         onClick={() => copyToClipboard(name || "")}
                         className="p-1 hover:bg-gray-100 rounded-md"
