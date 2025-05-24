@@ -11,6 +11,8 @@ interface RegistrationCompleteProps {
   phone: string | null;
   price: number | string | null;
   userType: string | null;
+  univGroup: number | null;
+  gradeId: number;
   depositAccount: string | null;
   registrationType: string | null;
 }
@@ -21,6 +23,8 @@ export function RegistrationComplete({
   phone,
   price,
   userType,
+  univGroup,
+  gradeId,
   depositAccount,
   registrationType,
 }: RegistrationCompleteProps) {
@@ -51,7 +55,6 @@ export function RegistrationComplete({
       .then(() => {
         addToast({
           title: "클립보드로 복사되었습니다",
-          //description: "클립보드로 복사되었습니다",
           variant: "success",
         });
       })
@@ -156,7 +159,9 @@ export function RegistrationComplete({
                     <p className="flex items-center gap-2">
                       <User className="h-4 w-4" />
                       <span className="font-medium">입금자명:</span>{" "}
-                      <span className="whitespace-nowrap">{name}</span>
+                      <span className="whitespace-nowrap">
+                        {univGroup + "부" + gradeId + name}
+                      </span>
                       <button
                         onClick={() => copyToClipboard(name || "")}
                         className="p-1 hover:bg-gray-100 rounded-md"
