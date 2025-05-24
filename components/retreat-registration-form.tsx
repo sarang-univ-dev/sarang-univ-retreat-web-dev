@@ -73,7 +73,7 @@ export function RetreatRegistrationForm({
     scheduleChangeConsent: "",
     refundPolicyConsent: "",
   });
-  const [gradeNumber, setGradeNumber] = useState<Number>(0);
+  const [gradeNumber, setGradeNumber] = useState<number>(0);
 
   const [formData, setFormData] = useState<{
     univGroup: string;
@@ -384,7 +384,6 @@ export function RetreatRegistrationForm({
       );
 
       if (response.status >= 200 && response.status <= 399) {
-        const gradeId = availableGrades;
         localStorage.setItem(
           "registrationData",
           JSON.stringify({
