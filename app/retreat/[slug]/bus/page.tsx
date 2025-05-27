@@ -7,8 +7,9 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { server } from "@/utils/axios";
 import axios from "axios";
-import type { RetreatInfo } from "@/types";
+import type {RetreatInfo, ShuttleBusInfo, TRetreatRegistrationSchedule} from "@/types";
 import { BusRegistrationFormComponent } from "@/components/bus-registration-form";
+import {Skeleton} from "@/components/ui/skeleton";
 
 const fetchRetreatData = async (slug: string): Promise<RetreatInfo> => {
   try {
@@ -26,12 +27,29 @@ const fetchRetreatData = async (slug: string): Promise<RetreatInfo> => {
   }
 };
 
+const fetchBusData = async (slug: string): Promise<ShuttleBusInfo> => {
+  try {
+    const response = await server.get(`/api/v1/retreat/${slug}/shuttle-bus/info`);
+
+    return response.data.shuttleBusInfo;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+          error.response.data?.message || "Failed to fetch bus data"
+      );
+    } else {
+      throw new Error("Failed to fetch bus data");
+    }
+  }
+};
+
 export default function BusRegisterPage() {
   const params = useParams<{ slug: string }>();
   const router = useRouter();
   const { slug } = params;
 
   const [retreatData, setRetreatData] = useState<RetreatInfo | null>(null);
+  const [busData, setBusData] = useState<ShuttleBusInfo | null>(null);
   // TODO: 이 ESLint 주석 제거하고 loading/error 상태를 사용하거나 필요 없으면 제거하기
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState<boolean>(true);
@@ -43,7 +61,9 @@ export default function BusRegisterPage() {
     const getData = async () => {
       try {
         const data = await fetchRetreatData(slug as string);
+        const busData = await fetchBusData(slug as string);
         setRetreatData(data);
+        setBusData(busData);
         setLoading(false);
 
         // 현재 시각이 payment 기간 안에 있는지 확인
@@ -93,47 +113,116 @@ export default function BusRegisterPage() {
     }
   };
 
-  // const params = useParams<{ slug: string }>();
-  // const { slug } = params;
+  // 날짜 포맷팅
+  const formatDates = (schedules: TRetreatRegistrationSchedule[]) => {
+    if (!schedules || schedules.length === 0) return "";
 
-  // const [retreat, setRetreat] = useState<TRetreatInfo | null>(null);
-  // const [loading, setLoading] = useState<boolean>(true);
-  // const [error, setError] = useState<string | null>(null);
+    const dates = [
+      ...new Set(
+          schedules.map((s) => new Date(s.time).toISOString().split("T")[0])
+      )
+    ].sort();
 
-  // useEffect(() => {
-  //   if (!slug) return;
+    // "M/D(요일)" 형식으로 날짜 포맷팅
+    const formatDate = (dateStr: string) => {
+      const date = new Date(dateStr);
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const weekdays = ["주일", "월", "화", "수", "목", "금", "토"];
+      const dayOfWeek = weekdays[date.getDay()];
+      return `${month}/${day}(${dayOfWeek})`;
+    };
 
-  //   const fetchRetreat = async () => {
-  //     try {
-  //       const response = await axios.get(`/api/v1/retreats/${slug}`);
+    // 연속된 날짜 그룹화
+    const groupDates = (dates: string[]) => {
+      if (dates.length <= 1) return dates.map(formatDate);
 
-  //       console.log(response.data);
+      const result = [];
+      let start = dates[0];
+      let end = start;
 
-  //       setRetreat(response.data);
-  //     } catch (err) {
-  //       if (err instanceof AxiosError) {
-  //         setError(
-  //           err.response?.data?.error || "데이터를 불러오는데 실패했습니다."
-  //         );
-  //       } else {
-  //         setError("알 수 없는 에러가 발생했습니다.");
-  //       }
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+      for (let i = 1; i < dates.length; i++) {
+        const curr = new Date(dates[i]);
+        const prev = new Date(end);
 
-  //   fetchRetreat();
-  // }, [slug]);
+        // 연속된 날짜인지 확인
+        if (curr.getTime() - prev.getTime() === 24 * 60 * 60 * 1000) {
+          end = dates[i];
+        } else {
+          if (start === end) {
+            result.push(formatDate(start));
+          } else {
+            result.push(`${formatDate(start)} ~ ${formatDate(end)}`);
+          }
+          start = dates[i];
+          end = start;
+        }
+      }
 
-  // if (loading) return <p>로딩 중...</p>;
-  // if (error) return <p>에러: {error}</p>;
-  // if (!retreat) return <p>리트리트를 찾을 수 없습니다.</p>;
+      // 마지막 그룹 추가
+      if (start === end) {
+        result.push(formatDate(start));
+      } else {
+        result.push(`${formatDate(start)} ~ ${formatDate(end)}`);
+      }
 
-  return retreatData ? (
-    <BusRegistrationFormComponent
-      retreatData={retreatData}
-      retreatSlug={slug}
-    />
-  ) : null;
+      return result;
+    };
+
+    return groupDates(dates).join(", ");
+  };
+
+  if (loading) {
+    return (
+        <div className="container mx-auto p-4">
+          <div className="mb-8">
+            <Skeleton className="w-full h-64" />
+          </div>
+          <Skeleton className="w-full h-[600px]" />
+        </div>
+    );
+  }
+
+  if (error || !retreatData) {
+    return (
+        <div className="container mx-auto p-4 text-center">
+          <p className="text-red-500 text-lg">
+            {error || "수양회 정보를 찾을 수 없습니다."}
+          </p>
+        </div>
+    );
+  }else if(!busData){
+    return (
+        <div className="container mx-auto p-4 text-center">
+          <p className="text-red-500 text-lg">
+            {error || "셔틀버스 정보를 찾을 수 없습니다."}
+          </p>
+        </div>
+    );
+  }
+
+
+
+  return (
+      <div className="container mx-auto p-4">
+        {/*<div className="mb-8">*/}
+        {/*  <RetreatCard*/}
+        {/*      name={retreatData.retreat.name}*/}
+        {/*      dates={formatDates(retreatData.schedule)}*/}
+        {/*      location={retreatData.retreat.location}*/}
+        {/*      main_verse={retreatData.retreat.mainVerse}*/}
+        {/*      main_speaker={retreatData.retreat.mainSpeaker}*/}
+        {/*      memo={retreatData.retreat.memo}*/}
+        {/*      poster_url={retreatData.retreat.poster_url}*/}
+        {/*  />*/}
+        {/*</div>*/}
+
+        <BusRegistrationFormComponent
+            retreatData={retreatData}
+            busData={busData}
+            retreatSlug={slug as string}
+        />
+      </div>
+  );
+
 }
