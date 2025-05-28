@@ -48,6 +48,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { server } from "@/utils/axios";
 import { useRouter } from "next/navigation";
+import { getErrorMessage, logError } from "@/utils/errorHandler";
 
 interface BusRegistrationFormProps {
   retreatData: RetreatInfo;
@@ -299,53 +300,76 @@ export function BusRegistrationFormComponent({
       isAdminContact: formData.isAdminContact
     };
 
-    const response = await server.post(
-      `/api/v1/retreat/${retreatSlug}/shuttle-bus/register`,
-      submissionData
-    );
-
-    if (response.status >= 200 && response.status <= 399) {
-      // 부서 번호를 찾기 위해 univGroup 정보 가져오기
-      const selectedGroup = retreatData.univGroupAndGrade.find(
-        (group) => group.univGroupId.toString() === formData.univGroup
+    try {
+      const response = await server.post(
+        `/api/v1/retreat/${retreatSlug}/shuttle-bus/register`,
+        submissionData
       );
 
-      // 선택된 학년 정보 가져오기
-      const selectedGrade = availableGrades.find(
-        (grade) => grade.id.toString() === formData.grade
-      );
+      if (response.status >= 200 && response.status <= 399) {
+        // 부서 번호를 찾기 위해 univGroup 정보 가져오기
+        const selectedGroup = retreatData.univGroupAndGrade.find(
+          (group) => group.univGroupId.toString() === formData.univGroup
+        );
 
-      localStorage.setItem(
-        "shuttleBusRegistrationData",
-        JSON.stringify({
-          name: formData.name,
-          phoneNumber: formData.phoneNumber,
-          gender: formData.gender,
-          gradeId: Number(formData.grade),
-          gradeNumber: selectedGrade?.number,
-          retreatId: retreatData.retreat.id,
-          shuttleBusIds: formData.shuttleBusIds,
-          isAdminContact: formData.isAdminContact,
-          totalPrice: totalPrice,
-          univGroup: selectedGroup?.univGroupId
-        })
-      );
+        // 선택된 학년 정보 가져오기
+        const selectedGrade = availableGrades.find(
+          (grade) => grade.id.toString() === formData.grade
+        );
 
-      router.push(`/retreat/${retreatSlug}/shuttle-bus-registration-success`);
-    } else {
-      console.error("response message: " + response.data.message);
+        localStorage.setItem(
+          "shuttleBusRegistrationData",
+          JSON.stringify({
+            name: formData.name,
+            phoneNumber: formData.phoneNumber,
+            gender: formData.gender,
+            gradeId: Number(formData.grade),
+            gradeNumber: selectedGrade?.number,
+            retreatId: retreatData.retreat.id,
+            shuttleBusIds: formData.shuttleBusIds,
+            isAdminContact: formData.isAdminContact,
+            totalPrice: totalPrice,
+            univGroup: selectedGroup?.univGroupId
+          })
+        );
+
+        router.push(`/retreat/${retreatSlug}/shuttle-bus-registration-success`);
+      } else {
+        console.error("response message: " + response.data.message);
+
+        // 실패 정보를 localStorage에 저장
+        localStorage.setItem(
+          "registrationFailureData",
+          JSON.stringify({
+            errorMessage: response.data.message,
+            timestamp: new Date().toISOString(),
+            retreatName: retreatData.retreat.name,
+            registrationType: "bus-registration"
+          })
+        );
+
+        router.push(`/retreat/${retreatSlug}/registration-failure`);
+      }
+    } catch (error: unknown) {
+      logError(error, "bus-registration");
+
+      // 에러 메시지 추출
+      const errorMessage = getErrorMessage(error);
 
       // 실패 정보를 localStorage에 저장
       localStorage.setItem(
         "registrationFailureData",
         JSON.stringify({
-          errorMessage: response.data.message,
+          errorMessage: errorMessage,
           timestamp: new Date().toISOString(),
-          retreatName: retreatData.retreat.name
+          retreatName: retreatData.retreat.name,
+          registrationType: "bus-registration"
         })
       );
 
       router.push(`/retreat/${retreatSlug}/registration-failure`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
