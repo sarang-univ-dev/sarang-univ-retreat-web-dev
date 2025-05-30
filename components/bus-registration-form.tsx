@@ -596,9 +596,13 @@ export function BusRegistrationFormComponent({
             <Calendar className="mr-2" size={24} />
             셔틀버스 선택
           </h2>
+          <div className="mt-4 text-sm text-black-500">
+            * 금요일 저녁 교회로 복귀하는 셔틀은 없습니다.
+          </div>
           <Tabs
             value={selectedDate || availableDates[0]}
             onValueChange={(value) => setSelectedDate(value)}
+            className="p-4"
           >
             <TabsList
               className="flex space-x-2 overflow-x-auto overflow-y-hidden hide-scrollbar"
