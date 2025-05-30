@@ -108,7 +108,7 @@ export default function BusRegisterPage() {
         "registrationPeriod",
         JSON.stringify({
           start: earliestStart.toISOString(),
-          end: latestEnd.toISOString()
+          end: latestEnd.toISOString(),
         })
       );
 
@@ -152,7 +152,7 @@ export default function BusRegisterPage() {
     const dates = [
       ...new Set(
         schedules.map((s) => new Date(s.time).toISOString().split("T")[0])
-      )
+      ),
     ].sort();
 
     // "M/D(요일)" 형식으로 날짜 포맷팅

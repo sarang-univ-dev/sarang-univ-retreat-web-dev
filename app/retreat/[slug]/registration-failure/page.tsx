@@ -63,7 +63,6 @@ export default function RegistrationFailurePage() {
             </p>
           ) : (
             <>
-
               <div className="bg-red-50 p-4 rounded-md mb-6 text-left">
                 <p className="text-red-700">
                   {failureData?.errorMessage ||
@@ -77,7 +76,7 @@ export default function RegistrationFailurePage() {
                     <Button className="w-full">다시 시도하기</Button>
                   </Link>
                 ) : failureData?.registrationType === "bus-registration" ? (
-                  <Link href={`/retreat/${params.slug}/bus`}>
+                  <Link href={`/retreat/${params.slug}/shuttle-bus`}>
                     <Button className="w-full">다시 시도하기</Button>
                   </Link>
                 ) : (
