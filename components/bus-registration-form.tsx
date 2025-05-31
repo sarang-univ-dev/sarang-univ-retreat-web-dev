@@ -918,6 +918,34 @@ export function BusRegistrationFormComponent({
                 <span className="font-medium">총 금액:</span>{" "}
                 {totalPrice.toLocaleString()}원
               </p>
+              <div>
+                <span className="font-medium">선택한 버스 및 출발 시간:</span>
+                <div className="mt-1 space-y-1">
+                  {formData.shuttleBusIds.map((busId) => {
+                    const bus = busData.shuttleBuses.find(
+                      (b) => b.id === busId
+                    );
+                    if (!bus) return null;
+
+                    const departureTime = bus.departureTime
+                      ? new Date(bus.departureTime).toLocaleTimeString(
+                          "ko-KR",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true
+                          }
+                        )
+                      : "미정";
+
+                    return (
+                      <p key={bus.id} className="text-sm text-gray-600">
+                        {bus.name} ({departureTime})
+                      </p>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
             <p className="text-sm text-muted-foreground mb-4 whitespace-normal break-keep wrap-break-word">
