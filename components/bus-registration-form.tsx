@@ -19,7 +19,6 @@ import {
   ArrowRight,
   Clock,
   X,
-  Bus,
   TriangleAlert,
   UserCheck,
   User,
@@ -46,7 +45,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { server } from "@/utils/axios";
 import { useRouter } from "next/navigation";
 import { getErrorMessage, logError } from "@/utils/errorHandler";
@@ -421,7 +419,7 @@ export function BusRegistrationFormComponent({
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card className="mb-6">
           <CardContent className="pt-6">
-            <div className="flex items-center space-x-2 p-4">
+            <div className="flex items-center space-x-2 py-1">
               <Checkbox
                 id="privacyConsent"
                 checked={formData.privacyConsent}
@@ -442,7 +440,7 @@ export function BusRegistrationFormComponent({
                 {formErrors.privacyConsent}
               </p>
             )}
-            <div className="flex items-center space-x-2 p-4">
+            <div className="flex items-center space-x-2 py-1">
               <Checkbox
                 id="agreeShuttleOnly"
                 checked={formData.agreeShuttleOnly}
@@ -596,13 +594,12 @@ export function BusRegistrationFormComponent({
             <Calendar className="mr-2" size={24} />
             셔틀버스 선택
           </h2>
-          <div className="mt-4 text-sm text-black-500">
+          <div className="my-2 text-sm text-bold text-muted-foreground">
             * 금요일 저녁 교회로 복귀하는 셔틀은 없습니다.
           </div>
           <Tabs
             value={selectedDate || availableDates[0]}
             onValueChange={(value) => setSelectedDate(value)}
-            className="p-4"
           >
             <TabsList
               className="flex space-x-2 overflow-x-auto overflow-y-hidden hide-scrollbar"
@@ -623,11 +620,6 @@ export function BusRegistrationFormComponent({
         {/* 스케줄 및 버스 정보 표시 */}
         {selectedDate && (
           <div className="space-y-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Bus className="h-5 w-5" />
-              <h3 className="text-lg font-semibold">신청 가능한 셔틀버스</h3>
-            </div>
-
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-4">
                 {busData.shuttleBuses
@@ -660,7 +652,7 @@ export function BusRegistrationFormComponent({
                             htmlFor={`bus-${bus.id}`}
                             className="flex flex-col cursor-pointer flex-grow"
                           >
-                            <div className="mb-2">
+                            <div className="space-y-2">
                               <div className="flex items-center justify-between gap-2 flex-wrap">
                                 <div className="flex items-center gap-2 flex-wrap min-w-0">
                                   <span className="font-medium break-words text-sm sm:text-base">
@@ -687,36 +679,35 @@ export function BusRegistrationFormComponent({
                                   </span>
                                 </div>
                               </div>
-                            </div>
-                            <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600 flex-wrap">
-                              <div className="flex items-center gap-1">
-                                <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                                출발:{" "}
-                                {bus.departureTime
-                                  ? new Date(
-                                      bus.departureTime
+                              <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600 flex-wrap">
+                                <div className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+                                  출발:{" "}
+                                  {bus.departureTime
+                                    ? new Date(
+                                        bus.departureTime
+                                      ).toLocaleTimeString("ko-KR", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      hour12: true,
+                                      })
+                                    : "미정"}
+                                  {/*{bus.departureTime?.slice(0, 5)}*/}
+                                </div>
+                                {bus.arrivalTime && (
+                                  <div className="flex items-center gap-1">
+                                    <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+                                    도착:{" "}
+                                    {new Date(
+                                      bus.arrivalTime
                                     ).toLocaleTimeString("ko-KR", {
                                       hour: "2-digit",
                                       minute: "2-digit",
-                                      hour12: true,
-                                    })
-                                  : "미정"}
-                                {/*{bus.departureTime?.slice(0, 5)}*/}
+                                      hour12: true
+                                    })}
+                                  </div>
+                                )}
                               </div>
-                              {bus.arrivalTime && (
-                                <div className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                                  도착:{" "}
-                                  {new Date(bus.arrivalTime).toLocaleTimeString(
-                                    "ko-KR",
-                                    {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                      hour12: true,
-                                    }
-                                  )}
-                                </div>
-                              )}
                             </div>
                           </Label>
                         </div>
