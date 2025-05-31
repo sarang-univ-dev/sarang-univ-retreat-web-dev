@@ -740,6 +740,14 @@ export function BusRegistrationFormComponent({
                 {formData.shuttleBusIds.map((busId) => {
                   const bus = busData.shuttleBuses.find((b) => b.id === busId);
                   if (!bus) return null;
+
+                  // 버스의 실제 날짜 계산
+                  const busDate = new Date(
+                    bus.departureTime
+                  ).toLocaleDateString("sv-SE", {
+                    timeZone: "Asia/Seoul"
+                  });
+
                   return (
                     <div
                       key={bus.id}
@@ -774,9 +782,9 @@ export function BusRegistrationFormComponent({
                             </>
                           )}
                         </p>
-                        {/* 선택된 버스의 날짜 표시 */}
+                        {/* 버스의 실제 날짜 표시 */}
                         <p className="text-sm text-gray-500">
-                          날짜: {formatDate(selectedDate || "")}
+                          날짜: {formatDate(busDate)}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
