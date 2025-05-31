@@ -12,14 +12,13 @@ import { cn } from "@/lib/utils";
 import type {
   RetreatInfo,
   ShuttleBusInfo,
-  TRetreatRegistrationSchedule
+  TRetreatRegistrationSchedule,
 } from "@/types";
 // import { format, addDays, parseISO } from "date-fns";
 import {
   ArrowRight,
   Clock,
   X,
-  Bus,
   TriangleAlert,
   UserCheck,
   User,
@@ -28,14 +27,15 @@ import {
   Hash,
   Users,
   Calendar,
-  CheckCircle
+  CheckCircle,
+  CircleAlert,
 } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import {
   Tabs,
   // TabsContent,
   TabsList,
-  TabsTrigger
+  TabsTrigger,
 } from "@/components/ui/tabs";
 
 import {
@@ -43,9 +43,8 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { server } from "@/utils/axios";
 import { useRouter } from "next/navigation";
 import { getErrorMessage, logError } from "@/utils/errorHandler";
@@ -59,7 +58,7 @@ interface BusRegistrationFormProps {
 export function BusRegistrationFormComponent({
   retreatData,
   busData,
-  retreatSlug
+  retreatSlug,
 }: BusRegistrationFormProps) {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -68,6 +67,10 @@ export function BusRegistrationFormComponent({
   >([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [refundPolicyConsent, setRefundPolicyConsent] = useState(false);
+  const [modalError, setModalError] = useState({
+    refundPolicyConsent: "",
+  });
 
   const [formData, setFormData] = useState<{
     name: string;
@@ -79,6 +82,7 @@ export function BusRegistrationFormComponent({
     shuttleBusIds: number[];
     isAdminContact: boolean;
     privacyConsent: boolean;
+    agreeShuttleOnly: boolean;
   }>({
     name: "",
     phoneNumber: "",
@@ -88,7 +92,8 @@ export function BusRegistrationFormComponent({
     retreatId: -1,
     shuttleBusIds: [],
     isAdminContact: false,
-    privacyConsent: false
+    privacyConsent: false,
+    agreeShuttleOnly: false,
   });
 
   const [formErrors, setFormErrors] = useState<{
@@ -98,13 +103,15 @@ export function BusRegistrationFormComponent({
     univGroup: string;
     grade: string;
     privacyConsent: string;
+    agreeShuttleOnly: string;
   }>({
     name: "",
     phoneNumber: "",
     gender: "",
     univGroup: "",
     grade: "",
-    privacyConsent: ""
+    privacyConsent: "",
+    agreeShuttleOnly: "",
   });
 
   // 전화번호 유효성 체크
@@ -130,7 +137,7 @@ export function BusRegistrationFormComponent({
   const schedulesByDate = useMemo(() => {
     return busData.retreatRegisterSchedules.reduce((acc, schedule) => {
       const dateStr = new Date(schedule.time).toLocaleDateString("sv-SE", {
-        timeZone: "Asia/Seoul"
+        timeZone: "Asia/Seoul",
       }); // "YYYY-MM-DD" 형식, 한국 기준
 
       if (!acc[dateStr]) {
@@ -154,7 +161,8 @@ export function BusRegistrationFormComponent({
       name: "",
       phoneNumber: "",
       gender: "",
-      privacyConsent: ""
+      privacyConsent: "",
+      agreeShuttleOnly: "",
     };
     let isValid = true;
     let firstErrorElement: HTMLElement | null = null;
@@ -203,6 +211,12 @@ export function BusRegistrationFormComponent({
       if (!firstErrorElement)
         firstErrorElement = document.getElementById("privacyConsent");
     }
+    if (!formData.agreeShuttleOnly) {
+      errors.agreeShuttleOnly = "셔틀 이외의 이동 금지 사항에 동의해주세요";
+      isValid = false;
+      if (!firstErrorElement)
+        firstErrorElement = document.getElementById("agreeShuttleOnly");
+    }
 
     setFormErrors(errors);
 
@@ -211,7 +225,7 @@ export function BusRegistrationFormComponent({
       setTimeout(() => {
         firstErrorElement?.scrollIntoView({
           behavior: "smooth",
-          block: "center"
+          block: "center",
         });
       }, 100);
     }
@@ -244,7 +258,7 @@ export function BusRegistrationFormComponent({
       if (!phoneRegex.test(value)) {
         setFormErrors((prevErrors) => ({
           ...prevErrors,
-          phoneNumber: "010-1234-5678 형식으로 적어주세요"
+          phoneNumber: "010-1234-5678 형식으로 적어주세요",
         }));
       } else {
         setFormErrors((prevErrors) => ({ ...prevErrors, phoneNumber: "" }));
@@ -255,6 +269,11 @@ export function BusRegistrationFormComponent({
   const handlePrivacyConsentChange = (checked: boolean) => {
     setFormData({ ...formData, privacyConsent: checked });
     setFormErrors((prevErrors) => ({ ...prevErrors, privacyConsent: "" }));
+  };
+
+  const handleAgreeShuttleOnlyChange = (checked: boolean) => {
+    setFormData({ ...formData, agreeShuttleOnly: checked });
+    setFormErrors((prevErrors) => ({ ...prevErrors, agreeShuttleOnly: "" }));
   };
 
   const handleGenderChange = (value: string) => {
@@ -287,6 +306,23 @@ export function BusRegistrationFormComponent({
   };
 
   const confirmSubmission = async () => {
+    const errors = {
+      refundPolicyConsent: "",
+    };
+
+    let isValid = true;
+
+    if (!refundPolicyConsent) {
+      errors.refundPolicyConsent = "해당 내용을 읽고 체크박스에 체크해주세요";
+      isValid = false;
+    }
+
+    setModalError(errors);
+
+    if (!isValid) {
+      return;
+    }
+
     setShowConfirmModal(false);
     setIsSubmitting(true);
 
@@ -297,7 +333,7 @@ export function BusRegistrationFormComponent({
       gradeId: Number(formData.grade),
       retreatId: retreatData.retreat.id,
       shuttleBusIds: formData.shuttleBusIds,
-      isAdminContact: formData.isAdminContact
+      isAdminContact: formData.isAdminContact,
     };
 
     try {
@@ -329,7 +365,7 @@ export function BusRegistrationFormComponent({
             shuttleBusIds: formData.shuttleBusIds,
             isAdminContact: formData.isAdminContact,
             totalPrice: totalPrice,
-            univGroup: selectedGroup?.univGroupId
+            univGroup: selectedGroup?.univGroupId,
           })
         );
 
@@ -344,7 +380,7 @@ export function BusRegistrationFormComponent({
             errorMessage: response.data.message,
             timestamp: new Date().toISOString(),
             retreatName: retreatData.retreat.name,
-            registrationType: "bus-registration"
+            registrationType: "bus-registration",
           })
         );
 
@@ -363,7 +399,7 @@ export function BusRegistrationFormComponent({
           errorMessage: errorMessage,
           timestamp: new Date().toISOString(),
           retreatName: retreatData.retreat.name,
-          registrationType: "bus-registration"
+          registrationType: "bus-registration",
         })
       );
 
@@ -383,7 +419,7 @@ export function BusRegistrationFormComponent({
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card className="mb-6">
           <CardContent className="pt-6">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 py-1">
               <Checkbox
                 id="privacyConsent"
                 checked={formData.privacyConsent}
@@ -402,6 +438,27 @@ export function BusRegistrationFormComponent({
             {formErrors.privacyConsent && (
               <p className="text-red-500 text-sm mt-1">
                 {formErrors.privacyConsent}
+              </p>
+            )}
+            <div className="flex items-center space-x-2 py-1">
+              <Checkbox
+                id="agreeShuttleOnly"
+                checked={formData.agreeShuttleOnly}
+                onCheckedChange={handleAgreeShuttleOnlyChange}
+              />
+              <div className="flex gap-1.5 items-center">
+                <CircleAlert className="text-red-500" size={20} />
+                <label
+                  htmlFor="agreeShuttleOnly"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  안전을 위해 셔틀 이외 이동은 금지되는 것을 확인하였습니다
+                </label>
+              </div>
+            </div>
+            {formErrors.agreeShuttleOnly && (
+              <p className="text-red-500 text-sm mt-1">
+                {formErrors.agreeShuttleOnly}
               </p>
             )}
           </CardContent>
@@ -454,7 +511,7 @@ export function BusRegistrationFormComponent({
                 setFormData({ ...formData, grade: value });
                 setFormErrors((prevErrors) => ({
                   ...prevErrors,
-                  grade: ""
+                  grade: "",
                 }));
               }}
               value={formData.grade}
@@ -537,6 +594,9 @@ export function BusRegistrationFormComponent({
             <Calendar className="mr-2" size={24} />
             셔틀버스 선택
           </h2>
+          <div className="my-2 text-sm text-bold text-muted-foreground">
+            * 금요일 저녁 교회로 복귀하는 셔틀은 없습니다.
+          </div>
           <Tabs
             value={selectedDate || availableDates[0]}
             onValueChange={(value) => setSelectedDate(value)}
@@ -545,7 +605,7 @@ export function BusRegistrationFormComponent({
               className="flex space-x-2 overflow-x-auto overflow-y-hidden hide-scrollbar"
               style={{
                 msOverflowStyle: "none",
-                scrollbarWidth: "none"
+                scrollbarWidth: "none",
               }}
             >
               {availableDates.map((date) => (
@@ -560,11 +620,6 @@ export function BusRegistrationFormComponent({
         {/* 스케줄 및 버스 정보 표시 */}
         {selectedDate && (
           <div className="space-y-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Bus className="h-5 w-5" />
-              <h3 className="text-lg font-semibold">신청 가능한 셔틀버스</h3>
-            </div>
-
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-4">
                 {busData.shuttleBuses
@@ -572,7 +627,7 @@ export function BusRegistrationFormComponent({
                     const busDate = new Date(
                       bus.departureTime
                     ).toLocaleDateString("sv-SE", {
-                      timeZone: "Asia/Seoul"
+                      timeZone: "Asia/Seoul",
                     }); // ex: "2024-07-02"
                     return busDate === selectedDate;
                   })
@@ -597,7 +652,7 @@ export function BusRegistrationFormComponent({
                             htmlFor={`bus-${bus.id}`}
                             className="flex flex-col cursor-pointer flex-grow"
                           >
-                            <div className="mb-2">
+                            <div className="space-y-2">
                               <div className="flex items-center justify-between gap-2 flex-wrap">
                                 <div className="flex items-center gap-2 flex-wrap min-w-0">
                                   <span className="font-medium break-words text-sm sm:text-base">
@@ -624,36 +679,35 @@ export function BusRegistrationFormComponent({
                                   </span>
                                 </div>
                               </div>
-                            </div>
-                            <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600 flex-wrap">
-                              <div className="flex items-center gap-1">
-                                <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                                출발:{" "}
-                                {bus.departureTime
-                                  ? new Date(
-                                      bus.departureTime
+                              <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600 flex-wrap">
+                                <div className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+                                  출발:{" "}
+                                  {bus.departureTime
+                                    ? new Date(
+                                        bus.departureTime
+                                      ).toLocaleTimeString("ko-KR", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      hour12: true,
+                                      })
+                                    : "미정"}
+                                  {/*{bus.departureTime?.slice(0, 5)}*/}
+                                </div>
+                                {bus.arrivalTime && (
+                                  <div className="flex items-center gap-1">
+                                    <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+                                    도착:{" "}
+                                    {new Date(
+                                      bus.arrivalTime
                                     ).toLocaleTimeString("ko-KR", {
                                       hour: "2-digit",
                                       minute: "2-digit",
                                       hour12: true
-                                    })
-                                  : "미정"}
-                                {/*{bus.departureTime?.slice(0, 5)}*/}
+                                    })}
+                                  </div>
+                                )}
                               </div>
-                              {bus.arrivalTime && (
-                                <div className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                                  도착:{" "}
-                                  {new Date(bus.arrivalTime).toLocaleTimeString(
-                                    "ko-KR",
-                                    {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                      hour12: true
-                                    }
-                                  )}
-                                </div>
-                              )}
                             </div>
                           </Label>
                         </div>
@@ -677,6 +731,14 @@ export function BusRegistrationFormComponent({
                 {formData.shuttleBusIds.map((busId) => {
                   const bus = busData.shuttleBuses.find((b) => b.id === busId);
                   if (!bus) return null;
+
+                  // 버스의 실제 날짜 계산
+                  const busDate = new Date(
+                    bus.departureTime
+                  ).toLocaleDateString("sv-SE", {
+                    timeZone: "Asia/Seoul"
+                  });
+
                   return (
                     <div
                       key={bus.id}
@@ -692,7 +754,7 @@ export function BusRegistrationFormComponent({
                                 {
                                   hour: "2-digit",
                                   minute: "2-digit",
-                                  hour12: true
+                                  hour12: true,
                                 }
                               )
                             : "미정"}
@@ -705,15 +767,15 @@ export function BusRegistrationFormComponent({
                                 {
                                   hour: "2-digit",
                                   minute: "2-digit",
-                                  hour12: true
+                                  hour12: true,
                                 }
                               )}
                             </>
                           )}
                         </p>
-                        {/* 선택된 버스의 날짜 표시 */}
+                        {/* 버스의 실제 날짜 표시 */}
                         <p className="text-sm text-gray-500">
-                          날짜: {formatDate(selectedDate || "")}
+                          날짜: {formatDate(busDate)}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -755,7 +817,7 @@ export function BusRegistrationFormComponent({
           </Card>
         )}
 
-        {/* 간사 소통 여부 체크 */}
+        {/* 간사 소통 여부 체크
         <div className="pt-4 border-t">
           <div className="space-y-4">
             <div className="space-y-2">
@@ -776,7 +838,7 @@ export function BusRegistrationFormComponent({
                 (val) =>
                   setFormData({
                     ...formData,
-                    isAdminContact: val === "true"
+                    isAdminContact: val === "true",
                   }) // string → boolean
               }
               name="isAdminContact"
@@ -792,7 +854,7 @@ export function BusRegistrationFormComponent({
               </div>
             </RadioGroup>
           </div>
-        </div>
+        </div> */}
         <Button
           type="submit"
           className="w-full text-md flex items-center justify-center"
@@ -847,11 +909,63 @@ export function BusRegistrationFormComponent({
                 <span className="font-medium">총 금액:</span>{" "}
                 {totalPrice.toLocaleString()}원
               </p>
+              <div>
+                <span className="font-medium">선택한 버스 및 출발 시간:</span>
+                <div className="mt-1 space-y-1">
+                  {formData.shuttleBusIds.map((busId) => {
+                    const bus = busData.shuttleBuses.find(
+                      (b) => b.id === busId
+                    );
+                    if (!bus) return null;
+
+                    const departureTime = bus.departureTime
+                      ? new Date(bus.departureTime).toLocaleTimeString(
+                          "ko-KR",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true
+                          }
+                        )
+                      : "미정";
+
+                    return (
+                      <p key={bus.id} className="text-sm text-gray-600">
+                        {bus.name} ({departureTime})
+                      </p>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
             <p className="text-sm text-muted-foreground mb-4 whitespace-normal break-keep wrap-break-word">
               위 정보가 정확한지 확인해주세요. 신청 후에는 수정이 어렵습니다.
             </p>
+            <div className="space-y-4 mb-4">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="refundPolicyConsent"
+                    checked={refundPolicyConsent}
+                    onCheckedChange={(checked) =>
+                      setRefundPolicyConsent(checked as boolean)
+                    }
+                  />
+                  <label
+                    htmlFor="refundPolicyConsent"
+                    className="text-sm font-medium leading-none whitespace-normal break-keep wrap-break-word"
+                  >
+                    셔틀 버스 환불은 불가함에 동의합니다.
+                  </label>
+                </div>
+                {modalError.refundPolicyConsent && (
+                  <p className="text-red-500 text-sm ml-6">
+                    {modalError.refundPolicyConsent}
+                  </p>
+                )}
+              </div>
+            </div>
 
             <div className="flex justify-end gap-2">
               <Button

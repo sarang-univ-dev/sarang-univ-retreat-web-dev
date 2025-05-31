@@ -12,7 +12,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -22,7 +22,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/utils/formatDate";
@@ -44,7 +44,7 @@ import {
   Sunset,
   Bed,
   TriangleAlert,
-  Star
+  Star,
 } from "lucide-react";
 
 // 이벤트 타입을 한글로 매핑
@@ -52,7 +52,7 @@ const EVENT_TYPE_MAP: Record<string, string> = {
   BREAKFAST: "아침",
   LUNCH: "점심",
   DINNER: "저녁",
-  SLEEP: "숙박"
+  SLEEP: "숙박",
 };
 
 interface RetreatRegistrationFormProps {
@@ -62,7 +62,7 @@ interface RetreatRegistrationFormProps {
 
 export function RetreatRegistrationForm({
   retreatData,
-  retreatSlug
+  retreatSlug,
 }: RetreatRegistrationFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -71,7 +71,7 @@ export function RetreatRegistrationForm({
   const [refundPolicyConsent, setRefundPolicyConsent] = useState(false);
   const [modalErrors, setModalErrors] = useState({
     scheduleChangeConsent: "",
-    refundPolicyConsent: ""
+    refundPolicyConsent: "",
   });
   const [gradeNumber, setGradeNumber] = useState<number>(0);
 
@@ -94,7 +94,7 @@ export function RetreatRegistrationForm({
     scheduleSelection: [],
     privacyConsent: false,
     gender: "",
-    userType: null
+    userType: null,
   });
 
   const [availableGrades, setAvailableGrades] = useState<
@@ -120,7 +120,7 @@ export function RetreatRegistrationForm({
     scheduleSelection: "",
     privacyConsent: "",
     gender: "",
-    userType: ""
+    userType: "",
   });
 
   const [isAllScheduleSelected, setIsAllScheduleSelected] = useState(false);
@@ -171,7 +171,7 @@ export function RetreatRegistrationForm({
     formData.scheduleSelection,
     isAllScheduleSelected,
     retreatData,
-    findCurrentPayment
+    findCurrentPayment,
   ]);
 
   const handleUnivGroupChange = (value: string) => {
@@ -193,7 +193,7 @@ export function RetreatRegistrationForm({
       if (!phoneRegex.test(value)) {
         setFormErrors((prevErrors) => ({
           ...prevErrors,
-          phoneNumber: "010-1234-5678 형식으로 적어주세요"
+          phoneNumber: "010-1234-5678 형식으로 적어주세요",
         }));
       } else {
         setFormErrors((prevErrors) => ({ ...prevErrors, phoneNumber: "" }));
@@ -222,7 +222,7 @@ export function RetreatRegistrationForm({
     );
     setFormData({
       ...formData,
-      scheduleSelection: checked ? allScheduleIds : []
+      scheduleSelection: checked ? allScheduleIds : [],
     });
     setFormErrors((prevErrors) => ({ ...prevErrors, scheduleSelection: "" }));
   };
@@ -260,7 +260,7 @@ export function RetreatRegistrationForm({
       scheduleSelection: "",
       privacyConsent: "",
       gender: "",
-      userType: ""
+      userType: "",
     };
     let isValid = true;
     let firstErrorElement: HTMLElement | null = null;
@@ -329,7 +329,7 @@ export function RetreatRegistrationForm({
       setTimeout(() => {
         firstErrorElement?.scrollIntoView({
           behavior: "smooth",
-          block: "center"
+          block: "center",
         });
       }, 100);
     }
@@ -348,7 +348,7 @@ export function RetreatRegistrationForm({
     // 체크박스 유효성 검사
     const errors = {
       scheduleChangeConsent: "",
-      refundPolicyConsent: ""
+      refundPolicyConsent: "",
     };
     let isValid = true;
 
@@ -379,7 +379,7 @@ export function RetreatRegistrationForm({
       retreatId: retreatData.retreat.id,
       currentLeaderName: formData.currentLeaderName,
       retreatRegistrationScheduleIds: formData.scheduleSelection,
-      userType: formData.userType
+      userType: formData.userType,
     };
 
     try {
@@ -403,7 +403,7 @@ export function RetreatRegistrationForm({
             userType: formData.userType,
             univGroup: formData.univGroup,
             gradeId: gradeNumber,
-            registrationType: "retreat-registration"
+            registrationType: "retreat-registration",
           })
         );
 
@@ -418,7 +418,7 @@ export function RetreatRegistrationForm({
             errorMessage: response.data.message,
             timestamp: new Date().toISOString(),
             retreatName: retreatData.retreat.name,
-            registrationType: "retreat-registration"
+            registrationType: "retreat-registration",
           })
         );
 
@@ -439,7 +439,7 @@ export function RetreatRegistrationForm({
           errorMessage: errorMessage,
           timestamp: new Date().toISOString(),
           retreatName: retreatData.retreat.name,
-          registrationType: "retreat-registration"
+          registrationType: "retreat-registration",
         })
       );
 
