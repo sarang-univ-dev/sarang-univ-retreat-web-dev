@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -126,7 +126,7 @@ export function RetreatRegistrationForm({
   const [isAllScheduleSelected, setIsAllScheduleSelected] = useState(false);
 
   // 현재 날짜에 유효한 payment를 찾는 함수
-  const findCurrentPayment = () => {
+  const findCurrentPayment = useCallback(() => {
     const currentDate = new Date();
     const validPayment = retreatData.payment.find(
       (payment) =>
@@ -144,7 +144,7 @@ export function RetreatRegistrationForm({
           : latest;
       });
     }
-  };
+  }, [retreatData.payment]);
 
   useEffect(() => {
     if (retreatData) {
@@ -167,7 +167,12 @@ export function RetreatRegistrationForm({
         setTotalPrice(calculatedPrice);
       }
     }
-  }, [formData.scheduleSelection, isAllScheduleSelected, retreatData]);
+  }, [
+    formData.scheduleSelection,
+    isAllScheduleSelected,
+    retreatData,
+    findCurrentPayment,
+  ]);
 
   const handleUnivGroupChange = (value: string) => {
     const selectedGroup = retreatData.univGroupAndGrade.find(
