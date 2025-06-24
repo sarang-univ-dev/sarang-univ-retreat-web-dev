@@ -569,7 +569,7 @@ export function RetreatRegistrationForm({
             name="currentLeaderName"
             value={formData.currentLeaderName}
             onChange={handleCurrentLeaderNameChange}
-            placeholder="현재 GBS/EBS 리더 이름을 입력해주세요"
+            placeholder="김리더"
           />
           {formErrors.currentLeaderName && (
             <p className="text-red-500 text-sm mt-1">
@@ -588,7 +588,7 @@ export function RetreatRegistrationForm({
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            placeholder="이름을 입력해주세요"
+            placeholder="이조원"
           />
           {formErrors.name && (
             <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
