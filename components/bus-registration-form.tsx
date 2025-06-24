@@ -543,7 +543,7 @@ export function BusRegistrationFormComponent({
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="이름을 입력해주세요"
+              placeholder="홍길동"
             />
             {formErrors.name && (
               <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
