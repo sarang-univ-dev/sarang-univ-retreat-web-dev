@@ -737,9 +737,9 @@ export function RetreatRegistrationForm({
             <UserCheck className="mr-2" />
             신청 유형
           </Label>
-          <p className="text-sm text-muted-foreground mb-2 break-keep break-words">
+          {/* <p className="text-sm text-muted-foreground mb-2 break-keep break-words">
             복음 GBS 신청은 각 부서 새가족 간사님을 통해 신청해주시기 바랍니다.
-          </p>
+          </p> */}
           <RadioGroup
             value={formData.userType === null ? "NONE" : formData.userType}
             onValueChange={handleUserTypeChange}
