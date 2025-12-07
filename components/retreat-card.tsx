@@ -72,10 +72,10 @@ function RetreatCard({
               <Book className="w-5 h-5 text-primary shrink-0 mt-1" />
               <p className="text-sm italic break-keep break-words">{main_verse}</p>
             </div>
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
               <Mic2 className="w-5 h-5 text-primary flex-shrink-0" />
               <span className="font-medium">{main_speaker}</span>
-            </div>
+            </div> */}
             <div className="flex items-center gap-3">
               <UserRound className="w-5 h-5 text-primary flex-shrink-0" />
               <span className="font-medium">
