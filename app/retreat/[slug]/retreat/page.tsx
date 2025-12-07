@@ -240,7 +240,7 @@ export default function RetreatPage() {
           dates={formatDates(retreatData.schedule)}
           location={retreatData.retreat.location}
           main_verse={retreatData.retreat.mainVerse}
-          main_speaker={retreatData.retreat.mainSpeaker}
+          // main_speaker={retreatData.retreat.mainSpeaker}
           memo={retreatData.retreat.memo}
           poster_url={retreatData.retreat.posterUrl}
           retreat_registration_name={
