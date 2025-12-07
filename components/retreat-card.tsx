@@ -5,7 +5,7 @@ import {
   CalendarDays,
   MapPin,
   Book,
-  Mic2,
+  // Mic2,
   StickyNote,
   UserRound
 } from "lucide-react";
@@ -16,7 +16,7 @@ interface RetreatCardProps {
   dates: string;
   location: string;
   main_verse: string;
-  main_speaker: string;
+  // main_speaker: string;
   memo?: string;
   poster_url?: string;
   retreat_registration_name: string;
@@ -27,7 +27,7 @@ function RetreatCard({
   dates,
   location,
   main_verse,
-  main_speaker,
+  // main_speaker,
   memo,
   poster_url,
   retreat_registration_name
