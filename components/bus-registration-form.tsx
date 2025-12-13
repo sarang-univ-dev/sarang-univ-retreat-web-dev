@@ -12,7 +12,6 @@ import { cn } from "@/lib/utils";
 import type {
   RetreatInfo,
   ShuttleBusInfo,
-  TRetreatRegistrationSchedule,
 } from "@/types";
 // import { format, addDays, parseISO } from "date-fns";
 import {
@@ -31,6 +30,7 @@ import {
   CircleAlert,
 } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
+import { getKSTDateString } from "@/lib/date-utils";
 import {
   Tabs,
   // TabsContent,
@@ -133,26 +133,13 @@ export function BusRegistrationFormComponent({
     );
   }, [formData.shuttleBusIds, busData]);
 
-  // 날짜별 스케줄을 정리
-  const schedulesByDate = useMemo(() => {
-    return busData.retreatRegisterSchedules.reduce((acc, schedule) => {
-      const dateStr = new Date(schedule.time).toLocaleDateString("sv-SE", {
-        timeZone: "Asia/Seoul",
-      }); // "YYYY-MM-DD" 형식, 한국 기준
-
-      if (!acc[dateStr]) {
-        acc[dateStr] = [];
-      }
-      acc[dateStr].push(schedule);
-
-      return acc;
-    }, {} as Record<string, TRetreatRegistrationSchedule[]>);
-  }, [busData.retreatRegisterSchedules]);
-
-  // 사용 가능한 날짜 목록
+  // 셔틀버스 출발 날짜 기준으로 사용 가능한 날짜 목록 생성
   const availableDates = useMemo(() => {
-    return Object.keys(schedulesByDate).sort();
-  }, [schedulesByDate]);
+    const busDateSet = new Set(
+      busData.shuttleBuses.map((bus) => getKSTDateString(bus.departureTime))
+    );
+    return Array.from(busDateSet).sort();
+  }, [busData.shuttleBuses]);
 
   const validateForm = (): boolean => {
     const errors = {
@@ -624,11 +611,7 @@ export function BusRegistrationFormComponent({
               <div className="grid grid-cols-1 gap-4">
                 {busData.shuttleBuses
                   .filter((bus) => {
-                    const busDate = new Date(
-                      bus.departureTime
-                    ).toLocaleDateString("sv-SE", {
-                      timeZone: "Asia/Seoul",
-                    }); // ex: "2024-07-02"
+                    const busDate = getKSTDateString(bus.departureTime); // KST 기준 YYYY-MM-DD
                     return busDate === selectedDate;
                   })
                   .map((bus) => (
@@ -732,12 +715,8 @@ export function BusRegistrationFormComponent({
                   const bus = busData.shuttleBuses.find((b) => b.id === busId);
                   if (!bus) return null;
 
-                  // 버스의 실제 날짜 계산
-                  const busDate = new Date(
-                    bus.departureTime
-                  ).toLocaleDateString("sv-SE", {
-                    timeZone: "Asia/Seoul"
-                  });
+                  // 버스의 실제 날짜 계산 (KST 기준)
+                  const busDate = getKSTDateString(bus.departureTime);
 
                   return (
                     <div
