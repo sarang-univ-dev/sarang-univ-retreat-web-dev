@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/utils/formatDate";
+import { getKSTDateString } from "@/lib/date-utils";
 import type { RetreatInfo, TRetreatRegistrationSchedule } from "@/types";
 import { server } from "@/utils/axios";
 import { getErrorMessage, logError } from "@/utils/errorHandler";
@@ -449,13 +450,11 @@ export function RetreatRegistrationForm({
     //}
   };
 
-  // 표시 목적으로 일정에서 고유한 날짜 추출
+  // 표시 목적으로 일정에서 고유한 날짜 추출 (KST 기준)
   const retreatDatesForDisplay = retreatData
     ? Array.from(
         new Set(
-          retreatData.schedule.map(
-            (s) => new Date(s.time).toISOString().split("T")[0]
-          )
+          retreatData.schedule.map((s) => getKSTDateString(s.time))
         )
       ).sort()
     : [];
@@ -700,8 +699,7 @@ export function RetreatRegistrationForm({
                 {retreatDatesForDisplay.map((date: string) => {
                   const event = retreatData.schedule.find(
                     (s) =>
-                      new Date(s.time).toLocaleDateString("ko-KR") ===
-                        new Date(date).toLocaleDateString("ko-KR") &&
+                      getKSTDateString(s.time) === date &&
                       s.type === eventType
                   );
                   return (

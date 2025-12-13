@@ -9,6 +9,7 @@ import type { RetreatInfo } from "@/types";
 import { TRetreatRegistrationSchedule } from "@/types";
 import { server } from "@/utils/axios";
 import axios from "axios";
+import { getKSTDateString, getKSTFullYear, getKSTMonth, getKSTDate, getKSTDay } from "@/lib/date-utils";
 
 // 실제 API 호출 함수 using axios
 const fetchRetreatData = async (slug: string): Promise<RetreatInfo> => {
@@ -95,20 +96,20 @@ export default function RetreatPage() {
   const formatDates = (schedules: TRetreatRegistrationSchedule[]) => {
     if (!schedules || schedules.length === 0) return "";
 
+    // KST 기준으로 날짜 추출
     const dates = [
       ...new Set(
-        schedules.map((s) => new Date(s.time).toISOString().split("T")[0])
+        schedules.map((s) => getKSTDateString(s.time))
       ),
     ].sort();
 
-    // "M/D(요일)" 형식으로 날짜 포맷팅
+    // "M/D(요일)" 형식으로 날짜 포맷팅 (KST 기준)
     const formatDate = (dateStr: string, showYear: boolean = true) => {
-      const date = new Date(dateStr);
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
+      const year = getKSTFullYear(dateStr);
+      const month = getKSTMonth(dateStr) + 1;
+      const day = getKSTDate(dateStr);
       const weekdays = ["주일", "월", "화", "수", "목", "금", "토"];
-      const dayOfWeek = weekdays[date.getDay()];
+      const dayOfWeek = weekdays[getKSTDay(dateStr)];
       return showYear
         ? `${year}년 ${month}월 ${day}일(${dayOfWeek})`
         : `${month}월 ${day}일(${dayOfWeek})`;
@@ -121,7 +122,7 @@ export default function RetreatPage() {
       const result = [];
       let start = dates[0];
       let end = start;
-      let previousYear = new Date(start).getFullYear();
+      let previousYear = getKSTFullYear(start);
 
       for (let i = 1; i < dates.length; i++) {
         const curr = new Date(dates[i]);
@@ -137,12 +138,12 @@ export default function RetreatPage() {
               formatDate(
                 start,
                 result.length === 0 ||
-                  new Date(start).getFullYear() !== previousYear
+                  getKSTFullYear(start) !== previousYear
               )
             );
           } else {
-            const startYear = new Date(start).getFullYear();
-            const endYear = new Date(end).getFullYear();
+            const startYear = getKSTFullYear(start);
+            const endYear = getKSTFullYear(end);
 
             // 결과 배열이 비어있으면 첫 번째 그룹이므로 항상 연도 표시
             const showStartYear: boolean =
@@ -159,19 +160,19 @@ export default function RetreatPage() {
           }
           start = dates[i];
           end = start;
-          previousYear = new Date(start).getFullYear();
+          previousYear = getKSTFullYear(start);
         }
       }
 
       // 마지막 그룹 추가
       if (start === end) {
-        const currentYear = new Date(start).getFullYear();
+        const currentYear = getKSTFullYear(start);
         result.push(
           formatDate(start, result.length === 0 || currentYear !== previousYear)
         );
       } else {
-        const startYear = new Date(start).getFullYear();
-        const endYear = new Date(end).getFullYear();
+        const startYear = getKSTFullYear(start);
+        const endYear = getKSTFullYear(end);
 
         // 결과 배열이 비어있으면 첫 번째 그룹이므로 항상 연도 표시
         const showStartYear: boolean =
