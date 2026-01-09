@@ -373,12 +373,12 @@ export function RetreatRegistrationForm({
     setIsSubmitting(true);
 
     const submissionData = {
-      name: formData.name,
+      name: formData.name.trim(),
       phoneNumber: formData.phoneNumber,
       gender: formData.gender,
       gradeId: Number(formData.grade),
       retreatId: retreatData.retreat.id,
-      currentLeaderName: formData.currentLeaderName,
+      currentLeaderName: formData.currentLeaderName.trim(),
       retreatRegistrationScheduleIds: formData.scheduleSelection,
       userType: formData.userType,
     };
