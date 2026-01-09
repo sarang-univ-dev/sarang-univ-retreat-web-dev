@@ -317,7 +317,7 @@ export function BusRegistrationFormComponent({
     setIsSubmitting(true);
 
     const submissionData = {
-      name: formData.name,
+      name: formData.name.trim(),
       phoneNumber: formData.phoneNumber,
       gender: formData.gender,
       gradeId: Number(formData.grade),
