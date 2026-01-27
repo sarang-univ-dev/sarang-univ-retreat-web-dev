@@ -56,6 +56,42 @@ const EVENT_TYPE_MAP: Record<string, string> = {
   SLEEP: "숙박",
 };
 
+// 직책 접미사 패턴 (리더명 유효성 검사용)
+const TITLE_SUFFIX_PATTERN =
+  /((리더|간사|고을지기|마을장|순장)(님)?|GBS|EBS|새가족)$/;
+
+// 유효하지 않은 이름 패턴 (모름, ?, - 등)
+const INVALID_NAME_PATTERN =
+  /^(모름|모르겠음|없음|없어요|몰라요|모름요|\?+|-+|x|X|\.+)$/;
+
+// 리더명 유효성 검사 함수
+const validateLeaderName = (
+  name: string
+): { isValid: boolean; errorMessage: string } => {
+  const trimmedName = name.trim();
+
+  if (!trimmedName) {
+    return { isValid: false, errorMessage: "현재 GBS/EBS 리더를 입력해주세요" };
+  }
+
+  if (INVALID_NAME_PATTERN.test(trimmedName)) {
+    return {
+      isValid: false,
+      errorMessage: "리더 이름을 정확히 입력해주세요",
+    };
+  }
+
+  const match = trimmedName.match(TITLE_SUFFIX_PATTERN);
+  if (match) {
+    return {
+      isValid: false,
+      errorMessage: "이름만 적어주세요",
+    };
+  }
+
+  return { isValid: true, errorMessage: "" };
+};
+
 interface RetreatRegistrationFormProps {
   retreatData: RetreatInfo;
   retreatSlug: string;
@@ -248,7 +284,14 @@ export function RetreatRegistrationForm({
   ) => {
     const { value } = e.target;
     setFormData({ ...formData, currentLeaderName: value });
-    setFormErrors({ ...formErrors, currentLeaderName: "" });
+
+    // 실시간 유효성 검사
+    const validation = validateLeaderName(value);
+    if (!validation.isValid && value.trim()) {
+      setFormErrors({ ...formErrors, currentLeaderName: validation.errorMessage });
+    } else {
+      setFormErrors({ ...formErrors, currentLeaderName: "" });
+    }
   };
 
   const validateForm = (): boolean => {
@@ -278,8 +321,9 @@ export function RetreatRegistrationForm({
       if (!firstErrorElement)
         firstErrorElement = document.getElementById("grade");
     }
-    if (!formData.currentLeaderName.trim()) {
-      errors.currentLeaderName = "현재 GBS/EBS 리더를 입력해주세요";
+    const leaderNameValidation = validateLeaderName(formData.currentLeaderName);
+    if (!leaderNameValidation.isValid) {
+      errors.currentLeaderName = leaderNameValidation.errorMessage;
       isValid = false;
       if (!firstErrorElement)
         firstErrorElement = document.getElementById("currentLeaderName");
@@ -561,14 +605,14 @@ export function RetreatRegistrationForm({
             <Star className="mr-2" /> 현재 GBS/EBS 리더
           </Label>
           <p className="text-sm text-muted-foreground mb-2">
-            리더는 본인 이름을 적어주세요
+            리더는 본인 이름을 적어주세요 (직책 제외, 이름만 입력)
           </p>
           <Input
             id="currentLeaderName"
             name="currentLeaderName"
             value={formData.currentLeaderName}
             onChange={handleCurrentLeaderNameChange}
-            placeholder="김리더"
+            placeholder="김철수"
           />
           {formErrors.currentLeaderName && (
             <p className="text-red-500 text-sm mt-1">
