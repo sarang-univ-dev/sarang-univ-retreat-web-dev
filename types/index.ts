@@ -58,10 +58,6 @@ export type TRetreatUnivGroup = {
     admin_staff_phone_number?: string;
     deposit_account?: string;
     deposit_account_holder?: string;
-    new_comer_staff_name?: string;
-    new_comer_staff_phone_number?: string;
-    soldier_staff_name?: string;
-    soldier_staff_phone_number?: string;
     shuttle_bus_deposit_account?: string;
     shuttle_bus_deposit_account_holder?: string;
   };
