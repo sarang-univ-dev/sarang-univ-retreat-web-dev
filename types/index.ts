@@ -359,7 +359,11 @@ export type RetreatInfo = {
     univGroupId: number;
     univGroupName: string;
     univGroupNumber: number;
-    grades: Pick<TGrade, "id" | "name" | "number">[];
+    grades: {
+      gradeId: number;
+      gradeName: string;
+      gradeNumber: number;
+    }[];
   }[];
   schedule: TRetreatRegistrationSchedule[];
   payment: TRetreatPaymentSchedule[];
@@ -371,7 +375,11 @@ export type ShuttleBusInfo = {
     univGroupId: number;
     univGroupName: string;
     univGroupNumber: number;
-    grades: Pick<TGrade, "id" | "name" | "number">[];
+    grades: {
+      gradeId: number;
+      gradeName: string;
+      gradeNumber: number;
+    }[];
   }[];
   retreatRegisterSchedules: TRetreatRegistrationSchedule[];
   shuttleBuses: TShuttleBuses[];

@@ -346,7 +346,7 @@ export function BusRegistrationFormComponent({
 
         // 선택된 학년 정보 가져오기
         const selectedGrade = availableGrades.find(
-          (grade) => grade.id.toString() === formData.grade
+          (grade) => grade.gradeId.toString() === formData.grade
         );
 
         localStorage.setItem(
@@ -356,7 +356,7 @@ export function BusRegistrationFormComponent({
             phoneNumber: formData.phoneNumber,
             gender: formData.gender,
             gradeId: Number(formData.grade),
-            gradeNumber: selectedGrade?.number,
+            gradeNumber: selectedGrade?.gradeNumber,
             retreatId: retreatData.retreat.id,
             shuttleBusIds: formData.shuttleBusIds,
             isAdminContact: formData.isAdminContact,
@@ -518,8 +518,8 @@ export function BusRegistrationFormComponent({
               </SelectTrigger>
               <SelectContent>
                 {availableGrades.map((grade) => (
-                  <SelectItem key={grade.id} value={grade.id.toString()}>
-                    {`${grade.number}학년 ${grade.name}`}
+                  <SelectItem key={grade.gradeId} value={grade.gradeId.toString()}>
+                    {`${grade.gradeNumber}학년 ${grade.gradeName}`}
                   </SelectItem>
                 ))}
               </SelectContent>
