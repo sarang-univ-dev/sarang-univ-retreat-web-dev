@@ -573,10 +573,10 @@ export function RetreatRegistrationForm({
           <Select
             onValueChange={(value: string) => {
               const selectedGrade = availableGrades.find(
-                (grade) => grade.id.toString() === value
+                (grade) => grade.gradeId.toString() === value
               );
               if (selectedGrade) {
-                setGradeNumber(selectedGrade.number);
+                setGradeNumber(selectedGrade.gradeNumber);
                 setFormData({ ...formData, grade: value });
                 setFormErrors((prevErrors) => ({ ...prevErrors, grade: "" }));
               }
@@ -589,8 +589,8 @@ export function RetreatRegistrationForm({
             </SelectTrigger>
             <SelectContent>
               {availableGrades.map((grade) => (
-                <SelectItem key={grade.id} value={grade.id.toString()}>
-                  {`${grade.number}학년 ${grade.name}`}
+                <SelectItem key={grade.gradeId} value={grade.gradeId.toString()}>
+                  {`${grade.gradeNumber}학년 ${grade.gradeName}`}
                 </SelectItem>
               ))}
             </SelectContent>
