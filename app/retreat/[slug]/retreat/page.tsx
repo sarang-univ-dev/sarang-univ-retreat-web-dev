@@ -233,11 +233,16 @@ export default function RetreatPage() {
     "Made By 사랑의교회 대학부 여름연합수양회 전산팀\ncredits to 희서, 주호, 성욱, 상묵, 혜성, 진영, 예빈"
   );
 
+  const year = retreatData.schedule[0]
+    ? getKSTFullYear(retreatData.schedule[0].time)
+    : new Date().getFullYear();
+
   return (
     <div className="container mx-auto p-4">
       <div className="mb-8">
         <RetreatCard
           name={retreatData.retreat.name}
+          year={year}
           dates={formatDates(retreatData.schedule)}
           location={retreatData.retreat.location}
           main_verse={retreatData.retreat.mainVerse}
