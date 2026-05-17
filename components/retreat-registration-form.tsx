@@ -612,27 +612,6 @@ export function RetreatRegistrationForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="currentLeaderName" className="flex items-center">
-            <Star className="mr-2" /> 현재 GBS/EBS 리더
-          </Label>
-          <p className="text-sm text-muted-foreground mb-2">
-            리더는 본인 이름을 적어주세요 (직책 제외, 이름만 입력)
-          </p>
-          <Input
-            id="currentLeaderName"
-            name="currentLeaderName"
-            value={formData.currentLeaderName}
-            onChange={handleCurrentLeaderNameChange}
-            placeholder="김철수"
-          />
-          {formErrors.currentLeaderName && (
-            <p className="text-red-500 text-sm mt-1">
-              {formErrors.currentLeaderName}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
           <Label htmlFor="name" className="flex items-center">
             <User className="mr-2" />
             이름
@@ -691,6 +670,27 @@ export function RetreatRegistrationForm({
           {formErrors.phoneNumber && (
             <p className="text-red-500 text-sm mt-1">
               {formErrors.phoneNumber}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="currentLeaderName" className="flex items-center">
+            <Star className="mr-2" /> 현재 GBS/EBS 리더
+          </Label>
+          <p className="text-sm text-muted-foreground mb-2">
+            리더는 본인 이름을 적어주세요 (직책 제외, 이름만 입력)
+          </p>
+          <Input
+            id="currentLeaderName"
+            name="currentLeaderName"
+            value={formData.currentLeaderName}
+            onChange={handleCurrentLeaderNameChange}
+            placeholder="김철수"
+          />
+          {formErrors.currentLeaderName && (
+            <p className="text-red-500 text-sm mt-1">
+              {formErrors.currentLeaderName}
             </p>
           )}
         </div>
