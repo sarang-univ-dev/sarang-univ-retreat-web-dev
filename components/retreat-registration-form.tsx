@@ -56,6 +56,42 @@ const EVENT_TYPE_MAP: Record<string, string> = {
   SLEEP: "숙박",
 };
 
+// 직책 접미사 패턴 (리더명 유효성 검사용)
+const TITLE_SUFFIX_PATTERN =
+  /((리더|간사|고을지기|마을장|순장)(님)?|GBS|EBS|새가족)$/;
+
+// 유효하지 않은 이름 패턴 (모름, ?, - 등)
+const INVALID_NAME_PATTERN =
+  /^(모름|모르겠음|없음|없어요|몰라요|모름요|\?+|-+|x|X|\.+)$/;
+
+// 리더명 유효성 검사 함수
+const validateLeaderName = (
+  name: string
+): { isValid: boolean; errorMessage: string } => {
+  const trimmedName = name.trim();
+
+  if (!trimmedName) {
+    return { isValid: false, errorMessage: "현재 GBS/EBS 리더를 입력해주세요" };
+  }
+
+  if (INVALID_NAME_PATTERN.test(trimmedName)) {
+    return {
+      isValid: false,
+      errorMessage: "리더 이름을 정확히 입력해주세요",
+    };
+  }
+
+  const match = trimmedName.match(TITLE_SUFFIX_PATTERN);
+  if (match) {
+    return {
+      isValid: false,
+      errorMessage: "이름만 적어주세요",
+    };
+  }
+
+  return { isValid: true, errorMessage: "" };
+};
+
 interface RetreatRegistrationFormProps {
   retreatData: RetreatInfo;
   retreatSlug: string;
@@ -102,6 +138,7 @@ export function RetreatRegistrationForm({
     RetreatInfo["univGroupAndGrade"][number]["grades"]
   >([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [originalPrice, setOriginalPrice] = useState<number>(0);
   const [formErrors, setFormErrors] = useState<{
     univGroup: string;
     grade: string;
@@ -149,9 +186,17 @@ export function RetreatRegistrationForm({
 
   useEffect(() => {
     if (retreatData) {
+      const currentPayment = findCurrentPayment();
+      const maxTotalPrice = Math.max(
+        ...retreatData.payment.map((p) => p.totalPrice)
+      );
+      const maxPartialPricePerSchedule = Math.max(
+        ...retreatData.payment.map((p) => p.partialPricePerSchedule)
+      );
+
       if (isAllScheduleSelected) {
-        const currentPayment = findCurrentPayment();
         setTotalPrice(currentPayment.totalPrice);
+        setOriginalPrice(maxTotalPrice);
       } else {
         const selectedSchedules = retreatData.schedule.filter(
           (schedule: TRetreatRegistrationSchedule) =>
@@ -159,13 +204,15 @@ export function RetreatRegistrationForm({
         );
 
         const eventCount = selectedSchedules.length;
-        const currentPayment = findCurrentPayment();
 
         const calculatedPrice = Math.min(
           eventCount * currentPayment.partialPricePerSchedule,
           currentPayment.totalPrice
         );
         setTotalPrice(calculatedPrice);
+        setOriginalPrice(
+          Math.min(eventCount * maxPartialPricePerSchedule, maxTotalPrice)
+        );
       }
     }
   }, [
@@ -248,7 +295,14 @@ export function RetreatRegistrationForm({
   ) => {
     const { value } = e.target;
     setFormData({ ...formData, currentLeaderName: value });
-    setFormErrors({ ...formErrors, currentLeaderName: "" });
+
+    // 실시간 유효성 검사
+    const validation = validateLeaderName(value);
+    if (!validation.isValid && value.trim()) {
+      setFormErrors({ ...formErrors, currentLeaderName: validation.errorMessage });
+    } else {
+      setFormErrors({ ...formErrors, currentLeaderName: "" });
+    }
   };
 
   const validateForm = (): boolean => {
@@ -278,8 +332,9 @@ export function RetreatRegistrationForm({
       if (!firstErrorElement)
         firstErrorElement = document.getElementById("grade");
     }
-    if (!formData.currentLeaderName.trim()) {
-      errors.currentLeaderName = "현재 GBS/EBS 리더를 입력해주세요";
+    const leaderNameValidation = validateLeaderName(formData.currentLeaderName);
+    if (!leaderNameValidation.isValid) {
+      errors.currentLeaderName = leaderNameValidation.errorMessage;
       isValid = false;
       if (!firstErrorElement)
         firstErrorElement = document.getElementById("currentLeaderName");
@@ -529,10 +584,10 @@ export function RetreatRegistrationForm({
           <Select
             onValueChange={(value: string) => {
               const selectedGrade = availableGrades.find(
-                (grade) => grade.id.toString() === value
+                (grade) => grade.gradeId.toString() === value
               );
               if (selectedGrade) {
-                setGradeNumber(selectedGrade.number);
+                setGradeNumber(selectedGrade.gradeNumber);
                 setFormData({ ...formData, grade: value });
                 setFormErrors((prevErrors) => ({ ...prevErrors, grade: "" }));
               }
@@ -545,8 +600,8 @@ export function RetreatRegistrationForm({
             </SelectTrigger>
             <SelectContent>
               {availableGrades.map((grade) => (
-                <SelectItem key={grade.id} value={grade.id.toString()}>
-                  {`${grade.number}학년 ${grade.name}`}
+                <SelectItem key={grade.gradeId} value={grade.gradeId.toString()}>
+                  {`${grade.gradeNumber}학년 ${grade.gradeName}`}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -561,14 +616,14 @@ export function RetreatRegistrationForm({
             <Star className="mr-2" /> 현재 GBS/EBS 리더
           </Label>
           <p className="text-sm text-muted-foreground mb-2">
-            리더는 본인 이름을 적어주세요
+            리더는 본인 이름을 적어주세요 (직책 제외, 이름만 입력)
           </p>
           <Input
             id="currentLeaderName"
             name="currentLeaderName"
             value={formData.currentLeaderName}
             onChange={handleCurrentLeaderNameChange}
-            placeholder="김리더"
+            placeholder="김철수"
           />
           {formErrors.currentLeaderName && (
             <p className="text-red-500 text-sm mt-1">
@@ -604,8 +659,12 @@ export function RetreatRegistrationForm({
               <SelectValue placeholder="성별을 선택해주세요" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="MALE">남</SelectItem>
-              <SelectItem value="FEMALE">여</SelectItem>
+              <SelectItem value="MALE">
+                <span className="text-blue-700 bg-blue-50 px-2 py-0.5 rounded">남</span>
+              </SelectItem>
+              <SelectItem value="FEMALE">
+                <span className="text-pink-700 bg-pink-50 px-2 py-0.5 rounded">여</span>
+              </SelectItem>
             </SelectContent>
           </Select>
           {formErrors.gender && (
@@ -765,13 +824,35 @@ export function RetreatRegistrationForm({
           )}
         </div>
 
+        {/* TODO: 강조 표시 on/off 를 수양회별로 제어하고 싶을 때는 retreat 테이블에
+            display_settings JSONB 컬럼을 도입해서 { showDiscountPricing: boolean }
+            같은 키로 관리하면 옵션이 늘어날 때마다 새 컬럼을 추가하지 않아도 된다.
+            지금은 "최고가 > 현재가" 일 때만 자동으로 강조 표시되므로 토글 없이 동작. */}
         <div className="mt-4 text-right">
           <p className="font-bold">
             총금액:{" "}
             {formData.userType === "NEW_COMER" ||
-            formData.userType === "SOLDIER"
-              ? "입금 대기"
-              : `${totalPrice.toLocaleString()}원`}
+            formData.userType === "SOLDIER" ? (
+              "입금 대기"
+            ) : originalPrice > totalPrice ? (
+              <>
+                <span className="text-gray-400 line-through font-normal mr-2">
+                  {originalPrice.toLocaleString()}원
+                </span>
+                <span className="text-red-600">
+                  {totalPrice.toLocaleString()}원
+                </span>
+                <span className="text-red-600 text-sm ml-2">
+                  (
+                  {Math.round(
+                    ((originalPrice - totalPrice) / originalPrice) * 100
+                  )}
+                  % 할인)
+                </span>
+              </>
+            ) : (
+              `${totalPrice.toLocaleString()}원`
+            )}
           </p>
         </div>
       </div>

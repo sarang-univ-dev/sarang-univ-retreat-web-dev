@@ -58,10 +58,6 @@ export type TRetreatUnivGroup = {
     admin_staff_phone_number?: string;
     deposit_account?: string;
     deposit_account_holder?: string;
-    new_comer_staff_name?: string;
-    new_comer_staff_phone_number?: string;
-    soldier_staff_name?: string;
-    soldier_staff_phone_number?: string;
     shuttle_bus_deposit_account?: string;
     shuttle_bus_deposit_account_holder?: string;
   };
@@ -363,7 +359,11 @@ export type RetreatInfo = {
     univGroupId: number;
     univGroupName: string;
     univGroupNumber: number;
-    grades: Pick<TGrade, "id" | "name" | "number">[];
+    grades: {
+      gradeId: number;
+      gradeName: string;
+      gradeNumber: number;
+    }[];
   }[];
   schedule: TRetreatRegistrationSchedule[];
   payment: TRetreatPaymentSchedule[];
@@ -375,7 +375,11 @@ export type ShuttleBusInfo = {
     univGroupId: number;
     univGroupName: string;
     univGroupNumber: number;
-    grades: Pick<TGrade, "id" | "name" | "number">[];
+    grades: {
+      gradeId: number;
+      gradeName: string;
+      gradeNumber: number;
+    }[];
   }[];
   retreatRegisterSchedules: TRetreatRegistrationSchedule[];
   shuttleBuses: TShuttleBuses[];

@@ -9,10 +9,11 @@ import {
   StickyNote,
   UserRound
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface RetreatCardProps {
   name: string;
+  year: number;
   dates: string;
   location: string;
   main_verse: string;
@@ -24,6 +25,7 @@ interface RetreatCardProps {
 
 function RetreatCard({
   name,
+  year,
   dates,
   location,
   main_verse,
@@ -34,32 +36,25 @@ function RetreatCard({
 }: RetreatCardProps) {
   return (
     <Card className="w-full mx-auto overflow-hidden">
-      <div className="relative">
+      <div className="flex flex-col">
         {poster_url && (
-          <div className="relative w-full h-[500px] md:h-[600px]">
+          <div className="relative w-full">
             <Image
-              src={poster_url || "/placeholder.svg"}
+              src={poster_url}
               alt={`${name} 포스터`}
-              fill
-              className="object-cover opacity-90"
+              width={1200}
+              height={1600}
+              className="w-full h-auto"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/60"></div>
           </div>
         )}
 
-        <div
-          className={`${
-            poster_url ? "absolute inset-0 z-10" : ""
-          } p-3 sm:p-4 md:p-6 flex flex-col h-full`}
-        >
-          <CardHeader className="flex-grow flex flex-col items-center justify-center">
-            <CardTitle className="text-3xl md:text-4xl font-bold text-center mb-4">
-              {name}
-            </CardTitle>
-          </CardHeader>
-
+        <div className="p-3 sm:p-4 md:p-6">
           <CardContent className="grid gap-4 bg-white/80 rounded-lg p-4 sm:p-6 backdrop-blur-sm">
+            <div className="text-center text-xl md:text-2xl font-semibold mb-2">
+              {year} 대학부 여름연합수양회 {name} 신청폼
+            </div>
             <div className="flex items-center gap-3">
               <CalendarDays className="w-5 h-5 text-primary flex-shrink-0" />
               <span className="font-medium">{dates}</span>

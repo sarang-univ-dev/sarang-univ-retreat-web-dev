@@ -60,6 +60,7 @@ export function BusRegistrationFormComponent({
   >([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showOneWayConfirmModal, setShowOneWayConfirmModal] = useState(false);
   const [refundPolicyConsent, setRefundPolicyConsent] = useState(false);
   const [modalError, setModalError] = useState({
     refundPolicyConsent: "",
@@ -291,7 +292,12 @@ export function BusRegistrationFormComponent({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
-      setShowConfirmModal(true);
+      // 버스 선택이 홀수면 편도 확인 모달 먼저 표시
+      if (formData.shuttleBusIds.length % 2 === 1) {
+        setShowOneWayConfirmModal(true);
+      } else {
+        setShowConfirmModal(true);
+      }
     }
   };
 
@@ -340,7 +346,7 @@ export function BusRegistrationFormComponent({
 
         // 선택된 학년 정보 가져오기
         const selectedGrade = availableGrades.find(
-          (grade) => grade.id.toString() === formData.grade
+          (grade) => grade.gradeId.toString() === formData.grade
         );
 
         localStorage.setItem(
@@ -350,7 +356,7 @@ export function BusRegistrationFormComponent({
             phoneNumber: formData.phoneNumber,
             gender: formData.gender,
             gradeId: Number(formData.grade),
-            gradeNumber: selectedGrade?.number,
+            gradeNumber: selectedGrade?.gradeNumber,
             retreatId: retreatData.retreat.id,
             shuttleBusIds: formData.shuttleBusIds,
             isAdminContact: formData.isAdminContact,
@@ -512,8 +518,8 @@ export function BusRegistrationFormComponent({
               </SelectTrigger>
               <SelectContent>
                 {availableGrades.map((grade) => (
-                  <SelectItem key={grade.id} value={grade.id.toString()}>
-                    {`${grade.number}학년 ${grade.name}`}
+                  <SelectItem key={grade.gradeId} value={grade.gradeId.toString()}>
+                    {`${grade.gradeNumber}학년 ${grade.gradeName}`}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -550,8 +556,12 @@ export function BusRegistrationFormComponent({
                 <SelectValue placeholder="성별을 선택해주세요" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="MALE">남</SelectItem>
-                <SelectItem value="FEMALE">여</SelectItem>
+                <SelectItem value="MALE">
+                  <span className="text-blue-700 bg-blue-50 px-2 py-0.5 rounded">남</span>
+                </SelectItem>
+                <SelectItem value="FEMALE">
+                  <span className="text-pink-700 bg-pink-50 px-2 py-0.5 rounded">여</span>
+                </SelectItem>
               </SelectContent>
             </Select>
             {formErrors.gender && (
@@ -856,6 +866,34 @@ export function BusRegistrationFormComponent({
           )}
         </Button>
       </form>
+
+      {showOneWayConfirmModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+            <h3 className="text-lg font-bold mb-4">편도 신청 확인</h3>
+            <p className="text-sm mb-4">
+              편도 이동이 확인되었습니다.<br />
+              편도로 신청하시겠습니까?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowOneWayConfirmModal(false)}
+              >
+                버스 추가 선택
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowOneWayConfirmModal(false);
+                  setShowConfirmModal(true);
+                }}
+              >
+                예, 편도입니다
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
