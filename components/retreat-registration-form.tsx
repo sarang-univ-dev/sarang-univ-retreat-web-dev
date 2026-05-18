@@ -815,7 +815,7 @@ export function RetreatRegistrationForm({
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="SOLDIER" id="userType-soldier" />
               <Label htmlFor="userType-soldier">
-                현역 군지체 (공익, 직업군인, 카투사 제외)
+                현역 군지체 (사회복무요원, 직업군인, 카투사 제외)
               </Label>
             </div>
           </RadioGroup>
