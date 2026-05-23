@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 
 import { server } from "@/utils/axios";
@@ -19,6 +19,7 @@ type RegistrationStatusResponse = {
 };
 
 const numberFormatter = new Intl.NumberFormat("ko-KR");
+const digitAnimationDurationMs = 420;
 
 const fetchRegistrationStatus = async ({
   retreatSlug,
@@ -36,6 +37,132 @@ const fetchRegistrationStatus = async ({
 
   return response.data;
 };
+
+function RollingDigit({
+  digit,
+  animate,
+}: {
+  digit: string;
+  animate: boolean;
+}) {
+  const currentDigitRef = useRef(digit);
+  const [displayDigit, setDisplayDigit] = useState(digit);
+  const [previousDigit, setPreviousDigit] = useState<string | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    const currentDigit = currentDigitRef.current;
+
+    if (digit === currentDigit) {
+      return;
+    }
+
+    currentDigitRef.current = digit;
+
+    if (!animate) {
+      setDisplayDigit(digit);
+      setPreviousDigit(null);
+      setIsAnimating(false);
+      return;
+    }
+
+    setPreviousDigit(currentDigit);
+    setDisplayDigit(digit);
+    setIsAnimating(true);
+
+    const timeoutId = setTimeout(() => {
+      setPreviousDigit(null);
+      setIsAnimating(false);
+    }, digitAnimationDurationMs);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [animate, digit]);
+
+  return (
+    <span className="relative inline-flex h-[1em] w-[1ch] shrink-0 justify-center overflow-hidden align-baseline tabular-nums">
+      {previousDigit !== null && (
+        <span className="digit-roll-out absolute inset-0 flex items-center justify-center">
+          {previousDigit}
+        </span>
+      )}
+      <span
+        className={`absolute inset-0 flex items-center justify-center ${
+          isAnimating ? "digit-roll-in" : ""
+        }`}
+      >
+        {displayDigit}
+      </span>
+    </span>
+  );
+}
+
+function RollingNumber({
+  value,
+  suffix = "",
+  fallback,
+  className,
+}: {
+  value: number | null;
+  suffix?: string;
+  fallback: string;
+  className: string;
+}) {
+  const previousValueRef = useRef<number | null>(null);
+  const shouldAnimate =
+    previousValueRef.current !== null &&
+    value !== null &&
+    value > previousValueRef.current;
+
+  useEffect(() => {
+    previousValueRef.current = value;
+  }, [value]);
+
+  const wrapperClassName = `${className} inline-flex items-center justify-center tabular-nums`;
+
+  if (value === null) {
+    return <span className={wrapperClassName}>{fallback}</span>;
+  }
+
+  const formattedValue = numberFormatter.format(value);
+  const characters = formattedValue.split("");
+  const digitCount = characters.filter((character) =>
+    /\d/.test(character)
+  ).length;
+  let seenDigitCount = 0;
+
+  return (
+    <span
+      aria-label={`${formattedValue}${suffix}`}
+      className={wrapperClassName}
+    >
+      <span aria-hidden="true">
+        {characters.map((character, index) => {
+          if (!/\d/.test(character)) {
+            return (
+              <span className="inline-block w-[0.34em]" key={`static-${index}`}>
+                {character}
+              </span>
+            );
+          }
+
+          const digitPositionFromRight = digitCount - seenDigitCount - 1;
+          seenDigitCount += 1;
+
+          return (
+            <RollingDigit
+              animate={shouldAnimate}
+              digit={character}
+              key={`digit-${digitPositionFromRight}`}
+            />
+          );
+        })}
+        {suffix}
+      </span>
+    </span>
+  );
+}
 
 export default function DepartmentRegistrationStatusPage() {
   const params = useParams<{ slug: string; univGroupNumber: string }>();
@@ -125,13 +252,21 @@ export default function DepartmentRegistrationStatusPage() {
         </header>
 
         <section className="flex w-full flex-1 flex-col items-center justify-center gap-8">
-          <p className="min-h-[12rem] text-8xl font-black leading-none tracking-normal tabular-nums sm:min-h-[16rem] sm:text-[9rem] md:min-h-[20rem] md:text-[12rem] lg:text-[14rem]">
-            {status ? `${numberFormatter.format(status.count)}명` : "--명"}
-          </p>
+          <RollingNumber
+            className="min-h-[12rem] text-8xl font-black leading-none tracking-normal sm:min-h-[16rem] sm:text-[9rem] md:min-h-[20rem] md:text-[12rem] lg:text-[14rem]"
+            fallback="--명"
+            suffix="명"
+            value={status?.count ?? null}
+          />
 
           <div className="rounded-md border-2 border-[#f4d35e] px-6 py-4 tabular-nums sm:px-10 sm:py-5">
             <p className="text-3xl font-extrabold text-[#f4d35e] sm:text-5xl md:text-6xl">
-              추가 신청 +{numberFormatter.format(additionalCount)}
+              추가 신청 +
+              <RollingNumber
+                className="inline-flex"
+                fallback="0"
+                value={additionalCount}
+              />
             </p>
           </div>
         </section>

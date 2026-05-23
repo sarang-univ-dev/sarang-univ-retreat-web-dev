@@ -70,3 +70,38 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes digit-roll-in {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes digit-roll-out {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-100%);
+    }
+  }
+
+  .digit-roll-in {
+    animation: digit-roll-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .digit-roll-out {
+    animation: digit-roll-out 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .digit-roll-in,
+    .digit-roll-out {
+      animation: none;
+    }
+  }
+}
