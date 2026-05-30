@@ -9,7 +9,7 @@ import type { RetreatInfo } from "@/types";
 import { TRetreatRegistrationSchedule } from "@/types";
 import { server } from "@/utils/axios";
 import axios from "axios";
-import { getKSTDateString, getKSTFullYear, getKSTMonth, getKSTDate, getKSTDay } from "@/lib/date-utils";
+import { getKSTDateString, getKSTFullYear, getKSTMonth, getKSTDate, getKSTDay, getRetreatSeason } from "@/lib/date-utils";
 
 // 실제 API 호출 함수 using axios
 const fetchRetreatData = async (slug: string): Promise<RetreatInfo> => {
@@ -236,6 +236,9 @@ export default function RetreatPage() {
   const year = retreatData.schedule[0]
     ? getKSTFullYear(retreatData.schedule[0].time)
     : new Date().getFullYear();
+  const season = retreatData.schedule[0]
+    ? getRetreatSeason(retreatData.schedule[0].time)
+    : "여름";
 
   return (
     <div className="container mx-auto p-4">
@@ -243,6 +246,7 @@ export default function RetreatPage() {
         <RetreatCard
           name={retreatData.retreat.name}
           year={year}
+          season={season}
           dates={formatDates(retreatData.schedule)}
           location={retreatData.retreat.location}
           main_verse={retreatData.retreat.mainVerse}

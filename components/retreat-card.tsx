@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 interface RetreatCardProps {
   name: string;
   year: number;
+  season: string;
   dates: string;
   location: string;
   main_verse: string;
@@ -25,6 +26,7 @@ interface RetreatCardProps {
 function RetreatCard({
   name,
   year,
+  season,
   dates,
   location,
   main_verse,
@@ -52,7 +54,7 @@ function RetreatCard({
         <div className="p-3 sm:p-4 md:p-6">
           <CardContent className="grid gap-4 bg-white/80 rounded-lg p-4 sm:p-6 backdrop-blur-sm">
             <div className="text-center text-xl md:text-2xl font-semibold mb-2">
-              {year} 대학부 여름연합수양회 {name} {form_kind ? `${form_kind} ` : ""}신청폼
+              {year} 대학부 {season}연합수양회 {name} {form_kind ? `${form_kind} ` : ""}신청폼
             </div>
             <div className="flex items-center gap-3">
               <CalendarDays className="w-5 h-5 text-primary flex-shrink-0" />

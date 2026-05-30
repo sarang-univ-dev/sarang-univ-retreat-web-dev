@@ -11,7 +11,7 @@ import type { RetreatInfo, ShuttleBusInfo } from "@/types";
 import { BusRegistrationFormComponent } from "@/components/bus-registration-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import RetreatCard from "@/components/retreat-card";
-import { getKSTDateString, getKSTFullYear, getKSTMonth, getKSTDate, getKSTDay } from "@/lib/date-utils";
+import { getKSTDateString, getKSTFullYear, getKSTMonth, getKSTDate, getKSTDay, getRetreatSeason } from "@/lib/date-utils";
 
 const fetchRetreatData = async (slug: string): Promise<RetreatInfo> => {
   try {
@@ -248,21 +248,12 @@ export default function BusRegisterPage() {
     return groupDates(dates).join(", ");
   };
 
-  // 현재 신청 기간 이름 조회
-  const getCurrentRegistrationPeriodName = (data: RetreatInfo) => {
-    const now = new Date();
-    const currentPeriod = data.payment.find((payment) => {
-      const startAt = new Date(payment.startAt);
-      const endAt = new Date(payment.endAt);
-      return now >= startAt && now <= endAt;
-    });
-
-    return currentPeriod?.name;
-  };
-
   const year = retreatData.schedule[0]
     ? getKSTFullYear(retreatData.schedule[0].time)
     : new Date().getFullYear();
+  const season = retreatData.schedule[0]
+    ? getRetreatSeason(retreatData.schedule[0].time)
+    : "여름";
 
   return (
     <div className="container mx-auto p-4">
@@ -270,6 +261,7 @@ export default function BusRegisterPage() {
         <RetreatCard
           name={retreatData.retreat.name}
           year={year}
+          season={season}
           dates={formatDates(retreatData.schedule)}
           location={retreatData.retreat.location}
           main_verse={retreatData.retreat.mainVerse}
