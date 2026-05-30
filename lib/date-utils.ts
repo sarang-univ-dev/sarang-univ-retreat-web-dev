@@ -59,6 +59,15 @@ export function getKSTMonth(dateInput: string | Date): number {
 }
 
 /**
+ * 수양회 시즌 반환 (KST 월 기준)
+ * 4~9월 → "여름", 그 외(10~3월) → "겨울"
+ */
+export function getRetreatSeason(dateInput: string | Date): "여름" | "겨울" {
+  const month = getKSTMonth(dateInput); // 0: 1월 ~ 11: 12월
+  return month >= 3 && month <= 8 ? "여름" : "겨울";
+}
+
+/**
  * KST 기준 연도 반환
  */
 export function getKSTFullYear(dateInput: string | Date): number {

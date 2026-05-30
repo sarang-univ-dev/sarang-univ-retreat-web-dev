@@ -138,7 +138,6 @@ export function RetreatRegistrationForm({
     RetreatInfo["univGroupAndGrade"][number]["grades"]
   >([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [originalPrice, setOriginalPrice] = useState<number>(0);
   const [formErrors, setFormErrors] = useState<{
     univGroup: string;
     grade: string;
@@ -187,16 +186,9 @@ export function RetreatRegistrationForm({
   useEffect(() => {
     if (retreatData) {
       const currentPayment = findCurrentPayment();
-      const maxTotalPrice = Math.max(
-        ...retreatData.payment.map((p) => p.totalPrice)
-      );
-      const maxPartialPricePerSchedule = Math.max(
-        ...retreatData.payment.map((p) => p.partialPricePerSchedule)
-      );
 
       if (isAllScheduleSelected) {
         setTotalPrice(currentPayment.totalPrice);
-        setOriginalPrice(maxTotalPrice);
       } else {
         const selectedSchedules = retreatData.schedule.filter(
           (schedule: TRetreatRegistrationSchedule) =>
@@ -210,9 +202,6 @@ export function RetreatRegistrationForm({
           currentPayment.totalPrice
         );
         setTotalPrice(calculatedPrice);
-        setOriginalPrice(
-          Math.min(eventCount * maxPartialPricePerSchedule, maxTotalPrice)
-        );
       }
     }
   }, [
@@ -824,35 +813,13 @@ export function RetreatRegistrationForm({
           )}
         </div>
 
-        {/* TODO: 강조 표시 on/off 를 수양회별로 제어하고 싶을 때는 retreat 테이블에
-            display_settings JSONB 컬럼을 도입해서 { showDiscountPricing: boolean }
-            같은 키로 관리하면 옵션이 늘어날 때마다 새 컬럼을 추가하지 않아도 된다.
-            지금은 "최고가 > 현재가" 일 때만 자동으로 강조 표시되므로 토글 없이 동작. */}
         <div className="mt-4 text-right">
           <p className="font-bold">
             총금액:{" "}
             {formData.userType === "NEW_COMER" ||
-            formData.userType === "SOLDIER" ? (
-              "입금 대기"
-            ) : originalPrice > totalPrice ? (
-              <>
-                <span className="text-gray-400 line-through font-normal mr-2">
-                  {originalPrice.toLocaleString()}원
-                </span>
-                <span className="text-red-600">
-                  {totalPrice.toLocaleString()}원
-                </span>
-                <span className="text-red-600 text-sm ml-2">
-                  (
-                  {Math.round(
-                    ((originalPrice - totalPrice) / originalPrice) * 100
-                  )}
-                  % 할인)
-                </span>
-              </>
-            ) : (
-              `${totalPrice.toLocaleString()}원`
-            )}
+            formData.userType === "SOLDIER"
+              ? "입금 대기"
+              : `${totalPrice.toLocaleString()}원`}
           </p>
         </div>
       </div>
