@@ -10,8 +10,8 @@ import axios from "axios";
 import type { RetreatInfo, ShuttleBusInfo } from "@/types";
 import { BusRegistrationFormComponent } from "@/components/bus-registration-form";
 import { Skeleton } from "@/components/ui/skeleton";
-import ShuttleBusCard from "@/components/shuttle-bus-card";
-import { getKSTDateString, getKSTFullYear, getKSTMonth, getKSTDate, getKSTDay } from "@/lib/date-utils";
+import RetreatCard from "@/components/retreat-card";
+import { getKSTDateString, getKSTFullYear, getKSTMonth, getKSTDate, getKSTDay, getRetreatSeason } from "@/lib/date-utils";
 
 const fetchRetreatData = async (slug: string): Promise<RetreatInfo> => {
   try {
@@ -248,17 +248,26 @@ export default function BusRegisterPage() {
     return groupDates(dates).join(", ");
   };
 
+  const year = retreatData.schedule[0]
+    ? getKSTFullYear(retreatData.schedule[0].time)
+    : new Date().getFullYear();
+  const season = retreatData.schedule[0]
+    ? getRetreatSeason(retreatData.schedule[0].time)
+    : "여름";
+
   return (
     <div className="container mx-auto p-4">
       <div className="mb-8">
-        <ShuttleBusCard
+        <RetreatCard
           name={retreatData.retreat.name}
+          year={year}
+          season={season}
           dates={formatDates(retreatData.schedule)}
           location={retreatData.retreat.location}
           main_verse={retreatData.retreat.mainVerse}
           main_speaker={retreatData.retreat.mainSpeaker}
-          memo={retreatData.retreat.memo}
           poster_url={retreatData.retreat.posterUrl}
+          form_kind="셔틀버스"
         />
       </div>
 
