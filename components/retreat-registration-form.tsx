@@ -162,8 +162,20 @@ export function RetreatRegistrationForm({
 
   const [isAllScheduleSelected, setIsAllScheduleSelected] = useState(false);
 
-  // 현재 날짜에 유효한 payment를 찾는 함수
-  const findCurrentPayment = useCallback(() => {
+  const findApplicablePayment = useCallback(() => {
+    const usesEarliestPayment =
+      formData.userType === "NEW_COMER" ||
+      formData.userType === "SOLDIER" ||
+      gradeNumber === 1;
+
+    if (usesEarliestPayment) {
+      return retreatData.payment.reduce((earliest, current) => {
+        return new Date(current.startAt) < new Date(earliest.startAt)
+          ? current
+          : earliest;
+      });
+    }
+
     const currentDate = new Date();
     const validPayment = retreatData.payment.find(
       (payment) =>
@@ -181,11 +193,11 @@ export function RetreatRegistrationForm({
           : latest;
       });
     }
-  }, [retreatData.payment]);
+  }, [formData.userType, gradeNumber, retreatData.payment]);
 
   useEffect(() => {
     if (retreatData) {
-      const currentPayment = findCurrentPayment();
+      const currentPayment = findApplicablePayment();
 
       if (isAllScheduleSelected) {
         setTotalPrice(currentPayment.totalPrice);
@@ -208,7 +220,7 @@ export function RetreatRegistrationForm({
     formData.scheduleSelection,
     isAllScheduleSelected,
     retreatData,
-    findCurrentPayment,
+    findApplicablePayment,
   ]);
 
   const handleUnivGroupChange = (value: string) => {
@@ -216,6 +228,7 @@ export function RetreatRegistrationForm({
       (group) => group.univGroupId.toString() === value
     );
     setAvailableGrades(selectedGroup ? selectedGroup.grades : []);
+    setGradeNumber(0);
     setFormData({ ...formData, univGroup: value, grade: "" });
     setFormErrors({ ...formErrors, univGroup: "" });
   };
