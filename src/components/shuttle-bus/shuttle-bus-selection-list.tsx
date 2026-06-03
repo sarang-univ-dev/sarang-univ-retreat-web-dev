@@ -7,18 +7,18 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, Clock } from "lucide-react";
 import { formatDate } from "@/lib/format-date";
 import { getKSTDateString } from "@/lib/date-utils";
-import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
-import { useBusForm } from "@/hooks/use-bus-form";
+import { useShuttleBusInfoContext } from "@/components/shuttle-bus/shuttle-bus-info-context";
+import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
 
-export function BusSelectionList() {
-  const { busData } = useShuttleInfoContext();
-  const { control } = useBusForm();
-  const retreatLocation = busData.retreat.location;
+export function ShuttleBusSelectionList() {
+  const { shuttleBusData } = useShuttleBusInfoContext();
+  const { control } = useShuttleBusForm();
+  const retreatLocation = shuttleBusData.retreat.location;
 
   // 셔틀버스를 시간순으로 정렬하고 날짜별로 그룹화 (이 목록의 유일한 소비자)
   const busesByDate = useMemo(() => {
     // 시간순 정렬
-    const sortedBuses = busData.shuttleBuses.toSorted(
+    const sortedBuses = shuttleBusData.shuttleBuses.toSorted(
       (a, b) =>
         new Date(a.departureTime).getTime() -
         new Date(b.departureTime).getTime()
@@ -38,7 +38,7 @@ export function BusSelectionList() {
     return Object.entries(grouped)
       .toSorted(([dateA], [dateB]) => dateA.localeCompare(dateB))
       .map(([date, buses]) => ({ date, buses }));
-  }, [busData.shuttleBuses]);
+  }, [shuttleBusData.shuttleBuses]);
 
   return (
     <Controller

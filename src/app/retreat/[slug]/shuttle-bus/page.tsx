@@ -1,7 +1,7 @@
 "use client";
 
 import { useSlug } from "@/hooks/use-slug";
-import { BusRegistrationForm } from "@/components/shuttle/bus-registration-form";
+import { ShuttleBusRegistrationForm } from "@/components/shuttle-bus/shuttle-bus-registration-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import RetreatCard from "@/components/retreat/retreat-card";
 import {
@@ -20,7 +20,7 @@ export default function ShuttleBusPage() {
     isLoading: retreatLoading,
     isError: retreatError,
   } = useRetreatInfo(slug);
-  const { data: busData, isLoading: busLoading } = useShuttleBusInfo(slug);
+  const { data: shuttleBusData, isLoading: busLoading } = useShuttleBusInfo(slug);
 
   // 신청 기간이 지났으면 실패 페이지로 리다이렉트
   useRegistrationGate(slug, retreatData?.payment);
@@ -44,7 +44,7 @@ export default function ShuttleBusPage() {
     );
   }
 
-  if (!busData) {
+  if (!shuttleBusData) {
     return (
       <div className="container mx-auto p-4 text-center">
         <p className="text-red-500 text-lg">셔틀버스 정보를 찾을 수 없습니다.</p>
@@ -75,9 +75,9 @@ export default function ShuttleBusPage() {
         />
       </div>
 
-      <BusRegistrationForm
+      <ShuttleBusRegistrationForm
         retreatData={retreatData}
-        busData={busData}
+        shuttleBusData={shuttleBusData}
         retreatSlug={slug}
       />
     </div>

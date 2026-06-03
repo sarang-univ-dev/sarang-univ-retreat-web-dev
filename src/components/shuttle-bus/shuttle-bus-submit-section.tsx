@@ -2,25 +2,25 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BusSubmitButton } from "@/components/shuttle/bus-submit-button";
-import { OnewayConfirmModal } from "@/components/shuttle/oneway-confirm-modal";
-import { BusConfirmModal } from "@/components/shuttle/bus-confirm-modal";
-import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
-import { useBusTotalPrice } from "@/hooks/use-bus-derived";
+import { ShuttleBusSubmitButton } from "@/components/shuttle-bus/shuttle-bus-submit-button";
+import { OnewayConfirmModal } from "@/components/shuttle-bus/oneway-confirm-modal";
+import { ShuttleBusConfirmModal } from "@/components/shuttle-bus/shuttle-bus-confirm-modal";
+import { useShuttleBusInfoContext } from "@/components/shuttle-bus/shuttle-bus-info-context";
+import { useShuttleBusTotalPrice } from "@/hooks/use-shuttle-bus-derived";
 import { useShuttleBusRegistration } from "@/hooks/use-shuttle-bus-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
 import { getErrorMessage, logError } from "@/lib/error-handler";
-import { useBusForm } from "@/hooks/use-bus-form";
+import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
 
 /**
  * 제출 버튼 + 편도/확인 모달 + 제출(mutation) 책임을 묶은 컴포넌트.
- * 부모(BusRegistrationForm)는 mutation/제출 상태를 알지 못한다.
+ * 부모(ShuttleBusRegistrationForm)는 mutation/제출 상태를 알지 못한다.
  */
-export function BusSubmitSection({ retreatSlug }: { retreatSlug: string }) {
+export function ShuttleBusSubmitSection({ retreatSlug }: { retreatSlug: string }) {
   const router = useRouter();
-  const { getValues, handleSubmit } = useBusForm();
-  const { retreatData } = useShuttleInfoContext();
-  const totalPrice = useBusTotalPrice();
+  const { getValues, handleSubmit } = useShuttleBusForm();
+  const { retreatData } = useShuttleBusInfoContext();
+  const totalPrice = useShuttleBusTotalPrice();
   const setShuttleBusResult = useRegistrationResultStore(
     (s) => s.setShuttleBusResult
   );
@@ -92,7 +92,7 @@ export function BusSubmitSection({ retreatSlug }: { retreatSlug: string }) {
 
   return (
     <>
-      <BusSubmitButton
+      <ShuttleBusSubmitButton
         isSubmitting={isSubmitting}
         onClick={handleSubmit(onValid)}
       />
@@ -109,7 +109,7 @@ export function BusSubmitSection({ retreatSlug }: { retreatSlug: string }) {
       )}
 
       {showConfirmModal && (
-        <BusConfirmModal
+        <ShuttleBusConfirmModal
           open={showConfirmModal}
           isSubmitting={isSubmitting}
           onClose={() => setShowConfirmModal(false)}

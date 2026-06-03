@@ -4,18 +4,18 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { X, CheckCircle } from "lucide-react";
 import { formatDate } from "@/lib/format-date";
 import { getKSTDateString } from "@/lib/date-utils";
-import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
-import { useBusForm } from "@/hooks/use-bus-form";
+import { useShuttleBusInfoContext } from "@/components/shuttle-bus/shuttle-bus-info-context";
+import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
 
-export function SelectedBusesCard() {
-  const { busData } = useShuttleInfoContext();
-  const { watch, setValue } = useBusForm();
+export function SelectedShuttleBusesCard() {
+  const { shuttleBusData } = useShuttleBusInfoContext();
+  const { watch, setValue } = useShuttleBusForm();
   const selectedBusIds = watch("shuttleBusIds");
-  const shuttleBuses = busData.shuttleBuses;
+  const shuttleBuses = shuttleBusData.shuttleBuses;
 
   // 부분참여 여부 (이 카드의 유일한 소비자)
   const isPartialParticipation = useMemo(() => {
-    const buses = busData.shuttleBuses;
+    const buses = shuttleBusData.shuttleBuses;
     if (buses.length < 2) return false; // 데이터가 없거나 1개면 부분참여 판단 불가
 
     const firstBusId = buses[0].id;
@@ -24,7 +24,7 @@ export function SelectedBusesCard() {
     return selectedBusIds.some(
       (id) => id !== firstBusId && id !== lastBusId
     );
-  }, [selectedBusIds, busData]);
+  }, [selectedBusIds, shuttleBusData]);
 
   const handleBusSelection = (busId: number) => {
     const updatedSelection = selectedBusIds.includes(busId)

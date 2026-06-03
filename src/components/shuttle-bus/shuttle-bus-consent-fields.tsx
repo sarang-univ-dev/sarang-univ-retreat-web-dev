@@ -2,13 +2,13 @@ import { Controller } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TriangleAlert, CircleAlert } from "lucide-react";
-import { useBusForm } from "@/hooks/use-bus-form";
+import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
 
-export function BusConsentFields() {
+export function ShuttleBusConsentFields() {
   const {
     control,
     formState: { errors },
-  } = useBusForm();
+  } = useShuttleBusForm();
 
   return (
     <Card className="mb-6">

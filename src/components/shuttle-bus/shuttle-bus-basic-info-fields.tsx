@@ -10,18 +10,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Users, Hash, User, UserRoundCheck, Phone, UserCheck } from "lucide-react";
-import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
-import { useBusForm } from "@/hooks/use-bus-form";
+import { useShuttleBusInfoContext } from "@/components/shuttle-bus/shuttle-bus-info-context";
+import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
 
-export function BusBasicInfoFields() {
-  const { retreatData } = useShuttleInfoContext();
+export function ShuttleBusBasicInfoFields() {
+  const { retreatData } = useShuttleBusInfoContext();
   const {
     control,
     register,
     watch,
     setValue,
     formState: { errors },
-  } = useBusForm();
+  } = useShuttleBusForm();
 
   const univGroupAndGrade = retreatData.univGroupAndGrade;
   const univGroup = watch("univGroup");

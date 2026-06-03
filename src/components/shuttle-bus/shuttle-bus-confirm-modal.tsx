@@ -1,29 +1,29 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
-import { useBusTotalPrice } from "@/hooks/use-bus-derived";
-import { useBusForm } from "@/hooks/use-bus-form";
+import { useShuttleBusInfoContext } from "@/components/shuttle-bus/shuttle-bus-info-context";
+import { useShuttleBusTotalPrice } from "@/hooks/use-shuttle-bus-derived";
+import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
 
-interface BusConfirmModalProps {
+interface ShuttleBusConfirmModalProps {
   open: boolean;
   isSubmitting: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export function BusConfirmModal({
+export function ShuttleBusConfirmModal({
   open,
   isSubmitting,
   onClose,
   onConfirm,
-}: BusConfirmModalProps) {
-  const { busData } = useShuttleInfoContext();
-  const totalPrice = useBusTotalPrice();
-  const { getValues } = useBusForm();
+}: ShuttleBusConfirmModalProps) {
+  const { shuttleBusData } = useShuttleBusInfoContext();
+  const totalPrice = useShuttleBusTotalPrice();
+  const { getValues } = useShuttleBusForm();
   const { name, phoneNumber, shuttleBusIds } = getValues();
   const selectedBusIds = shuttleBusIds;
-  const shuttleBuses = busData.shuttleBuses;
+  const shuttleBuses = shuttleBusData.shuttleBuses;
 
   const [refundPolicyConsent, setRefundPolicyConsent] = useState(false);
   const [modalError, setModalError] = useState({

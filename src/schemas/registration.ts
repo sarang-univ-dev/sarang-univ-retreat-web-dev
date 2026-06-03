@@ -78,7 +78,7 @@ export const retreatRegistrationSchema = z.object({
   userType: z.union([z.enum(["NEW_COMER", "SOLDIER"]), z.null()]),
 });
 
-export const busRegistrationSchema = z.object({
+export const shuttleBusRegistrationSchema = z.object({
   univGroup: z.string().min(1, "부서를 선택해주세요"),
   grade: z.string().min(1, "학년을 선택해주세요"),
   name: z.string().trim().min(1, "이름을 입력해주세요"),
@@ -99,4 +99,4 @@ export const busRegistrationSchema = z.object({
 
 /** 폼 입력값 타입 단일 출처. 각 컴포넌트에서 z.input<...> 를 반복 선언하지 않는다. */
 export type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
-export type BusFormValues = z.input<typeof busRegistrationSchema>;
+export type ShuttleBusFormValues = z.input<typeof shuttleBusRegistrationSchema>;

@@ -1,8 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { useBusTotalPrice } from "@/hooks/use-bus-derived";
+import { useShuttleBusTotalPrice } from "@/hooks/use-shuttle-bus-derived";
 
-export function BusTotalCard() {
-  const totalPrice = useBusTotalPrice();
+export function ShuttleBusTotalCard() {
+  const totalPrice = useShuttleBusTotalPrice();
 
   return (
     <Card>

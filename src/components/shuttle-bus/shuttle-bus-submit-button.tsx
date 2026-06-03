@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { useBusTotalPrice } from "@/hooks/use-bus-derived";
-import { useBusForm } from "@/hooks/use-bus-form";
+import { useShuttleBusTotalPrice } from "@/hooks/use-shuttle-bus-derived";
+import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
 
-interface BusSubmitButtonProps {
+interface ShuttleBusSubmitButtonProps {
   isSubmitting: boolean;
   onClick: () => void;
 }
@@ -13,16 +13,16 @@ const isValidPhoneNumber = (phone: string) => {
   return phoneRegex.test(phone);
 };
 
-export function BusSubmitButton({
+export function ShuttleBusSubmitButton({
   isSubmitting,
   onClick,
-}: BusSubmitButtonProps) {
-  const { watch } = useBusForm();
+}: ShuttleBusSubmitButtonProps) {
+  const { watch } = useShuttleBusForm();
   const name = watch("name");
   const phoneNumber = watch("phoneNumber");
   const shuttleBusIds = watch("shuttleBusIds");
   const isAdminContact = watch("isAdminContact");
-  const totalPrice = useBusTotalPrice();
+  const totalPrice = useShuttleBusTotalPrice();
 
   return (
     <Button
