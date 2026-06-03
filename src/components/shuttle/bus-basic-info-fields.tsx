@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Users, Hash, User, UserRoundCheck, Phone, UserCheck } from "lucide-react";
 import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
-import { useBusForm } from "@/hooks/use-registration-form";
+import { useBusForm } from "@/hooks/use-bus-form";
 
 export function BusBasicInfoFields() {
   const { retreatData } = useShuttleInfoContext();

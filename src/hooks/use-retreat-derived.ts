@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useRetreatInfoContext } from "@/components/retreat/retreat-info-context";
-import { useRetreatForm } from "@/hooks/use-registration-form";
+import { useRetreatForm } from "@/hooks/use-retreat-form";
 import type { RetreatInfo, TRetreatRegistrationSchedule } from "@/types";
 
 /**

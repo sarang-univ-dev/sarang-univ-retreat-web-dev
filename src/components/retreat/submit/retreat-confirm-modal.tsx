@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useRetreatForm } from "@/hooks/use-registration-form";
+import { useRetreatForm } from "@/hooks/use-retreat-form";
 
 interface RetreatConfirmModalProps {
   open: boolean;

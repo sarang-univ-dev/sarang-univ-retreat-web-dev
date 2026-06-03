@@ -1,7 +1,7 @@
 "use client";
 
 import { useSlug } from "@/hooks/use-slug";
-import { BusRegistrationFormComponent } from "@/components/shuttle/bus-registration-form";
+import { BusRegistrationForm } from "@/components/shuttle/bus-registration-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import RetreatCard from "@/components/retreat/retreat-card";
 import {
@@ -12,7 +12,7 @@ import { useRegistrationGate } from "@/hooks/use-registration-gate";
 import { formatRetreatDates } from "@/lib/format-retreat-dates";
 import { getKSTFullYear, getRetreatSeason } from "@/lib/date-utils";
 
-export default function BusRegisterPage() {
+export default function ShuttleBusPage() {
   const slug = useSlug();
 
   const {
@@ -75,7 +75,7 @@ export default function BusRegisterPage() {
         />
       </div>
 
-      <BusRegistrationFormComponent
+      <BusRegistrationForm
         retreatData={retreatData}
         busData={busData}
         retreatSlug={slug}

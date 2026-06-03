@@ -2,7 +2,7 @@ import { Controller } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { TriangleAlert } from "lucide-react";
-import { useRetreatForm } from "@/hooks/use-registration-form";
+import { useRetreatForm } from "@/hooks/use-retreat-form";
 
 export function PrivacyConsentCard() {
   const {

@@ -7,14 +7,14 @@ import { OnewayConfirmModal } from "@/components/shuttle/oneway-confirm-modal";
 import { BusConfirmModal } from "@/components/shuttle/bus-confirm-modal";
 import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
 import { useBusTotalPrice } from "@/hooks/use-bus-derived";
-import { useShuttleBusRegistration } from "@/hooks/use-registration";
+import { useShuttleBusRegistration } from "@/hooks/use-shuttle-bus-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
 import { getErrorMessage, logError } from "@/lib/error-handler";
-import { useBusForm } from "@/hooks/use-registration-form";
+import { useBusForm } from "@/hooks/use-bus-form";
 
 /**
  * 제출 버튼 + 편도/확인 모달 + 제출(mutation) 책임을 묶은 컴포넌트.
- * 부모(BusRegistrationFormComponent)는 mutation/제출 상태를 알지 못한다.
+ * 부모(BusRegistrationForm)는 mutation/제출 상태를 알지 못한다.
  */
 export function BusSubmitSection({ retreatSlug }: { retreatSlug: string }) {
   const router = useRouter();

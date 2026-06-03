@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Phone } from "lucide-react";
-import { useRetreatForm } from "@/hooks/use-registration-form";
+import { useRetreatForm } from "@/hooks/use-retreat-form";
 
 export function PhoneField() {
   const {

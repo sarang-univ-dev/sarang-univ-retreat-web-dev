@@ -2,7 +2,7 @@ import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { UserCheck } from "lucide-react";
-import { useRetreatForm } from "@/hooks/use-registration-form";
+import { useRetreatForm } from "@/hooks/use-retreat-form";
 
 /** 신청 유형(해당 없음 / 새가족 / 현역 군지체) 선택. */
 export function UserTypeField() {

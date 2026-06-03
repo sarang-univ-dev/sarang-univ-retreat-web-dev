@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
-import { useBusForm } from "@/hooks/use-registration-form";
+import { useBusForm } from "@/hooks/use-bus-form";
 
 /**
  * 선택한 셔틀버스(watch("shuttleBusIds")) + busData 로부터 총 금액을 계산한다.

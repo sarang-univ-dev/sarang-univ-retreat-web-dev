@@ -5,7 +5,7 @@ import { X, CheckCircle } from "lucide-react";
 import { formatDate } from "@/lib/format-date";
 import { getKSTDateString } from "@/lib/date-utils";
 import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
-import { useBusForm } from "@/hooks/use-registration-form";
+import { useBusForm } from "@/hooks/use-bus-form";
 
 export function SelectedBusesCard() {
   const { busData } = useShuttleInfoContext();

@@ -4,7 +4,7 @@ import { GradeField } from "@/components/retreat/basic-info/grade-field";
 import { NameField } from "@/components/retreat/basic-info/name-field";
 import { GenderField } from "@/components/retreat/basic-info/gender-field";
 import { PhoneField } from "@/components/retreat/basic-info/phone-field";
-import { LeaderNameField } from "@/components/retreat/basic-info/leader-field";
+import { LeaderField } from "@/components/retreat/basic-info/leader-field";
 
 export function BasicInfoFields() {
   return (
@@ -19,7 +19,7 @@ export function BasicInfoFields() {
       <NameField />
       <GenderField />
       <PhoneField />
-      <LeaderNameField />
+      <LeaderField />
     </div>
   );
 }

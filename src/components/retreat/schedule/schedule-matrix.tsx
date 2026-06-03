@@ -14,7 +14,7 @@ import { formatDate } from "@/lib/format-date";
 import { getKSTDateString } from "@/lib/date-utils";
 import { useRetreatInfoContext } from "@/components/retreat/retreat-info-context";
 import { useIsAllScheduleSelected } from "@/hooks/use-retreat-derived";
-import { useRetreatForm } from "@/hooks/use-registration-form";
+import { useRetreatForm } from "@/hooks/use-retreat-form";
 import { EVENT_TYPE_MAP } from "@/constants/schedule";
 import type { TRetreatRegistrationSchedule } from "@/types";
 

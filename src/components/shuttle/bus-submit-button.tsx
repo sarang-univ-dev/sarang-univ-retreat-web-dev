@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useBusTotalPrice } from "@/hooks/use-bus-derived";
-import { useBusForm } from "@/hooks/use-registration-form";
+import { useBusForm } from "@/hooks/use-bus-form";
 
 interface BusSubmitButtonProps {
   isSubmitting: boolean;

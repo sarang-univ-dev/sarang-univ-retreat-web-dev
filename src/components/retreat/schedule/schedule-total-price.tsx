@@ -1,5 +1,5 @@
 import { useRetreatPrice } from "@/hooks/use-retreat-derived";
-import { useRetreatForm } from "@/hooks/use-registration-form";
+import { useRetreatForm } from "@/hooks/use-retreat-form";
 
 /** 선택한 일정/유형에 따른 총금액. 새가족·현역 군지체는 "입금 대기". */
 export function ScheduleTotalPrice() {

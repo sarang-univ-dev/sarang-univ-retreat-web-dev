@@ -9,7 +9,7 @@ import {
   busRegistrationSchema,
   type BusFormValues,
 } from "@/schemas/registration";
-import { useBusForm } from "@/hooks/use-registration-form";
+import { useBusForm } from "@/hooks/use-bus-form";
 import { BusConsentFields } from "@/components/shuttle/bus-consent-fields";
 import { BusBasicInfoFields } from "@/components/shuttle/bus-basic-info-fields";
 import { BusSelectionList } from "@/components/shuttle/bus-selection-list";
@@ -24,7 +24,7 @@ interface BusRegistrationFormProps {
   retreatSlug: string;
 }
 
-export function BusRegistrationFormComponent({
+export function BusRegistrationForm({
   retreatData,
   busData,
   retreatSlug,

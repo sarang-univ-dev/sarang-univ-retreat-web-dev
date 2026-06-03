@@ -9,10 +9,10 @@ import {
   useAvailableGrades,
   useRetreatPrice,
 } from "@/hooks/use-retreat-derived";
-import { useRetreatRegistration } from "@/hooks/use-registration";
+import { useRetreatRegistration } from "@/hooks/use-retreat-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
 import { getErrorMessage, logError } from "@/lib/error-handler";
-import { useRetreatForm } from "@/hooks/use-registration-form";
+import { useRetreatForm } from "@/hooks/use-retreat-form";
 
 /**
  * 제출 버튼 + 확인 모달 + 제출(mutation) 책임을 한곳에 묶은 컴포넌트.
