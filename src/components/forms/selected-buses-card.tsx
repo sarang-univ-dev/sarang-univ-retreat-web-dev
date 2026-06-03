@@ -4,11 +4,11 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { X, CheckCircle } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { getKSTDateString } from "@/lib/date-utils";
-import { useBusData } from "@/components/forms/bus-derived-context";
+import { useShuttleInfoContext } from "@/components/forms/shuttle-info-context";
 import { useBusForm } from "@/hooks/use-registration-form";
 
 export function SelectedBusesCard() {
-  const { busData } = useBusData();
+  const { busData } = useShuttleInfoContext();
   const { watch, setValue } = useBusForm();
   const selectedBusIds = watch("shuttleBusIds");
   const shuttleBuses = busData.shuttleBuses;

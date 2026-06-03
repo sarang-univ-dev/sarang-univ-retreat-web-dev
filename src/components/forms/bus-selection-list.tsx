@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, Clock } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { getKSTDateString } from "@/lib/date-utils";
-import { useBusData } from "@/components/forms/bus-derived-context";
+import { useShuttleInfoContext } from "@/components/forms/shuttle-info-context";
 import { useBusForm } from "@/hooks/use-registration-form";
 
 export function BusSelectionList() {
-  const { busData } = useBusData();
+  const { busData } = useShuttleInfoContext();
   const { control } = useBusForm();
   const retreatLocation = busData.retreat.location;
 

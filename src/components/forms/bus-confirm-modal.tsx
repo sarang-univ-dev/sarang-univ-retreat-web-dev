@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useBusData } from "@/components/forms/bus-derived-context";
+import { useShuttleInfoContext } from "@/components/forms/shuttle-info-context";
 import { useBusTotalPrice } from "@/components/forms/use-bus-derived";
 import { useBusForm } from "@/hooks/use-registration-form";
 
@@ -18,7 +18,7 @@ export function BusConfirmModal({
   onClose,
   onConfirm,
 }: BusConfirmModalProps) {
-  const { busData } = useBusData();
+  const { busData } = useShuttleInfoContext();
   const totalPrice = useBusTotalPrice();
   const { getValues } = useBusForm();
   const { name, phoneNumber, shuttleBusIds } = getValues();

@@ -21,7 +21,7 @@ import {
   Bed,
 } from "lucide-react";
 import { useMemo } from "react";
-import { useRetreatData } from "@/components/forms/retreat-derived-context";
+import { useRetreatInfoContext } from "@/components/forms/retreat-info-context";
 import {
   useIsAllScheduleSelected,
   useRetreatPrice,
@@ -31,7 +31,7 @@ import type { TRetreatRegistrationSchedule } from "@/types";
 import { useRetreatForm } from "@/hooks/use-registration-form";
 
 export function ScheduleSelectionTable() {
-  const { retreatData } = useRetreatData();
+  const { retreatData } = useRetreatInfoContext();
   const isAllScheduleSelected = useIsAllScheduleSelected();
   const { totalPrice } = useRetreatPrice();
   const {

@@ -16,7 +16,7 @@ import { BusSelectionList } from "@/components/forms/bus-selection-list";
 import { SelectedBusesCard } from "@/components/forms/selected-buses-card";
 import { BusTotalCard } from "@/components/forms/bus-total-card";
 import { BusSubmitSection } from "@/components/forms/bus-submit-section";
-import { BusDataProvider } from "@/components/forms/bus-derived-context";
+import { ShuttleInfoProvider } from "@/components/forms/shuttle-info-context";
 
 interface BusRegistrationFormProps {
   retreatData: RetreatInfo;
@@ -46,11 +46,11 @@ export function BusRegistrationFormComponent({
   });
 
   return (
-    <BusDataProvider value={{ retreatData, busData }}>
+    <ShuttleInfoProvider value={{ retreatData, busData }}>
       <FormProvider {...form}>
         <BusRegistrationFormBody retreatSlug={retreatSlug} />
       </FormProvider>
-    </BusDataProvider>
+    </ShuttleInfoProvider>
   );
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useBusData } from "@/components/forms/bus-derived-context";
+import { useShuttleInfoContext } from "@/components/forms/shuttle-info-context";
 import { useBusForm } from "@/hooks/use-registration-form";
 
 /**
@@ -10,7 +10,7 @@ import { useBusForm } from "@/hooks/use-registration-form";
  * 여러 소비자가 동일하게 사용하므로 공유 훅으로 둔다.
  */
 export function useBusTotalPrice(): number {
-  const { busData } = useBusData();
+  const { busData } = useShuttleInfoContext();
   const { watch } = useBusForm();
   const shuttleBusIds = watch("shuttleBusIds");
 

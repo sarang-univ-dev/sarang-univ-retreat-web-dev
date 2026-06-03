@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { BusSubmitButton } from "@/components/forms/bus-submit-button";
 import { OnewayConfirmModal } from "@/components/forms/oneway-confirm-modal";
 import { BusConfirmModal } from "@/components/forms/bus-confirm-modal";
-import { useBusData } from "@/components/forms/bus-derived-context";
+import { useShuttleInfoContext } from "@/components/forms/shuttle-info-context";
 import { useBusTotalPrice } from "@/components/forms/use-bus-derived";
 import { useShuttleBusRegistration } from "@/hooks/use-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
@@ -19,7 +19,7 @@ import { useBusForm } from "@/hooks/use-registration-form";
 export function BusSubmitSection({ retreatSlug }: { retreatSlug: string }) {
   const router = useRouter();
   const { getValues, handleSubmit } = useBusForm();
-  const { retreatData } = useBusData();
+  const { retreatData } = useShuttleInfoContext();
   const totalPrice = useBusTotalPrice();
   const setShuttleBusResult = useRegistrationResultStore(
     (s) => s.setShuttleBusResult

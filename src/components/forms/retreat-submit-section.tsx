@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { RetreatConfirmModal } from "@/components/forms/retreat-confirm-modal";
-import { useRetreatData } from "@/components/forms/retreat-derived-context";
+import { useRetreatInfoContext } from "@/components/forms/retreat-info-context";
 import {
   useAvailableGrades,
   useRetreatPrice,
@@ -21,7 +21,7 @@ import { useRetreatForm } from "@/hooks/use-registration-form";
 export function RetreatSubmitSection({ retreatSlug }: { retreatSlug: string }) {
   const router = useRouter();
   const { handleSubmit, getValues } = useRetreatForm();
-  const { retreatData } = useRetreatData();
+  const { retreatData } = useRetreatInfoContext();
   const { totalPrice } = useRetreatPrice();
   const availableGrades = useAvailableGrades();
   const setRetreatResult = useRegistrationResultStore(

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useRetreatData } from "@/components/forms/retreat-derived-context";
+import { useRetreatInfoContext } from "@/components/forms/retreat-info-context";
 import { useRetreatForm } from "@/hooks/use-registration-form";
 import type { RetreatInfo, TRetreatRegistrationSchedule } from "@/types";
 
@@ -11,7 +11,7 @@ import type { RetreatInfo, TRetreatRegistrationSchedule } from "@/types";
  * 등 여러 소비자가 동일하게 사용하므로 공유 훅으로 둔다.
  */
 export function useAvailableGrades(): RetreatInfo["univGroupAndGrade"][number]["grades"] {
-  const { retreatData } = useRetreatData();
+  const { retreatData } = useRetreatInfoContext();
   const { watch } = useRetreatForm();
   const univGroup = watch("univGroup");
 
@@ -27,7 +27,7 @@ export function useAvailableGrades(): RetreatInfo["univGroupAndGrade"][number]["
  * scheduleSelection 이 전체 일정을 덮는지 여부.
  */
 export function useIsAllScheduleSelected(): boolean {
-  const { retreatData } = useRetreatData();
+  const { retreatData } = useRetreatInfoContext();
   const { watch } = useRetreatForm();
   const scheduleSelection = watch("scheduleSelection");
 
@@ -58,7 +58,7 @@ export function useGradeNumber(): number {
  * 현재 진행 중인 기간(없으면 가장 늦은 기간)을 적용한다. (할인/정가 표시는 없음)
  */
 export function useRetreatPrice(): { totalPrice: number } {
-  const { retreatData } = useRetreatData();
+  const { retreatData } = useRetreatInfoContext();
   const { watch } = useRetreatForm();
   const scheduleSelection = watch("scheduleSelection");
   const userType = watch("userType");

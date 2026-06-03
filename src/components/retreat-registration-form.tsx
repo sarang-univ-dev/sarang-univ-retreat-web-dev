@@ -11,7 +11,7 @@ import { PrivacyConsentCard } from "@/components/forms/privacy-consent-card";
 import { BasicInfoFields } from "@/components/forms/basic-info-fields";
 import { ScheduleSelectionTable } from "@/components/forms/schedule-selection-table";
 import { RetreatSubmitSection } from "@/components/forms/retreat-submit-section";
-import { RetreatDataProvider } from "@/components/forms/retreat-derived-context";
+import { RetreatInfoProvider } from "@/components/forms/retreat-info-context";
 
 interface RetreatRegistrationFormProps {
   retreatData: RetreatInfo;
@@ -39,7 +39,7 @@ export function RetreatRegistrationForm({
   });
 
   return (
-    <RetreatDataProvider value={{ retreatData }}>
+    <RetreatInfoProvider value={{ retreatData }}>
       <FormProvider {...form}>
         <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
           <PrivacyConsentCard />
@@ -51,6 +51,6 @@ export function RetreatRegistrationForm({
           <RetreatSubmitSection retreatSlug={retreatSlug} />
         </form>
       </FormProvider>
-    </RetreatDataProvider>
+    </RetreatInfoProvider>
   );
 }
