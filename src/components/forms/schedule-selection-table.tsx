@@ -51,7 +51,7 @@ export function ScheduleSelectionTable() {
     () =>
       Array.from(
         new Set(retreatData.schedule.map((s) => getKSTDateString(s.time)))
-      ).sort(),
+      ).toSorted(),
     [retreatData.schedule]
   );
 

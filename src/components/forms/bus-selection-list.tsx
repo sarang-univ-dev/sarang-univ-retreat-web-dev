@@ -21,7 +21,7 @@ export function BusSelectionList() {
   // 셔틀버스를 시간순으로 정렬하고 날짜별로 그룹화 (이 목록의 유일한 소비자)
   const busesByDate = useMemo(() => {
     // 시간순 정렬
-    const sortedBuses = [...busData.shuttleBuses].sort(
+    const sortedBuses = busData.shuttleBuses.toSorted(
       (a, b) =>
         new Date(a.departureTime).getTime() -
         new Date(b.departureTime).getTime()
@@ -39,7 +39,7 @@ export function BusSelectionList() {
 
     // 날짜순으로 정렬된 배열로 변환
     return Object.entries(grouped)
-      .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+      .toSorted(([dateA], [dateB]) => dateA.localeCompare(dateB))
       .map(([date, buses]) => ({ date, buses }));
   }, [busData.shuttleBuses]);
 

@@ -20,7 +20,7 @@ export function formatRetreatDates(
 
   const dates = [
     ...new Set(schedules.map((s) => getKSTDateString(s.time))),
-  ].sort();
+  ].toSorted();
 
   const formatDate = (dateStr: string, showYear: boolean = true) => {
     const year = getKSTFullYear(dateStr);
