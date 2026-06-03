@@ -1,7 +1,7 @@
 import { Calendar } from "lucide-react";
-import { ScheduleMatrix } from "@/components/forms/retreat/schedule-matrix";
-import { UserTypeField } from "@/components/forms/retreat/fields/user-type-field";
-import { ScheduleTotalPrice } from "@/components/forms/retreat/schedule-total-price";
+import { ScheduleMatrix } from "@/components/forms/retreat/schedule/schedule-matrix";
+import { UserTypeField } from "@/components/forms/retreat/schedule/user-type-field";
+import { ScheduleTotalPrice } from "@/components/forms/retreat/schedule/schedule-total-price";
 
 export function ScheduleSelectionTable() {
   return (

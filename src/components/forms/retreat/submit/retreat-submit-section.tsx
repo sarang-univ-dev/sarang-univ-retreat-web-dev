@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { RetreatConfirmModal } from "@/components/forms/retreat/retreat-confirm-modal";
+import { RetreatConfirmModal } from "@/components/forms/retreat/submit/retreat-confirm-modal";
 import { useRetreatInfoContext } from "@/components/forms/retreat/retreat-info-context";
 import {
   useAvailableGrades,
