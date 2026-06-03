@@ -20,20 +20,6 @@ export function isWithinRegistrationPeriod(
   });
 }
 
-/** 가장 빠른 시작일 ~ 가장 늦은 종료일 */
-export function getRegistrationPeriodBounds(payment: PaymentWindow[]): {
-  start: Date;
-  end: Date;
-} {
-  const start = new Date(
-    Math.min(...payment.map((p) => new Date(p.startAt).getTime()))
-  );
-  const end = new Date(
-    Math.max(...payment.map((p) => new Date(p.endAt).getTime()))
-  );
-  return { start, end };
-}
-
 /** 현재 진행 중인 신청 기간 이름 (없으면 undefined) */
 export function getCurrentRegistrationPeriodName(
   payment: PaymentWindow[],

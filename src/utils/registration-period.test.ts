@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   isWithinRegistrationPeriod,
-  getRegistrationPeriodBounds,
   getCurrentRegistrationPeriodName,
 } from "@/utils/registration-period";
 
@@ -26,14 +25,6 @@ describe("registration-period", () => {
       expect(
         isWithinRegistrationPeriod(payment, new Date("2025-12-31T00:00:00Z"))
       ).toBe(false);
-    });
-  });
-
-  describe("getRegistrationPeriodBounds", () => {
-    it("가장 빠른 시작 ~ 가장 늦은 종료를 반환한다", () => {
-      const { start, end } = getRegistrationPeriodBounds(payment);
-      expect(start.toISOString()).toBe("2026-01-01T00:00:00.000Z");
-      expect(end.toISOString()).toBe("2026-01-20T00:00:00.000Z");
     });
   });
 
