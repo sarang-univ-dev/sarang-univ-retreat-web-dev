@@ -19,7 +19,7 @@ export default function ShuttleBusRegistrationSuccessPage() {
     if (data) {
       useRegistrationResultStore.getState().clearShuttleBusResult();
     } else {
-      router.push(`/retreat/${slug}`);
+      router.push(`/retreat/${slug}/shuttle-bus`);
     }
   }, [data, router, slug]);
 

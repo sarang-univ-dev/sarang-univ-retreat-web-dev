@@ -21,7 +21,7 @@ export default function RegistrationSuccessPage() {
     if (data) {
       useRegistrationResultStore.getState().clearRetreatResult();
     } else {
-      router.push(`/retreat/${slug}`);
+      router.push(`/retreat/${slug}/retreat`);
     }
   }, [data, router, slug]);
 
