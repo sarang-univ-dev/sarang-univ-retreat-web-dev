@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import type { z } from "zod";
 import { useRetreatData } from "@/components/forms/retreat-derived-context";
@@ -69,29 +69,31 @@ export function useRetreatPrice(): { totalPrice: number } {
   const gradeNumber = useGradeNumber();
   const isAllScheduleSelected = useIsAllScheduleSelected();
 
-  const findApplicablePayment = useCallback(() => {
-    const usesEarliestPayment =
-      userType === "NEW_COMER" || userType === "SOLDIER" || gradeNumber === 1;
-
-    if (usesEarliestPayment) {
-      return retreatData.payment.reduce((earliest, current) =>
-        new Date(current.startAt) < new Date(earliest.startAt)
-          ? current
-          : earliest
-      );
-    }
-
-    const now = new Date();
-    const validPayment = retreatData.payment.find(
-      (p) => new Date(p.startAt) <= now && new Date(p.endAt) >= now
-    );
-    if (validPayment) return validPayment;
-    return retreatData.payment.reduce((latest, current) =>
-      new Date(current.endAt) > new Date(latest.endAt) ? current : latest
-    );
-  }, [userType, gradeNumber, retreatData.payment]);
-
   return useMemo(() => {
+    // 적용 payment: 새가족/현역 군지체/1학년 → 가장 이른(early-bird) 기간,
+    // 그 외 → 현재 진행 중(없으면 가장 늦은) 기간.
+    const findApplicablePayment = () => {
+      const usesEarliestPayment =
+        userType === "NEW_COMER" || userType === "SOLDIER" || gradeNumber === 1;
+
+      if (usesEarliestPayment) {
+        return retreatData.payment.reduce((earliest, current) =>
+          new Date(current.startAt) < new Date(earliest.startAt)
+            ? current
+            : earliest
+        );
+      }
+
+      const now = new Date();
+      const validPayment = retreatData.payment.find(
+        (p) => new Date(p.startAt) <= now && new Date(p.endAt) >= now
+      );
+      if (validPayment) return validPayment;
+      return retreatData.payment.reduce((latest, current) =>
+        new Date(current.endAt) > new Date(latest.endAt) ? current : latest
+      );
+    };
+
     const payment = findApplicablePayment();
 
     if (isAllScheduleSelected) {
@@ -109,9 +111,11 @@ export function useRetreatPrice(): { totalPrice: number } {
       ),
     };
   }, [
+    userType,
+    gradeNumber,
     scheduleSelection,
     isAllScheduleSelected,
+    retreatData.payment,
     retreatData.schedule,
-    findApplicablePayment,
   ]);
 }
