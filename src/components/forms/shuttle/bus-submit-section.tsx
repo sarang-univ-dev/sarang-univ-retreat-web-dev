@@ -6,7 +6,7 @@ import { BusSubmitButton } from "@/components/forms/shuttle/bus-submit-button";
 import { OnewayConfirmModal } from "@/components/forms/shuttle/oneway-confirm-modal";
 import { BusConfirmModal } from "@/components/forms/shuttle/bus-confirm-modal";
 import { useShuttleInfoContext } from "@/components/forms/shuttle/shuttle-info-context";
-import { useBusTotalPrice } from "@/components/forms/shuttle/use-bus-derived";
+import { useBusTotalPrice } from "@/hooks/use-bus-derived";
 import { useShuttleBusRegistration } from "@/hooks/use-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
 import { getErrorMessage, logError } from "@/utils/errorHandler";

@@ -8,7 +8,7 @@ import { useRetreatInfoContext } from "@/components/forms/retreat/retreat-info-c
 import {
   useAvailableGrades,
   useRetreatPrice,
-} from "@/components/forms/retreat/use-retreat-derived";
+} from "@/hooks/use-retreat-derived";
 import { useRetreatRegistration } from "@/hooks/use-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
 import { getErrorMessage, logError } from "@/utils/errorHandler";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useShuttleInfoContext } from "@/components/forms/shuttle/shuttle-info-context";
-import { useBusTotalPrice } from "@/components/forms/shuttle/use-bus-derived";
+import { useBusTotalPrice } from "@/hooks/use-bus-derived";
 import { useBusForm } from "@/hooks/use-registration-form";
 
 interface BusConfirmModalProps {
