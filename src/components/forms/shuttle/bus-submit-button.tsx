@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useBusTotalPrice } from "@/components/forms/use-bus-derived";
+import { useBusTotalPrice } from "@/components/forms/shuttle/use-bus-derived";
 import { useBusForm } from "@/hooks/use-registration-form";
 
 interface BusSubmitButtonProps {

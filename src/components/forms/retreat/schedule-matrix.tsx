@@ -12,8 +12,8 @@ import {
 import { Sunrise, Sun, Sunset, Bed } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { getKSTDateString } from "@/lib/date-utils";
-import { useRetreatInfoContext } from "@/components/forms/retreat-info-context";
-import { useIsAllScheduleSelected } from "@/components/forms/use-retreat-derived";
+import { useRetreatInfoContext } from "@/components/forms/retreat/retreat-info-context";
+import { useIsAllScheduleSelected } from "@/components/forms/retreat/use-retreat-derived";
 import { useRetreatForm } from "@/hooks/use-registration-form";
 import { EVENT_TYPE_MAP } from "@/constants/schedule";
 import type { TRetreatRegistrationSchedule } from "@/types";

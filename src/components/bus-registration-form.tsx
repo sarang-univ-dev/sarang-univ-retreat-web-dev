@@ -10,13 +10,13 @@ import {
   type BusFormValues,
 } from "@/schemas/registration";
 import { useBusForm } from "@/hooks/use-registration-form";
-import { BusConsentFields } from "@/components/forms/bus-consent-fields";
-import { BusBasicInfoFields } from "@/components/forms/bus-basic-info-fields";
-import { BusSelectionList } from "@/components/forms/bus-selection-list";
-import { SelectedBusesCard } from "@/components/forms/selected-buses-card";
-import { BusTotalCard } from "@/components/forms/bus-total-card";
-import { BusSubmitSection } from "@/components/forms/bus-submit-section";
-import { ShuttleInfoProvider } from "@/components/forms/shuttle-info-context";
+import { BusConsentFields } from "@/components/forms/shuttle/bus-consent-fields";
+import { BusBasicInfoFields } from "@/components/forms/shuttle/bus-basic-info-fields";
+import { BusSelectionList } from "@/components/forms/shuttle/bus-selection-list";
+import { SelectedBusesCard } from "@/components/forms/shuttle/selected-buses-card";
+import { BusTotalCard } from "@/components/forms/shuttle/bus-total-card";
+import { BusSubmitSection } from "@/components/forms/shuttle/bus-submit-section";
+import { ShuttleInfoProvider } from "@/components/forms/shuttle/shuttle-info-context";
 
 interface BusRegistrationFormProps {
   retreatData: RetreatInfo;

@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Users, Hash, User, UserRoundCheck, Phone, UserCheck } from "lucide-react";
-import { useShuttleInfoContext } from "@/components/forms/shuttle-info-context";
+import { useShuttleInfoContext } from "@/components/forms/shuttle/shuttle-info-context";
 import { useBusForm } from "@/hooks/use-registration-form";
 
 export function BusBasicInfoFields() {

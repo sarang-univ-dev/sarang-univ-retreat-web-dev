@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Hash } from "lucide-react";
-import { useAvailableGrades } from "@/components/forms/use-retreat-derived";
+import { useAvailableGrades } from "@/components/forms/retreat/use-retreat-derived";
 import { useRetreatForm } from "@/hooks/use-registration-form";
 
 export function GradeField() {

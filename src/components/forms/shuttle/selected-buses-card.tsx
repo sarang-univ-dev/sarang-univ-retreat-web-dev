@@ -4,7 +4,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { X, CheckCircle } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { getKSTDateString } from "@/lib/date-utils";
-import { useShuttleInfoContext } from "@/components/forms/shuttle-info-context";
+import { useShuttleInfoContext } from "@/components/forms/shuttle/shuttle-info-context";
 import { useBusForm } from "@/hooks/use-registration-form";
 
 export function SelectedBusesCard() {

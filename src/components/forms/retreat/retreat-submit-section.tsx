@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { RetreatConfirmModal } from "@/components/forms/retreat-confirm-modal";
-import { useRetreatInfoContext } from "@/components/forms/retreat-info-context";
+import { RetreatConfirmModal } from "@/components/forms/retreat/retreat-confirm-modal";
+import { useRetreatInfoContext } from "@/components/forms/retreat/retreat-info-context";
 import {
   useAvailableGrades,
   useRetreatPrice,
-} from "@/components/forms/use-retreat-derived";
+} from "@/components/forms/retreat/use-retreat-derived";
 import { useRetreatRegistration } from "@/hooks/use-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
 import { getErrorMessage, logError } from "@/utils/errorHandler";
