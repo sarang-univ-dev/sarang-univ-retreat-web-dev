@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { X, CheckCircle } from "lucide-react";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/lib/format-date";
 import { getKSTDateString } from "@/lib/date-utils";
 import { useShuttleInfoContext } from "@/components/forms/shuttle/shuttle-info-context";
 import { useBusForm } from "@/hooks/use-registration-form";

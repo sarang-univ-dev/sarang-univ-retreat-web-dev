@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Sunrise, Sun, Sunset, Bed } from "lucide-react";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/lib/format-date";
 import { getKSTDateString } from "@/lib/date-utils";
 import { useRetreatInfoContext } from "@/components/forms/retreat/retreat-info-context";
 import { useIsAllScheduleSelected } from "@/hooks/use-retreat-derived";

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   isWithinRegistrationPeriod,
   getCurrentRegistrationPeriodName,
-} from "@/utils/registration-period";
+} from "@/lib/registration-period";
 
 const payment = [
   { name: "얼리버드", startAt: "2026-01-01T00:00:00Z", endAt: "2026-01-10T00:00:00Z" },

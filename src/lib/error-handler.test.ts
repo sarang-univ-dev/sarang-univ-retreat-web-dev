@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { HTTPError } from "ky";
-import { getErrorMessage, logError } from "@/utils/errorHandler";
+import { getErrorMessage, logError } from "@/lib/error-handler";
 import type { NormalizedHTTPError } from "@/lib/ky";
 
 /**

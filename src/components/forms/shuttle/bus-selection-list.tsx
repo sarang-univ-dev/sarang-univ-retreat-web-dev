@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Clock } from "lucide-react";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/lib/format-date";
 import { getKSTDateString } from "@/lib/date-utils";
 import { useShuttleInfoContext } from "@/components/forms/shuttle/shuttle-info-context";
 import { useBusForm } from "@/hooks/use-registration-form";

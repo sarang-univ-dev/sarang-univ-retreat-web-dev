@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatRetreatDates } from "@/utils/format-retreat-dates";
+import { formatRetreatDates } from "@/lib/format-retreat-dates";
 
 // KST 기준 날짜. 2026-01-01=목, 07=수, 08=목, 09=금.
 const at = (isoDay: string) => ({ time: `${isoDay}T03:00:00.000Z` });

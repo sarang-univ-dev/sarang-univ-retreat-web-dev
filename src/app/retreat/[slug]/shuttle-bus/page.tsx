@@ -9,7 +9,7 @@ import {
   useShuttleBusInfo,
 } from "@/hooks/use-retreat-queries";
 import { useRegistrationGate } from "@/hooks/use-registration-gate";
-import { formatRetreatDates } from "@/utils/format-retreat-dates";
+import { formatRetreatDates } from "@/lib/format-retreat-dates";
 import { getKSTFullYear, getRetreatSeason } from "@/lib/date-utils";
 
 export default function BusRegisterPage() {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/lib/format-date";
 
 // 현재 동작 특성화: KST 기준 "M/D(요일)" 포맷.
 describe("formatDate", () => {

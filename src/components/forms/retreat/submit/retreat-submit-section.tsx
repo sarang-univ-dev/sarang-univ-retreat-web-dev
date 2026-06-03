@@ -11,7 +11,7 @@ import {
 } from "@/hooks/use-retreat-derived";
 import { useRetreatRegistration } from "@/hooks/use-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
-import { getErrorMessage, logError } from "@/utils/errorHandler";
+import { getErrorMessage, logError } from "@/lib/error-handler";
 import { useRetreatForm } from "@/hooks/use-registration-form";
 
 /**

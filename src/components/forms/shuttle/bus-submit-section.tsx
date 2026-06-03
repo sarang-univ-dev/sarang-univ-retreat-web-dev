@@ -9,7 +9,7 @@ import { useShuttleInfoContext } from "@/components/forms/shuttle/shuttle-info-c
 import { useBusTotalPrice } from "@/hooks/use-bus-derived";
 import { useShuttleBusRegistration } from "@/hooks/use-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
-import { getErrorMessage, logError } from "@/utils/errorHandler";
+import { getErrorMessage, logError } from "@/lib/error-handler";
 import { useBusForm } from "@/hooks/use-registration-form";
 
 /**

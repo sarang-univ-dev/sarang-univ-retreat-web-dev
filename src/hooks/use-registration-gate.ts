@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   isWithinRegistrationPeriod,
   type PaymentWindow,
-} from "@/utils/registration-period";
+} from "@/lib/registration-period";
 
 /**
  * 신청 기간이 닫혀 있으면 실패 페이지로 리다이렉트한다.

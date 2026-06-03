@@ -7,8 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getKSTFullYear, getRetreatSeason } from "@/lib/date-utils";
 import { useRetreatInfo } from "@/hooks/use-retreat-queries";
 import { useRegistrationGate } from "@/hooks/use-registration-gate";
-import { getCurrentRegistrationPeriodName } from "@/utils/registration-period";
-import { formatRetreatDates } from "@/utils/format-retreat-dates";
+import { getCurrentRegistrationPeriodName } from "@/lib/registration-period";
+import { formatRetreatDates } from "@/lib/format-retreat-dates";
 
 export default function RetreatPage() {
   const slug = useSlug();
