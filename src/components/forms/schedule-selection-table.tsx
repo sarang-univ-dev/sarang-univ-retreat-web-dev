@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -28,10 +28,7 @@ import {
 } from "@/components/forms/use-retreat-derived";
 import { EVENT_TYPE_MAP } from "@/constants/schedule";
 import type { TRetreatRegistrationSchedule } from "@/types";
-import { retreatRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
+import { useRetreatForm } from "@/hooks/use-registration-form";
 
 export function ScheduleSelectionTable() {
   const { retreatData } = useRetreatData();
@@ -41,7 +38,7 @@ export function ScheduleSelectionTable() {
     control,
     watch,
     formState: { errors },
-  } = useFormContext<RetreatFormValues>();
+  } = useRetreatForm();
 
   const schedule = retreatData.schedule;
   const userType = watch("userType");

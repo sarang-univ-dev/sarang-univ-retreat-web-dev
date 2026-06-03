@@ -1,12 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { useFormContext } from "react-hook-form";
-import type { z } from "zod";
 import { useBusData } from "@/components/forms/bus-derived-context";
-import { busRegistrationSchema } from "@/schemas/registration";
-
-type BusFormValues = z.input<typeof busRegistrationSchema>;
+import { useBusForm } from "@/hooks/use-registration-form";
 
 /**
  * 선택한 셔틀버스(watch("shuttleBusIds")) + busData 로부터 총 금액을 계산한다.
@@ -15,7 +11,7 @@ type BusFormValues = z.input<typeof busRegistrationSchema>;
  */
 export function useBusTotalPrice(): number {
   const { busData } = useBusData();
-  const { watch } = useFormContext<BusFormValues>();
+  const { watch } = useBusForm();
   const shuttleBusIds = watch("shuttleBusIds");
 
   return useMemo(() => {

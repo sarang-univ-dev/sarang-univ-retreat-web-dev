@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,14 +8,11 @@ import { ArrowRight, Clock } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { getKSTDateString } from "@/lib/date-utils";
 import { useBusData } from "@/components/forms/bus-derived-context";
-import { busRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type BusFormValues = z.input<typeof busRegistrationSchema>;
+import { useBusForm } from "@/hooks/use-registration-form";
 
 export function BusSelectionList() {
   const { busData } = useBusData();
-  const { control } = useFormContext<BusFormValues>();
+  const { control } = useBusForm();
   const retreatLocation = busData.retreat.location;
 
   // 셔틀버스를 시간순으로 정렬하고 날짜별로 그룹화 (이 목록의 유일한 소비자)

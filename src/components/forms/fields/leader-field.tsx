@@ -1,17 +1,13 @@
-import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Star } from "lucide-react";
-import { retreatRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
+import { useRetreatForm } from "@/hooks/use-registration-form";
 
 export function LeaderNameField() {
   const {
     register,
     formState: { errors },
-  } = useFormContext<RetreatFormValues>();
+  } = useRetreatForm();
 
   return (
     <div className="space-y-2">

@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFormContext } from "react-hook-form";
-import type { z } from "zod";
 import { BusSubmitButton } from "@/components/forms/bus-submit-button";
 import { OnewayConfirmModal } from "@/components/forms/oneway-confirm-modal";
 import { BusConfirmModal } from "@/components/forms/bus-confirm-modal";
@@ -12,9 +10,7 @@ import { useBusTotalPrice } from "@/components/forms/use-bus-derived";
 import { useShuttleBusRegistration } from "@/hooks/use-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
 import { getErrorMessage, logError } from "@/utils/errorHandler";
-import type { busRegistrationSchema } from "@/schemas/registration";
-
-type BusFormValues = z.input<typeof busRegistrationSchema>;
+import { useBusForm } from "@/hooks/use-registration-form";
 
 /**
  * 제출 버튼 + 편도/확인 모달 + 제출(mutation) 책임을 묶은 컴포넌트.
@@ -22,7 +18,7 @@ type BusFormValues = z.input<typeof busRegistrationSchema>;
  */
 export function BusSubmitSection({ retreatSlug }: { retreatSlug: string }) {
   const router = useRouter();
-  const { getValues, handleSubmit } = useFormContext<BusFormValues>();
+  const { getValues, handleSubmit } = useBusForm();
   const { retreatData } = useBusData();
   const totalPrice = useBusTotalPrice();
   const setShuttleBusResult = useRegistrationResultStore(

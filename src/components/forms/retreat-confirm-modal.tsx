@@ -1,11 +1,7 @@
 import { useState } from "react";
-import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { retreatRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
+import { useRetreatForm } from "@/hooks/use-registration-form";
 
 interface RetreatConfirmModalProps {
   open: boolean;
@@ -20,7 +16,7 @@ export function RetreatConfirmModal({
   onClose,
   onConfirm,
 }: RetreatConfirmModalProps) {
-  const { getValues } = useFormContext<RetreatFormValues>();
+  const { getValues } = useRetreatForm();
   const { name, phoneNumber } = getValues();
 
   const [scheduleChangeConsent, setScheduleChangeConsent] = useState(false);

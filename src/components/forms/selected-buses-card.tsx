@@ -1,19 +1,15 @@
 import { useMemo } from "react";
-import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { X, CheckCircle } from "lucide-react";
 import { formatDate } from "@/utils/formatDate";
 import { getKSTDateString } from "@/lib/date-utils";
 import { useBusData } from "@/components/forms/bus-derived-context";
-import { busRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type BusFormValues = z.input<typeof busRegistrationSchema>;
+import { useBusForm } from "@/hooks/use-registration-form";
 
 export function SelectedBusesCard() {
   const { busData } = useBusData();
-  const { watch, setValue } = useFormContext<BusFormValues>();
+  const { watch, setValue } = useBusForm();
   const selectedBusIds = watch("shuttleBusIds");
   const shuttleBuses = busData.shuttleBuses;
 

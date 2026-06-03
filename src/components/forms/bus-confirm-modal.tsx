@@ -1,13 +1,9 @@
 import { useState } from "react";
-import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useBusData } from "@/components/forms/bus-derived-context";
 import { useBusTotalPrice } from "@/components/forms/use-bus-derived";
-import { busRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type BusFormValues = z.input<typeof busRegistrationSchema>;
+import { useBusForm } from "@/hooks/use-registration-form";
 
 interface BusConfirmModalProps {
   open: boolean;
@@ -24,7 +20,7 @@ export function BusConfirmModal({
 }: BusConfirmModalProps) {
   const { busData } = useBusData();
   const totalPrice = useBusTotalPrice();
-  const { getValues } = useFormContext<BusFormValues>();
+  const { getValues } = useBusForm();
   const { name, phoneNumber, shuttleBusIds } = getValues();
   const selectedBusIds = shuttleBusIds;
   const shuttleBuses = busData.shuttleBuses;

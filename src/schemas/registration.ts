@@ -96,3 +96,7 @@ export const busRegistrationSchema = z.object({
     .boolean()
     .refine((v) => v === true, "셔틀 이외의 이동 금지 사항에 동의해주세요"),
 });
+
+/** 폼 입력값 타입 단일 출처. 각 컴포넌트에서 z.input<...> 를 반복 선언하지 않는다. */
+export type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
+export type BusFormValues = z.input<typeof busRegistrationSchema>;

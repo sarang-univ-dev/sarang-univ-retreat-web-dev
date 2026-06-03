@@ -1,10 +1,6 @@
-import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { useBusTotalPrice } from "@/components/forms/use-bus-derived";
-import { busRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type BusFormValues = z.input<typeof busRegistrationSchema>;
+import { useBusForm } from "@/hooks/use-registration-form";
 
 interface BusSubmitButtonProps {
   isSubmitting: boolean;
@@ -21,7 +17,7 @@ export function BusSubmitButton({
   isSubmitting,
   onClick,
 }: BusSubmitButtonProps) {
-  const { watch } = useFormContext<BusFormValues>();
+  const { watch } = useBusForm();
   const name = watch("name");
   const phoneNumber = watch("phoneNumber");
   const shuttleBusIds = watch("shuttleBusIds");

@@ -1,17 +1,14 @@
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TriangleAlert, CircleAlert } from "lucide-react";
-import { busRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type BusFormValues = z.input<typeof busRegistrationSchema>;
+import { useBusForm } from "@/hooks/use-registration-form";
 
 export function BusConsentFields() {
   const {
     control,
     formState: { errors },
-  } = useFormContext<BusFormValues>();
+  } = useBusForm();
 
   return (
     <Card className="mb-6">

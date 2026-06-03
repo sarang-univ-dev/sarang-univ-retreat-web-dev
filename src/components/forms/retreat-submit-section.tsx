@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFormContext } from "react-hook-form";
-import type { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { RetreatConfirmModal } from "@/components/forms/retreat-confirm-modal";
 import { useRetreatData } from "@/components/forms/retreat-derived-context";
@@ -14,9 +12,7 @@ import {
 import { useRetreatRegistration } from "@/hooks/use-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
 import { getErrorMessage, logError } from "@/utils/errorHandler";
-import type { retreatRegistrationSchema } from "@/schemas/registration";
-
-type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
+import { useRetreatForm } from "@/hooks/use-registration-form";
 
 /**
  * 제출 버튼 + 확인 모달 + 제출(mutation) 책임을 한곳에 묶은 컴포넌트.
@@ -24,7 +20,7 @@ type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
  */
 export function RetreatSubmitSection({ retreatSlug }: { retreatSlug: string }) {
   const router = useRouter();
-  const { handleSubmit, getValues } = useFormContext<RetreatFormValues>();
+  const { handleSubmit, getValues } = useRetreatForm();
   const { retreatData } = useRetreatData();
   const { totalPrice } = useRetreatPrice();
   const availableGrades = useAvailableGrades();

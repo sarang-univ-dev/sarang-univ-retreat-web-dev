@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -9,10 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Users } from "lucide-react";
 import { useRetreatData } from "@/components/forms/retreat-derived-context";
-import { retreatRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
+import { useRetreatForm } from "@/hooks/use-registration-form";
 
 export function UnivGroupField() {
   const { retreatData } = useRetreatData();
@@ -20,7 +17,7 @@ export function UnivGroupField() {
     control,
     setValue,
     formState: { errors },
-  } = useFormContext<RetreatFormValues>();
+  } = useRetreatForm();
 
   return (
     <div className="space-y-2">

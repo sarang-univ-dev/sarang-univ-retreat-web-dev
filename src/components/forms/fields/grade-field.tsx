@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -9,10 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Hash } from "lucide-react";
 import { useAvailableGrades } from "@/components/forms/use-retreat-derived";
-import { retreatRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
+import { useRetreatForm } from "@/hooks/use-registration-form";
 
 export function GradeField() {
   const availableGrades = useAvailableGrades();
@@ -20,7 +17,7 @@ export function GradeField() {
     control,
     watch,
     formState: { errors },
-  } = useFormContext<RetreatFormValues>();
+  } = useRetreatForm();
   const univGroup = watch("univGroup");
 
   return (

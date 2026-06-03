@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -8,16 +8,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { UserRoundCheck } from "lucide-react";
-import { retreatRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
+import { useRetreatForm } from "@/hooks/use-registration-form";
 
 export function GenderField() {
   const {
     control,
     formState: { errors },
-  } = useFormContext<RetreatFormValues>();
+  } = useRetreatForm();
 
   return (
     <div className="space-y-2">

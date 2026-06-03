@@ -1,12 +1,15 @@
 "use client";
 
-import { useForm, FormProvider, useFormContext } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { z } from "zod";
 import { Calendar } from "lucide-react";
 import type { RetreatInfo, ShuttleBusInfo } from "@/types";
 
-import { busRegistrationSchema } from "@/schemas/registration";
+import {
+  busRegistrationSchema,
+  type BusFormValues,
+} from "@/schemas/registration";
+import { useBusForm } from "@/hooks/use-registration-form";
 import { BusConsentFields } from "@/components/forms/bus-consent-fields";
 import { BusBasicInfoFields } from "@/components/forms/bus-basic-info-fields";
 import { BusSelectionList } from "@/components/forms/bus-selection-list";
@@ -14,8 +17,6 @@ import { SelectedBusesCard } from "@/components/forms/selected-buses-card";
 import { BusTotalCard } from "@/components/forms/bus-total-card";
 import { BusSubmitSection } from "@/components/forms/bus-submit-section";
 import { BusDataProvider } from "@/components/forms/bus-derived-context";
-
-type BusFormValues = z.input<typeof busRegistrationSchema>;
 
 interface BusRegistrationFormProps {
   retreatData: RetreatInfo;
@@ -54,7 +55,7 @@ export function BusRegistrationFormComponent({
 }
 
 function BusRegistrationFormBody({ retreatSlug }: { retreatSlug: string }) {
-  const { watch } = useFormContext<BusFormValues>();
+  const { watch } = useBusForm();
   const hasSelectedBuses = watch("shuttleBusIds").length > 0;
 
   return (

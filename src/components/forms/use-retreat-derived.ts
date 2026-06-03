@@ -1,13 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { useFormContext } from "react-hook-form";
-import type { z } from "zod";
 import { useRetreatData } from "@/components/forms/retreat-derived-context";
-import { retreatRegistrationSchema } from "@/schemas/registration";
+import { useRetreatForm } from "@/hooks/use-registration-form";
 import type { RetreatInfo, TRetreatRegistrationSchedule } from "@/types";
-
-type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
 
 /**
  * watch("univGroup") 에서 파생되는 학년 목록.
@@ -16,7 +12,7 @@ type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
  */
 export function useAvailableGrades(): RetreatInfo["univGroupAndGrade"][number]["grades"] {
   const { retreatData } = useRetreatData();
-  const { watch } = useFormContext<RetreatFormValues>();
+  const { watch } = useRetreatForm();
   const univGroup = watch("univGroup");
 
   return useMemo(() => {
@@ -32,7 +28,7 @@ export function useAvailableGrades(): RetreatInfo["univGroupAndGrade"][number]["
  */
 export function useIsAllScheduleSelected(): boolean {
   const { retreatData } = useRetreatData();
-  const { watch } = useFormContext<RetreatFormValues>();
+  const { watch } = useRetreatForm();
   const scheduleSelection = watch("scheduleSelection");
 
   return (
@@ -45,7 +41,7 @@ export function useIsAllScheduleSelected(): boolean {
  * 선택된 학년의 gradeNumber (없으면 0). 1학년 여부 판정 등에 사용.
  */
 export function useGradeNumber(): number {
-  const { watch } = useFormContext<RetreatFormValues>();
+  const { watch } = useRetreatForm();
   const grade = watch("grade");
   const availableGrades = useAvailableGrades();
   return useMemo(
@@ -63,7 +59,7 @@ export function useGradeNumber(): number {
  */
 export function useRetreatPrice(): { totalPrice: number } {
   const { retreatData } = useRetreatData();
-  const { watch } = useFormContext<RetreatFormValues>();
+  const { watch } = useRetreatForm();
   const scheduleSelection = watch("scheduleSelection");
   const userType = watch("userType");
   const gradeNumber = useGradeNumber();

@@ -2,16 +2,16 @@
 
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { z } from "zod";
 import type { RetreatInfo } from "@/types";
-import { retreatRegistrationSchema } from "@/schemas/registration";
+import {
+  retreatRegistrationSchema,
+  type RetreatFormValues,
+} from "@/schemas/registration";
 import { PrivacyConsentCard } from "@/components/forms/privacy-consent-card";
 import { BasicInfoFields } from "@/components/forms/basic-info-fields";
 import { ScheduleSelectionTable } from "@/components/forms/schedule-selection-table";
 import { RetreatSubmitSection } from "@/components/forms/retreat-submit-section";
 import { RetreatDataProvider } from "@/components/forms/retreat-derived-context";
-
-type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
 
 interface RetreatRegistrationFormProps {
   retreatData: RetreatInfo;

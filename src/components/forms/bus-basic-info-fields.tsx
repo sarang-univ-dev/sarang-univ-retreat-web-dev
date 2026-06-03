@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -11,10 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Users, Hash, User, UserRoundCheck, Phone, UserCheck } from "lucide-react";
 import { useBusData } from "@/components/forms/bus-derived-context";
-import { busRegistrationSchema } from "@/schemas/registration";
-import type { z } from "zod";
-
-type BusFormValues = z.input<typeof busRegistrationSchema>;
+import { useBusForm } from "@/hooks/use-registration-form";
 
 export function BusBasicInfoFields() {
   const { retreatData } = useBusData();
@@ -24,7 +21,7 @@ export function BusBasicInfoFields() {
     watch,
     setValue,
     formState: { errors },
-  } = useFormContext<BusFormValues>();
+  } = useBusForm();
 
   const univGroupAndGrade = retreatData.univGroupAndGrade;
   const univGroup = watch("univGroup");
