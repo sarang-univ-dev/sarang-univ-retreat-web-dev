@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShuttleBusRegistrationComplete } from "@/components/shuttle-bus-registration-complete";
+import { ShuttleBusRegistrationComplete } from "@/components/shuttle/shuttle-bus-registration-complete";
 import { useUnivGroupInfo } from "@/hooks/use-retreat-queries";
 import { useSlug } from "@/hooks/use-slug";
 import { useRegistrationResultStore } from "@/store/registration-result-store";

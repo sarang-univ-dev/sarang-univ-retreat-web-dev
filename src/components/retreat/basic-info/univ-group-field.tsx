@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Users } from "lucide-react";
-import { useRetreatInfoContext } from "@/components/forms/retreat/retreat-info-context";
+import { useRetreatInfoContext } from "@/components/retreat/retreat-info-context";
 import { useRetreatForm } from "@/hooks/use-registration-form";
 
 export function UnivGroupField() {

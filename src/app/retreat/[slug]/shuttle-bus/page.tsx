@@ -1,9 +1,9 @@
 "use client";
 
 import { useSlug } from "@/hooks/use-slug";
-import { BusRegistrationFormComponent } from "@/components/bus-registration-form";
+import { BusRegistrationFormComponent } from "@/components/shuttle/bus-registration-form";
 import { Skeleton } from "@/components/ui/skeleton";
-import RetreatCard from "@/components/retreat-card";
+import RetreatCard from "@/components/retreat/retreat-card";
 import {
   useRetreatInfo,
   useShuttleBusInfo,

@@ -7,11 +7,11 @@ import {
   retreatRegistrationSchema,
   type RetreatFormValues,
 } from "@/schemas/registration";
-import { PrivacyConsentCard } from "@/components/forms/retreat/privacy-consent-card";
-import { BasicInfoFields } from "@/components/forms/retreat/basic-info/basic-info-fields";
-import { ScheduleSelectionTable } from "@/components/forms/retreat/schedule/schedule-selection-table";
-import { RetreatSubmitSection } from "@/components/forms/retreat/submit/retreat-submit-section";
-import { RetreatInfoProvider } from "@/components/forms/retreat/retreat-info-context";
+import { PrivacyConsentCard } from "@/components/retreat/privacy-consent-card";
+import { BasicInfoFields } from "@/components/retreat/basic-info/basic-info-fields";
+import { ScheduleSelectionTable } from "@/components/retreat/schedule/schedule-selection-table";
+import { RetreatSubmitSection } from "@/components/retreat/submit/retreat-submit-section";
+import { RetreatInfoProvider } from "@/components/retreat/retreat-info-context";
 
 interface RetreatRegistrationFormProps {
   retreatData: RetreatInfo;

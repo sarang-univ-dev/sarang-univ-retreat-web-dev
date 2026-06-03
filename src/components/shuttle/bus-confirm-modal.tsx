@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useShuttleInfoContext } from "@/components/forms/shuttle/shuttle-info-context";
+import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
 import { useBusTotalPrice } from "@/hooks/use-bus-derived";
 import { useBusForm } from "@/hooks/use-registration-form";
 

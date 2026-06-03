@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BusSubmitButton } from "@/components/forms/shuttle/bus-submit-button";
-import { OnewayConfirmModal } from "@/components/forms/shuttle/oneway-confirm-modal";
-import { BusConfirmModal } from "@/components/forms/shuttle/bus-confirm-modal";
-import { useShuttleInfoContext } from "@/components/forms/shuttle/shuttle-info-context";
+import { BusSubmitButton } from "@/components/shuttle/bus-submit-button";
+import { OnewayConfirmModal } from "@/components/shuttle/oneway-confirm-modal";
+import { BusConfirmModal } from "@/components/shuttle/bus-confirm-modal";
+import { useShuttleInfoContext } from "@/components/shuttle/shuttle-info-context";
 import { useBusTotalPrice } from "@/hooks/use-bus-derived";
 import { useShuttleBusRegistration } from "@/hooks/use-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";

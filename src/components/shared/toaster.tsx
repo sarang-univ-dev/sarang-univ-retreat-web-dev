@@ -8,9 +8,9 @@ import {
   ToastTitle,
   ToastDescription,
   ToastClose,
-} from "@/components/radix/toast";
+} from "@/components/ui/toast";
 
-const Toast = () => {
+const Toaster = () => {
   const { toasts, remove } = useToastStore();
 
   return (
@@ -35,4 +35,4 @@ const Toast = () => {
   );
 };
 
-export default Toast;
+export default Toaster;

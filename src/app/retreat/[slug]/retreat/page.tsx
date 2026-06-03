@@ -1,8 +1,8 @@
 "use client";
 
 import { useSlug } from "@/hooks/use-slug";
-import RetreatCard from "@/components/retreat-card";
-import { RetreatRegistrationForm } from "@/components/retreat-registration-form";
+import RetreatCard from "@/components/retreat/retreat-card";
+import { RetreatRegistrationForm } from "@/components/retreat/retreat-registration-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getKSTFullYear, getRetreatSeason } from "@/lib/date-utils";
 import { useRetreatInfo } from "@/hooks/use-retreat-queries";

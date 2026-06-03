@@ -2,7 +2,7 @@ import type React from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Toast from "@/components/Toast";
+import Toaster from "@/components/shared/toaster";
 import { QueryProvider } from "@/providers/query-provider";
 
 const pretendard = localFont({
@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className={`${pretendard.className} antialiased`}>
         <QueryProvider>
           {children}
-          <Toast />
+          <Toaster />
         </QueryProvider>
       </body>
     </html>
