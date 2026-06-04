@@ -10,6 +10,7 @@ import {
 import { Users } from "lucide-react";
 import { useShuttleBusInfoContext } from "@/components/shuttle-bus/shuttle-bus-info-context";
 import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
+import { SHUTTLE_BUS_FIELDS } from "@/schemas/registration";
 
 export function UnivGroupField() {
   const { retreatData } = useShuttleBusInfoContext();
@@ -21,7 +22,7 @@ export function UnivGroupField() {
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="univGroup" className="flex items-center">
+      <Label htmlFor={SHUTTLE_BUS_FIELDS.univGroup} className="flex items-center">
         <Users className="mr-2" />
         부서
       </Label>
@@ -37,7 +38,7 @@ export function UnivGroupField() {
             }}
             value={field.value}
           >
-            <SelectTrigger id="univGroup">
+            <SelectTrigger id={SHUTTLE_BUS_FIELDS.univGroup}>
               <SelectValue placeholder="부서를 선택해주세요" />
             </SelectTrigger>
             <SelectContent>

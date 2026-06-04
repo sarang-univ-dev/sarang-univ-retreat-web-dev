@@ -10,6 +10,7 @@ import {
 import { Users } from "lucide-react";
 import { useRetreatInfoContext } from "@/components/retreat/retreat-info-context";
 import { useRetreatForm } from "@/hooks/use-retreat-form";
+import { RETREAT_FIELDS } from "@/schemas/registration";
 
 export function UnivGroupField() {
   const { retreatData } = useRetreatInfoContext();
@@ -21,7 +22,7 @@ export function UnivGroupField() {
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="univGroup" className="flex items-center">
+      <Label htmlFor={RETREAT_FIELDS.univGroup} className="flex items-center">
         <Users className="mr-2" />
         부서
       </Label>
@@ -37,7 +38,7 @@ export function UnivGroupField() {
             }}
             value={field.value}
           >
-            <SelectTrigger id="univGroup">
+            <SelectTrigger id={RETREAT_FIELDS.univGroup}>
               <SelectValue placeholder="부서를 선택해주세요" />
             </SelectTrigger>
             <SelectContent>

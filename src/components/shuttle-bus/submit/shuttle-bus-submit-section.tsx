@@ -10,6 +10,21 @@ import { useShuttleBusTotalPrice } from "@/hooks/use-shuttle-bus-derived";
 import { useShuttleBusRegistration } from "@/hooks/use-shuttle-bus-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
 import { getErrorMessage, logError } from "@/lib/error-handler";
+import { SHUTTLE_BUS_FIELDS } from "@/schemas/registration";
+import { scrollToFirstError } from "@/lib/scroll-to-error";
+
+// 폼 시각 순서 — 제출 실패 시 이 순서로 첫 에러 필드를 찾아 스크롤한다.
+// id 는 하드코딩이 아니라 SHUTTLE_BUS_FIELDS 상수를 참조한다.
+const BUS_FIELD_ORDER = [
+  SHUTTLE_BUS_FIELDS.privacyConsent,
+  SHUTTLE_BUS_FIELDS.agreeShuttleOnly,
+  SHUTTLE_BUS_FIELDS.univGroup,
+  SHUTTLE_BUS_FIELDS.grade,
+  SHUTTLE_BUS_FIELDS.name,
+  SHUTTLE_BUS_FIELDS.gender,
+  SHUTTLE_BUS_FIELDS.phoneNumber,
+  SHUTTLE_BUS_FIELDS.shuttleBusIds,
+];
 import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
 
 /**
@@ -94,7 +109,9 @@ export function ShuttleBusSubmitSection({ retreatSlug }: { retreatSlug: string }
     <>
       <ShuttleBusSubmitButton
         isSubmitting={isSubmitting}
-        onClick={handleSubmit(onValid)}
+        onClick={handleSubmit(onValid, (errors) =>
+          scrollToFirstError(errors, BUS_FIELD_ORDER)
+        )}
       />
 
       {showOneWayConfirmModal && (

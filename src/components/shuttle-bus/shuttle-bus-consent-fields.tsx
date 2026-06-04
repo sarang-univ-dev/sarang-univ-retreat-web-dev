@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TriangleAlert, CircleAlert } from "lucide-react";
 import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
+import { SHUTTLE_BUS_FIELDS } from "@/schemas/registration";
 
 export function ShuttleBusConsentFields() {
   const {
@@ -19,7 +20,7 @@ export function ShuttleBusConsentFields() {
             name="privacyConsent"
             render={({ field }) => (
               <Checkbox
-                id="privacyConsent"
+                id={SHUTTLE_BUS_FIELDS.privacyConsent}
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
@@ -28,7 +29,7 @@ export function ShuttleBusConsentFields() {
           <div className="flex gap-1.5 items-center">
             <TriangleAlert className="text-red-500" size={20} />
             <label
-              htmlFor="privacyConsent"
+              htmlFor={SHUTTLE_BUS_FIELDS.privacyConsent}
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               개인정보 수집 및 이용에 동의합니다
@@ -46,7 +47,7 @@ export function ShuttleBusConsentFields() {
             name="agreeShuttleOnly"
             render={({ field }) => (
               <Checkbox
-                id="agreeShuttleOnly"
+                id={SHUTTLE_BUS_FIELDS.agreeShuttleOnly}
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
@@ -55,7 +56,7 @@ export function ShuttleBusConsentFields() {
           <div className="flex gap-1.5 items-center">
             <CircleAlert className="text-red-500" size={20} />
             <label
-              htmlFor="agreeShuttleOnly"
+              htmlFor={SHUTTLE_BUS_FIELDS.agreeShuttleOnly}
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               안전을 위해 셔틀 이외 이동은 금지되는 것을 확인하였습니다

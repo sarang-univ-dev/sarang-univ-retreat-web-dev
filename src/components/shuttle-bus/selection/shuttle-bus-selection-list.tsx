@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/format-date";
 import { getKSTDateString } from "@/lib/date-utils";
 import { useShuttleBusInfoContext } from "@/components/shuttle-bus/shuttle-bus-info-context";
 import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
+import { SHUTTLE_BUS_FIELDS } from "@/schemas/registration";
 
 export function ShuttleBusSelectionList() {
   const { shuttleBusData } = useShuttleBusInfoContext();
@@ -44,7 +45,7 @@ export function ShuttleBusSelectionList() {
     <Controller
       control={control}
       name="shuttleBusIds"
-      render={({ field }) => {
+      render={({ field, fieldState }) => {
         const selectedBusIds = field.value;
 
         const handleBusSelection = (busId: number) => {
@@ -55,7 +56,10 @@ export function ShuttleBusSelectionList() {
         };
 
         return (
-          <div className="space-y-6">
+          <div
+            id={SHUTTLE_BUS_FIELDS.shuttleBusIds}
+            className="space-y-6 scroll-mt-4"
+          >
             {busesByDate.map(({ date, buses }) => (
               <div key={date} className="space-y-3">
                 <h3 className="text-lg font-semibold text-primary border-b pb-2">
@@ -149,6 +153,11 @@ export function ShuttleBusSelectionList() {
                 </div>
               </div>
             ))}
+            {fieldState.error && (
+              <p className="text-red-500 text-sm mt-1">
+                {fieldState.error.message}
+              </p>
+            )}
           </div>
         );
       }}

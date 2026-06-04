@@ -21,8 +21,10 @@ test.describe("retreat registration - SOLDIER (군지체) path", () => {
     // Select the 군지체 user type radio (shadcn radio is a button with role=radio).
     await page.locator("#userType-soldier").click();
 
-    // Total price block should now read "입금 대기" instead of an amount.
-    await expect(page.getByText("입금 대기")).toBeVisible();
+    // 군지체는 폼 총금액이 "예상 총금액: {추정액}" 으로 표시된다(전참=얼리버드 90,000).
+    await expect(
+      page.locator("p.font-bold", { hasText: "예상 총금액" })
+    ).toContainText("90,000원");
 
     // Submit -> confirm modal.
     await page.getByRole("button", { name: "수양회 신청하기" }).click();

@@ -43,15 +43,17 @@ test.describe("기능 플로우 정확성", () => {
     await expect(page.getByText("신한은행 123-456-789")).toHaveCount(0);
   });
 
-  test("새가족(NEW_COMER): 폼 총금액은 '입금 대기', 완료 페이지는 금액/계좌 블록 없이 새가족 안내", async ({
+  test("새가족(NEW_COMER): 폼 총금액은 '예상 총금액'(1차 전액), 완료 페이지는 금액/계좌 블록 없이 새가족 안내", async ({
     page,
   }) => {
     await page.goto(RETREAT_URL);
     await fillRetreatRequired(page);
     await page.locator('label[for="userType-newcomer"]').click();
 
-    // 폼의 총금액이 금액 대신 "입금 대기" 로 바뀐다.
-    await expect(page.getByText("총금액:")).toContainText("입금 대기");
+    // 새가족은 일정 선택과 무관하게 "예상 총금액: {1차 등록비용 전액}"(90,000) 표시.
+    await expect(
+      page.locator("p.font-bold", { hasText: "예상 총금액" })
+    ).toContainText("90,000원");
 
     await page.getByRole("button", { name: "수양회 신청하기" }).click();
     await confirmRetreatModal(page);
@@ -78,7 +80,7 @@ test.describe("기능 플로우 정확성", () => {
     ).toBeVisible();
   });
 
-  test("버스를 모두 해제하면 선택 카드/총금액이 사라지고 제출 버튼이 비활성화된다", async ({
+  test("버스를 모두 해제하면 선택 카드/총금액이 사라지고, 제출 시 버스 선택 에러가 뜬다", async ({
     page,
   }) => {
     await page.goto(SHUTTLE_URL);
@@ -90,8 +92,17 @@ test.describe("기능 플로우 정확성", () => {
     // 두 버스 모두 해제
     await toggleCheckbox(page, "bus-201");
     await toggleCheckbox(page, "bus-203");
-
     await expect(page.getByText("총 금액:")).toHaveCount(0);
-    await expect(page.getByRole("button", { name: /신청하기/ })).toBeDisabled();
+
+    // 버튼은 항상 활성 → 제출 시 zod 가 버스 미선택을 잡아낸다(모달 미개방).
+    await page.getByRole("button", { name: /신청하기/ }).click();
+    await expect(
+      page.locator("p.text-red-500", {
+        hasText: "셔틀버스를 한 대 이상 선택해주세요",
+      })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "신청 정보 확인" })
+    ).toHaveCount(0);
   });
 });

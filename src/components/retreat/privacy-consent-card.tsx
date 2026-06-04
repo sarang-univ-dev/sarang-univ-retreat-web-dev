@@ -3,6 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { TriangleAlert } from "lucide-react";
 import { useRetreatForm } from "@/hooks/use-retreat-form";
+import { RETREAT_FIELDS } from "@/schemas/registration";
 
 export function PrivacyConsentCard() {
   const {
@@ -19,7 +20,7 @@ export function PrivacyConsentCard() {
             name="privacyConsent"
             render={({ field }) => (
               <Checkbox
-                id="privacyConsent"
+                id={RETREAT_FIELDS.privacyConsent}
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
@@ -28,7 +29,7 @@ export function PrivacyConsentCard() {
           <div className="flex gap-1.5 items-center">
             <TriangleAlert className="text-red-500" size={20} />
             <label
-              htmlFor="privacyConsent"
+              htmlFor={RETREAT_FIELDS.privacyConsent}
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               개인정보 수집 및 이용에 동의합니다
