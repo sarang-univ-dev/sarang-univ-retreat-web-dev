@@ -16,12 +16,12 @@ test.describe("RetreatCard 포스터 미존재", () => {
 
     // 수양회 이름: "{year} 대학부 여름연합수양회 {name} 신청폼" 제목에 포함
     await expect(
-      page.getByText("2026 여름수양회", { exact: false })
+      page.getByText("UNASHAMED", { exact: false })
     ).toBeVisible();
 
     // 포스터 <img> 는 alt="{name} 포스터" 로 렌더되며, posterUrl 이 falsy 면 렌더되지 않는다.
     await expect(
-      page.getByRole("img", { name: "2026 여름수양회 포스터" })
+      page.getByRole("img", { name: "UNASHAMED 포스터" })
     ).toHaveCount(0);
   });
 });

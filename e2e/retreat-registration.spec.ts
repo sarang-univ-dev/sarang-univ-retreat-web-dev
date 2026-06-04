@@ -20,7 +20,7 @@ test.describe("수양회 등록 플로우", () => {
 
     // 카드 정보 노출 확인
     await expect(
-      page.getByText("2026 여름수양회", { exact: false })
+      page.getByText("UNASHAMED", { exact: false })
     ).toBeVisible();
 
     // 개인정보 동의

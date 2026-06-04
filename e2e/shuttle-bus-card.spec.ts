@@ -18,7 +18,7 @@ test.describe("셔틀버스 페이지 카드(RetreatCard)", () => {
 
     // 통합 카드 타이틀: "... {name} 셔틀버스 신청폼"
     await expect(page.getByText("셔틀버스 신청폼")).toBeVisible();
-    await expect(page.getByText("2026 여름수양회").first()).toBeVisible();
+    await expect(page.getByText("UNASHAMED").first()).toBeVisible();
 
     // 장소 (버스 목록 방향 표기와 겹치므로 카드의 정확 일치로 한정)
     await expect(

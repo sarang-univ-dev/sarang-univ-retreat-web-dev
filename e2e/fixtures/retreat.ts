@@ -15,7 +15,7 @@ export const openPeriodRetreatInfo = {
   retreat: {
     id: 1,
     slug: "test-retreat",
-    name: "2026 여름수양회",
+    name: "UNASHAMED",
     location: "사랑의교회 안성수양관",
     mainVerse: "주의 말씀은 내 발에 등이요 내 길에 빛이니이다 (시 119:105)",
     mainSpeaker: "김길동 목사",

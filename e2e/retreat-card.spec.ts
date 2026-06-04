@@ -14,7 +14,7 @@ test.describe("RetreatCard 표시", () => {
 
     // 수양회 이름: "{year} 대학부 여름연합수양회 {name} 신청폼" 형태의 제목에 포함
     await expect(
-      page.getByText("2026 여름수양회", { exact: false })
+      page.getByText("UNASHAMED", { exact: false })
     ).toBeVisible();
 
     // 장소
