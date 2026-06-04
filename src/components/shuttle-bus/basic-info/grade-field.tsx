@@ -35,7 +35,7 @@ export function GradeField() {
             value={field.value}
             disabled={!univGroup}
           >
-            <SelectTrigger>
+            <SelectTrigger id="grade">
               <SelectValue placeholder="학년을 선택해주세요" />
             </SelectTrigger>
             <SelectContent>

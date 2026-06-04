@@ -86,7 +86,7 @@ export function getKSTFullYear(dateInput: string | Date): number {
  */
 export function getKSTHours(dateInput: string | Date): number {
   const date = toDate(dateInput);
-  return parseInt(
+  const hours = parseInt(
     date.toLocaleTimeString(KST_LOCALE, {
       timeZone: KST_TIMEZONE,
       hour: "numeric",
@@ -94,6 +94,7 @@ export function getKSTHours(dateInput: string | Date): number {
     }),
     10
   );
+  return hours % 24;
 }
 
 /**

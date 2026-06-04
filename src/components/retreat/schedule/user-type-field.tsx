@@ -13,7 +13,7 @@ export function UserTypeField() {
 
   return (
     <div className="space-y-2 mt-4 mb-4 pt-4">
-      <Label htmlFor="userType" className="flex items-center">
+      <Label id="userType-label" className="flex items-center">
         <UserCheck className="mr-2" />
         신청 유형
       </Label>
@@ -22,6 +22,7 @@ export function UserTypeField() {
         name="userType"
         render={({ field }) => (
           <RadioGroup
+            aria-labelledby="userType-label"
             value={field.value === null ? "NONE" : field.value}
             onValueChange={(value) =>
               field.onChange(value === "NONE" ? null : value)

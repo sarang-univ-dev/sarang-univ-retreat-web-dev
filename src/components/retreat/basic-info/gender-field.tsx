@@ -27,7 +27,7 @@ export function GenderField() {
         name="gender"
         render={({ field }) => (
           <Select onValueChange={field.onChange} value={field.value}>
-            <SelectTrigger>
+            <SelectTrigger id="gender">
               <SelectValue placeholder="성별을 선택해주세요" />
             </SelectTrigger>
             <SelectContent>

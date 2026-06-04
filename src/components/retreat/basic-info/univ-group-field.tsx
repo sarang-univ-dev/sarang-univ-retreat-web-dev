@@ -37,7 +37,7 @@ export function UnivGroupField() {
             }}
             value={field.value}
           >
-            <SelectTrigger>
+            <SelectTrigger id="univGroup">
               <SelectValue placeholder="부서를 선택해주세요" />
             </SelectTrigger>
             <SelectContent>
