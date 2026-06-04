@@ -12,8 +12,8 @@ import {
 //   - isSpecialType = userType === "NEW_COMER" || "SOLDIER"
 //   - !isSpecialType → "입금 안내" 블록 렌더: "입금 계좌:" + depositAccount + "입금 금액:" + price
 //   - isSpecialType  → 대기 안내 문구만 렌더, "입금 계좌:" 블록 없음
-// "입금 대기" 문구는 폼의 총금액 블록에서만 나타나므로(특별 유형 선택 시),
-//   제출 직전 폼 상태에서 검증한다.
+// 특별 유형(새가족/군지체)은 폼 총금액이 "예상 총금액: {1차 등록비용 전액}" 으로,
+//   완료 페이지는 금액/계좌 블록 없이 대기 안내로 표시된다.
 
 const SLUG = "test-retreat";
 const RETREAT_URL = `/retreat/${SLUG}/retreat`;
@@ -67,8 +67,10 @@ test.describe("수양회 완료 페이지: 정상 입금 안내 vs 새가족 대
     // 새가족 유형 선택(shadcn radio = role=radio 버튼).
     await page.locator("#userType-newcomer").click();
 
-    // 폼 총금액 블록은 금액 대신 "입금 대기"를 보여준다.
-    await expect(page.getByText("입금 대기")).toBeVisible();
+    // 폼 총금액 블록은 새가족에게 "예상 총금액: {1차 등록비용 전액}" 을 보여준다.
+    await expect(
+      page.locator("p.font-bold", { hasText: "예상 총금액" })
+    ).toContainText("90,000원");
 
     await page.getByRole("button", { name: "수양회 신청하기" }).click();
     await expect(

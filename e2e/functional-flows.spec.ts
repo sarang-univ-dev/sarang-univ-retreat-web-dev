@@ -43,15 +43,17 @@ test.describe("기능 플로우 정확성", () => {
     await expect(page.getByText("신한은행 123-456-789")).toHaveCount(0);
   });
 
-  test("새가족(NEW_COMER): 폼 총금액은 '입금 대기', 완료 페이지는 금액/계좌 블록 없이 새가족 안내", async ({
+  test("새가족(NEW_COMER): 폼 총금액은 '예상 총금액'(1차 전액), 완료 페이지는 금액/계좌 블록 없이 새가족 안내", async ({
     page,
   }) => {
     await page.goto(RETREAT_URL);
     await fillRetreatRequired(page);
     await page.locator('label[for="userType-newcomer"]').click();
 
-    // 폼의 총금액이 금액 대신 "입금 대기" 로 바뀐다.
-    await expect(page.getByText("총금액:")).toContainText("입금 대기");
+    // 새가족은 일정 선택과 무관하게 "예상 총금액: {1차 등록비용 전액}"(90,000) 표시.
+    await expect(
+      page.locator("p.font-bold", { hasText: "예상 총금액" })
+    ).toContainText("90,000원");
 
     await page.getByRole("button", { name: "수양회 신청하기" }).click();
     await confirmRetreatModal(page);

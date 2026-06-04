@@ -66,19 +66,19 @@ export function useRetreatPrice(): { totalPrice: number } {
   const isAllScheduleSelected = useIsAllScheduleSelected();
 
   return useMemo(() => {
-    // 적용 payment: 새가족/현역 군지체/1학년 → 가장 이른(early-bird) 기간,
-    // 그 외 → 현재 진행 중(없으면 가장 늦은) 기간.
-    const findApplicablePayment = () => {
-      const usesEarliestPayment =
-        userType === "NEW_COMER" || userType === "SOLDIER" || gradeNumber === 1;
+    // 가장 이른(1차, early-bird) 기간.
+    const earliestPayment = retreatData.payment.reduce((earliest, current) =>
+      new Date(current.startAt) < new Date(earliest.startAt) ? current : earliest
+    );
 
-      if (usesEarliestPayment) {
-        return retreatData.payment.reduce((earliest, current) =>
-          new Date(current.startAt) < new Date(earliest.startAt)
-            ? current
-            : earliest
-        );
-      }
+    // 새가족/현역 군지체는 일정 선택과 무관하게 **무조건 1차 등록비용 전액**.
+    if (userType === "NEW_COMER" || userType === "SOLDIER") {
+      return { totalPrice: earliestPayment.totalPrice };
+    }
+
+    // 그 외 적용 payment: 1학년 → 1차, 아니면 현재 진행 중(없으면 가장 늦은) 기간.
+    const findApplicablePayment = () => {
+      if (gradeNumber === 1) return earliestPayment;
 
       const now = new Date();
       const validPayment = retreatData.payment.find(
