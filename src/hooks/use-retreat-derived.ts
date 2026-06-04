@@ -100,6 +100,7 @@ export function useRetreatPrice(): { totalPrice: number } {
       (schedule: TRetreatRegistrationSchedule) =>
         scheduleSelection.includes(schedule.id)
     ).length;
+
     return {
       totalPrice: Math.min(
         eventCount * payment.partialPricePerSchedule,

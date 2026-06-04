@@ -11,11 +11,11 @@ import {
 } from "@/schemas/registration";
 import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
 import { ShuttleBusConsentFields } from "@/components/shuttle-bus/shuttle-bus-consent-fields";
-import { ShuttleBusBasicInfoFields } from "@/components/shuttle-bus/shuttle-bus-basic-info-fields";
-import { ShuttleBusSelectionList } from "@/components/shuttle-bus/shuttle-bus-selection-list";
-import { SelectedShuttleBusesCard } from "@/components/shuttle-bus/selected-shuttle-buses-card";
-import { ShuttleBusTotalCard } from "@/components/shuttle-bus/shuttle-bus-total-card";
-import { ShuttleBusSubmitSection } from "@/components/shuttle-bus/shuttle-bus-submit-section";
+import { ShuttleBusBasicInfoFields } from "@/components/shuttle-bus/basic-info/shuttle-bus-basic-info-fields";
+import { ShuttleBusSelectionList } from "@/components/shuttle-bus/selection/shuttle-bus-selection-list";
+import { SelectedShuttleBusesCard } from "@/components/shuttle-bus/selection/selected-shuttle-buses-card";
+import { ShuttleBusTotalCard } from "@/components/shuttle-bus/selection/shuttle-bus-total-card";
+import { ShuttleBusSubmitSection } from "@/components/shuttle-bus/submit/shuttle-bus-submit-section";
 import { ShuttleBusInfoProvider } from "@/components/shuttle-bus/shuttle-bus-info-context";
 
 interface ShuttleBusRegistrationFormProps {
