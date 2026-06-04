@@ -78,7 +78,7 @@ test.describe("기능 플로우 정확성", () => {
     ).toBeVisible();
   });
 
-  test("버스를 모두 해제하면 선택 카드/총금액이 사라지고 제출 버튼이 비활성화된다", async ({
+  test("버스를 모두 해제하면 선택 카드/총금액이 사라지고, 제출 시 버스 선택 에러가 뜬다", async ({
     page,
   }) => {
     await page.goto(SHUTTLE_URL);
@@ -90,8 +90,17 @@ test.describe("기능 플로우 정확성", () => {
     // 두 버스 모두 해제
     await toggleCheckbox(page, "bus-201");
     await toggleCheckbox(page, "bus-203");
-
     await expect(page.getByText("총 금액:")).toHaveCount(0);
-    await expect(page.getByRole("button", { name: /신청하기/ })).toBeDisabled();
+
+    // 버튼은 항상 활성 → 제출 시 zod 가 버스 미선택을 잡아낸다(모달 미개방).
+    await page.getByRole("button", { name: /신청하기/ }).click();
+    await expect(
+      page.locator("p.text-red-500", {
+        hasText: "셔틀버스를 한 대 이상 선택해주세요",
+      })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "신청 정보 확인" })
+    ).toHaveCount(0);
   });
 });

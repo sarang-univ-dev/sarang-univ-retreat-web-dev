@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Phone } from "lucide-react";
 import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
+import { SHUTTLE_BUS_FIELDS } from "@/schemas/registration";
 
 export function PhoneField() {
   const {
@@ -11,12 +12,12 @@ export function PhoneField() {
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="phoneNumber" className="flex items-center">
+      <Label htmlFor={SHUTTLE_BUS_FIELDS.phoneNumber} className="flex items-center">
         <Phone className="mr-2" />
         전화번호
       </Label>
       <Input
-        id="phoneNumber"
+        id={SHUTTLE_BUS_FIELDS.phoneNumber}
         placeholder="010-1234-5678"
         {...register("phoneNumber")}
       />

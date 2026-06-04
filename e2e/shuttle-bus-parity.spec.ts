@@ -12,15 +12,19 @@ test.describe("셔틀버스 폼 패리티 검증", () => {
     await mockRetreatApi(page, { open: true });
   });
 
-  test('이름이 공백("   ")이면 제출 버튼이 비활성화된다 (name.trim() 가드)', async ({
+  test('이름이 공백("   ")이면 제출 시 이름 필수 에러가 뜨고 모달이 열리지 않는다', async ({
     page,
   }) => {
     await page.goto(SHUTTLE_URL);
-    // 이름만 공백, 나머지(전화/버스/동의)는 유효하게.
+    // 이름만 공백, 나머지(전화/버스/동의/부서/학년/성별)는 유효하게.
     await fillBusRequired(page, { name: "   " });
 
-    const submit = page.getByRole("button", { name: /신청하기/ });
-    await expect(submit).toBeDisabled();
+    await page.getByRole("button", { name: /신청하기/ }).click();
+    // zod name.trim().min(1) → 이름 필수 에러, 모달 미개방.
+    await expect(
+      page.locator("p.text-red-500", { hasText: "이름을 입력해주세요" })
+    ).toBeVisible();
+    await expect(page.getByText("신청 정보 확인")).toHaveCount(0);
   });
 
   test("입력 필드에서 Enter 를 눌러도 제출/모달이 열리지 않는다", async ({

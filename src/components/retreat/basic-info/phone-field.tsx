@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Phone } from "lucide-react";
 import { useRetreatForm } from "@/hooks/use-retreat-form";
+import { RETREAT_FIELDS } from "@/schemas/registration";
 
 export function PhoneField() {
   const {
@@ -11,7 +12,7 @@ export function PhoneField() {
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="phoneNumber" className="flex items-center">
+      <Label htmlFor={RETREAT_FIELDS.phoneNumber} className="flex items-center">
         <Phone className="mr-2" />
         전화번호
       </Label>
@@ -20,7 +21,7 @@ export function PhoneField() {
         각 부서 행정간사님에게 문의해주시기 바랍니다.
       </p>
       <Input
-        id="phoneNumber"
+        id={RETREAT_FIELDS.phoneNumber}
         placeholder="010-1234-5678"
         {...register("phoneNumber")}
       />

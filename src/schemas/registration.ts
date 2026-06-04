@@ -87,7 +87,7 @@ export const shuttleBusRegistrationSchema = z.object({
     .min(1, "성별을 선택해주세요")
     .refine((v) => v === "MALE" || v === "FEMALE", "성별을 선택해주세요"),
   phoneNumber: requiredPhoneSchema,
-  shuttleBusIds: z.array(z.number()),
+  shuttleBusIds: z.array(z.number()).min(1, "셔틀버스를 한 대 이상 선택해주세요"),
   isAdminContact: z.boolean(),
   privacyConsent: z
     .boolean()
@@ -100,3 +100,32 @@ export const shuttleBusRegistrationSchema = z.object({
 /** 폼 입력값 타입 단일 출처. 각 컴포넌트에서 z.input<...> 를 반복 선언하지 않는다. */
 export type RetreatFormValues = z.input<typeof retreatRegistrationSchema>;
 export type ShuttleBusFormValues = z.input<typeof shuttleBusRegistrationSchema>;
+
+/**
+ * 폼 필드 이름 단일 출처. RHF name / DOM id / 라벨 htmlFor / 스크롤 대상 매핑이
+ * 전부 이 상수를 참조해 하드코딩·드리프트를 막는다.
+ * `satisfies` 로 각 값이 실제 스키마 필드 키임을 컴파일 타임에 보장한다.
+ */
+export const RETREAT_FIELDS = {
+  privacyConsent: "privacyConsent",
+  univGroup: "univGroup",
+  grade: "grade",
+  name: "name",
+  gender: "gender",
+  phoneNumber: "phoneNumber",
+  currentLeaderName: "currentLeaderName",
+  scheduleSelection: "scheduleSelection",
+  userType: "userType",
+} as const satisfies Record<string, keyof RetreatFormValues>;
+
+export const SHUTTLE_BUS_FIELDS = {
+  privacyConsent: "privacyConsent",
+  agreeShuttleOnly: "agreeShuttleOnly",
+  univGroup: "univGroup",
+  grade: "grade",
+  name: "name",
+  gender: "gender",
+  phoneNumber: "phoneNumber",
+  shuttleBusIds: "shuttleBusIds",
+  isAdminContact: "isAdminContact",
+} as const satisfies Record<string, keyof ShuttleBusFormValues>;

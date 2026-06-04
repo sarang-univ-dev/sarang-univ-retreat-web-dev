@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { UserRoundCheck } from "lucide-react";
 import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
+import { SHUTTLE_BUS_FIELDS } from "@/schemas/registration";
 
 export function GenderField() {
   const {
@@ -18,7 +19,7 @@ export function GenderField() {
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="gender" className="flex items-center">
+      <Label htmlFor={SHUTTLE_BUS_FIELDS.gender} className="flex items-center">
         <UserRoundCheck className="mr-2" />
         성별
       </Label>
@@ -27,7 +28,7 @@ export function GenderField() {
         name="gender"
         render={({ field }) => (
           <Select onValueChange={field.onChange} value={field.value}>
-            <SelectTrigger id="gender">
+            <SelectTrigger id={SHUTTLE_BUS_FIELDS.gender}>
               <SelectValue placeholder="성별을 선택해주세요" />
             </SelectTrigger>
             <SelectContent>

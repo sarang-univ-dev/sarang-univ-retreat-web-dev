@@ -32,6 +32,8 @@ export function ShuttleBusRegistrationForm({
   const form = useForm<ShuttleBusFormValues>({
     resolver: zodResolver(shuttleBusRegistrationSchema),
     mode: "onChange",
+    // 제출 실패 시 포커스는 scrollToFirstError(시각 순서)가 담당 → RHF 기본 포커스 비활성.
+    shouldFocusError: false,
     defaultValues: {
       name: "",
       phoneNumber: "",

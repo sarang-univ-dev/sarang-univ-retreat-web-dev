@@ -1,11 +1,12 @@
 import { Calendar } from "lucide-react";
+import { RETREAT_FIELDS } from "@/schemas/registration";
 import { ScheduleMatrix } from "@/components/retreat/schedule/schedule-matrix";
 import { UserTypeField } from "@/components/retreat/schedule/user-type-field";
 import { ScheduleTotalPrice } from "@/components/retreat/schedule/schedule-total-price";
 
 export function ScheduleSelectionTable() {
   return (
-    <div className="pt-4 border-t">
+    <div id={RETREAT_FIELDS.scheduleSelection} className="pt-4 border-t scroll-mt-4">
       <h2 className="text-2xl font-bold flex items-center mb-4">
         <Calendar className="mr-2" size={24} />
         수양회 일정 선택

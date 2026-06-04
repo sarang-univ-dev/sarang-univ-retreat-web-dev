@@ -13,6 +13,21 @@ import { useRetreatRegistration } from "@/hooks/use-retreat-registration";
 import { useRegistrationResultStore } from "@/store/registration-result-store";
 import { getErrorMessage, logError } from "@/lib/error-handler";
 import { useRetreatForm } from "@/hooks/use-retreat-form";
+import { RETREAT_FIELDS } from "@/schemas/registration";
+import { scrollToFirstError } from "@/lib/scroll-to-error";
+
+// 폼 시각 순서 — 제출 실패 시 이 순서로 첫 에러 필드를 찾아 스크롤한다.
+// id 는 하드코딩이 아니라 RETREAT_FIELDS 상수를 참조한다.
+const RETREAT_FIELD_ORDER = [
+  RETREAT_FIELDS.privacyConsent,
+  RETREAT_FIELDS.univGroup,
+  RETREAT_FIELDS.grade,
+  RETREAT_FIELDS.name,
+  RETREAT_FIELDS.gender,
+  RETREAT_FIELDS.phoneNumber,
+  RETREAT_FIELDS.currentLeaderName,
+  RETREAT_FIELDS.scheduleSelection,
+];
 
 /**
  * 제출 버튼 + 확인 모달 + 제출(mutation) 책임을 한곳에 묶은 컴포넌트.
@@ -86,7 +101,10 @@ export function RetreatSubmitSection({ retreatSlug }: { retreatSlug: string }) {
     <>
       <Button
         type="button"
-        onClick={handleSubmit(() => setShowConfirmModal(true))}
+        onClick={handleSubmit(
+          () => setShowConfirmModal(true),
+          (errors) => scrollToFirstError(errors, RETREAT_FIELD_ORDER)
+        )}
         className="w-full text-md flex items-center justify-center"
         disabled={isSubmitting}
       >

@@ -1,27 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { useShuttleBusTotalPrice } from "@/hooks/use-shuttle-bus-derived";
-import { useShuttleBusForm } from "@/hooks/use-shuttle-bus-form";
 
 interface ShuttleBusSubmitButtonProps {
   isSubmitting: boolean;
   onClick: () => void;
 }
 
-// 전화번호 유효성 체크 (버튼 활성화용, 기존 느슨한 정규식 그대로)
-const isValidPhoneNumber = (phone: string) => {
-  const phoneRegex = /^\d{3}-\d{4}-\d{4}$/;
-  return phoneRegex.test(phone);
-};
-
+// 필수 입력(이름/전화/버스 선택)은 zod 가 검증하고, 미충족 시 scrollToFirstError 가
+// 해당 필드로 안내한다. 따라서 버튼은 제출 중에만 비활성화한다(수양회 CTA 와 동일).
 export function ShuttleBusSubmitButton({
   isSubmitting,
   onClick,
 }: ShuttleBusSubmitButtonProps) {
-  const { watch } = useShuttleBusForm();
-  const name = watch("name");
-  const phoneNumber = watch("phoneNumber");
-  const shuttleBusIds = watch("shuttleBusIds");
-  const isAdminContact = watch("isAdminContact");
   const totalPrice = useShuttleBusTotalPrice();
 
   return (
@@ -29,13 +19,7 @@ export function ShuttleBusSubmitButton({
       type="button"
       onClick={onClick}
       className="w-full text-md flex items-center justify-center"
-      disabled={
-        (!isAdminContact && shuttleBusIds.length === 0) ||
-        !name.trim() ||
-        !phoneNumber.trim() ||
-        !isValidPhoneNumber(phoneNumber) ||
-        isSubmitting
-      }
+      disabled={isSubmitting}
     >
       <span>신청하기 ({totalPrice.toLocaleString()}원)</span>
       {isSubmitting && (

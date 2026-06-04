@@ -10,6 +10,7 @@ import {
 import { Hash } from "lucide-react";
 import { useAvailableGrades } from "@/hooks/use-retreat-derived";
 import { useRetreatForm } from "@/hooks/use-retreat-form";
+import { RETREAT_FIELDS } from "@/schemas/registration";
 
 export function GradeField() {
   const availableGrades = useAvailableGrades();
@@ -22,7 +23,7 @@ export function GradeField() {
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="grade" className="flex items-center">
+      <Label htmlFor={RETREAT_FIELDS.grade} className="flex items-center">
         <Hash className="mr-2" />
         학년
       </Label>
@@ -35,7 +36,7 @@ export function GradeField() {
             value={field.value}
             disabled={!univGroup}
           >
-            <SelectTrigger id="grade">
+            <SelectTrigger id={RETREAT_FIELDS.grade}>
               <SelectValue placeholder="학년을 선택해주세요" />
             </SelectTrigger>
             <SelectContent>
