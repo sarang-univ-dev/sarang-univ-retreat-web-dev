@@ -74,7 +74,7 @@ export function validateLeaderSubmit({
     if (!draft.graceSharing.trim()) {
       errors.push("은혜나눔을 입력해주세요.");
     }
-    if (!draft.prayerTopics.trim()) {
+    if (!draft.prayerRequests.trim()) {
       errors.push("기도제목을 입력해주세요.");
     }
   }

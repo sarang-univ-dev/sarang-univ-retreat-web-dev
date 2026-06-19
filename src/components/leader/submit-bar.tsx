@@ -84,7 +84,7 @@ export function SubmitBar({
         await submitLeaderReport(slug, {
           date: today,
           graceSharing: draft.graceSharing,
-          prayerTopics: draft.prayerTopics,
+          prayerRequests: draft.prayerRequests,
         });
       }
 

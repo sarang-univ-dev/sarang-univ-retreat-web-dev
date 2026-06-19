@@ -51,7 +51,7 @@ export interface LeaderMember {
 
 export interface LeaderReport {
   graceSharing: string;
-  prayerTopics: string;
+  prayerRequests: string;
   updatedAt: string;
 }
 
@@ -135,10 +135,10 @@ export async function fetchLeaderReport(
     .json<{ report: LeaderReport | null }>();
 }
 
-/** POST /reports — body { date, graceSharing, prayerTopics } → { report } */
+/** POST /reports — body { date, graceSharing, prayerRequests } → { report } */
 export async function submitLeaderReport(
   slug: string,
-  payload: { date: string; graceSharing: string; prayerTopics: string }
+  payload: { date: string; graceSharing: string; prayerRequests: string }
 ): Promise<{ report: LeaderReport }> {
   return leaderApi
     .post(`${base(slug)}/reports`, { json: payload })

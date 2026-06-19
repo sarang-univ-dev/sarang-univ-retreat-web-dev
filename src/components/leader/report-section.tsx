@@ -12,9 +12,9 @@ interface ReportSectionProps {
 
 export function ReportSection({ isLastDay }: ReportSectionProps) {
   const graceSharing = useLeaderDraftStore((s) => s.draft.graceSharing);
-  const prayerTopics = useLeaderDraftStore((s) => s.draft.prayerTopics);
+  const prayerRequests = useLeaderDraftStore((s) => s.draft.prayerRequests);
   const setGraceSharing = useLeaderDraftStore((s) => s.setGraceSharing);
-  const setPrayerTopics = useLeaderDraftStore((s) => s.setPrayerTopics);
+  const setPrayerRequests = useLeaderDraftStore((s) => s.setPrayerRequests);
 
   if (isLastDay) {
     return (
@@ -50,8 +50,8 @@ export function ReportSection({ isLastDay }: ReportSectionProps) {
           <Label htmlFor="prayer-topics">기도 제목</Label>
           <Textarea
             id="prayer-topics"
-            value={prayerTopics}
-            onChange={(e) => setPrayerTopics(e.target.value)}
+            value={prayerRequests}
+            onChange={(e) => setPrayerRequests(e.target.value)}
             className="min-h-[120px]"
           />
         </div>

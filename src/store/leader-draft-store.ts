@@ -28,7 +28,7 @@ export interface LeaderDraft {
   /** userRetreatRegistrationId → 일정변경 드래프트 */
   scheduleChanges: Record<number, ScheduleChangeDraft>;
   graceSharing: string;
-  prayerTopics: string;
+  prayerRequests: string;
 }
 
 interface LeaderDraftState {
@@ -41,7 +41,7 @@ interface LeaderDraftState {
   setScheduleChange: (id: number, change: ScheduleChangeDraft) => void;
   clearScheduleChange: (id: number) => void;
   setGraceSharing: (value: string) => void;
-  setPrayerTopics: (value: string) => void;
+  setPrayerRequests: (value: string) => void;
   /** 입력된 게 하나라도 있는지(제출 전 이탈 경고용). */
   hasUnsavedChanges: () => boolean;
   /** 제출 성공 후 드래프트 + 영속 데이터 비우기. */
@@ -52,7 +52,7 @@ const emptyDraft = (): LeaderDraft => ({
   attendance: {},
   scheduleChanges: {},
   graceSharing: "",
-  prayerTopics: "",
+  prayerRequests: "",
 });
 
 export function leaderDraftKey(
@@ -77,7 +77,7 @@ function loadDraft(key: string): LeaderDraft {
       attendance: parsed.attendance ?? {},
       scheduleChanges: parsed.scheduleChanges ?? {},
       graceSharing: parsed.graceSharing ?? "",
-      prayerTopics: parsed.prayerTopics ?? "",
+      prayerRequests: parsed.prayerRequests ?? "",
     };
   } catch {
     return emptyDraft();
@@ -151,9 +151,9 @@ export const useLeaderDraftStore = create<LeaderDraftState>((set, get) => ({
       return { draft };
     }),
 
-  setPrayerTopics: (prayerTopics) =>
+  setPrayerRequests: (prayerRequests) =>
     set((state) => {
-      const draft = { ...state.draft, prayerTopics };
+      const draft = { ...state.draft, prayerRequests };
       persistDraft(state.key, draft);
       return { draft };
     }),
@@ -164,7 +164,7 @@ export const useLeaderDraftStore = create<LeaderDraftState>((set, get) => ({
       Object.keys(draft.attendance).length > 0 ||
       Object.keys(draft.scheduleChanges).length > 0 ||
       draft.graceSharing.trim().length > 0 ||
-      draft.prayerTopics.trim().length > 0
+      draft.prayerRequests.trim().length > 0
     );
   },
 
