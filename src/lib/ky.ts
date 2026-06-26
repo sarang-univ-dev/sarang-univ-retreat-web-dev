@@ -10,6 +10,29 @@ export interface NormalizedHTTPError extends HTTPError {
 }
 
 /**
+ * 비 2xx 응답 body 의 message/error 를 error.serverMessage 로 정규화하는 beforeError 훅.
+ * `api` 와 leader 전용 클라이언트(`leader-api.ts`)가 동일한 에러 정규화를 공유하도록 분리했다.
+ */
+export const normalizeServerError = async (error: HTTPError) => {
+  const { response } = error;
+  if (response) {
+    try {
+      const data = (await response.clone().json()) as {
+        message?: string;
+        error?: string;
+      };
+      const message = data?.message ?? data?.error;
+      if (message) {
+        (error as NormalizedHTTPError).serverMessage = message;
+      }
+    } catch {
+      // JSON 이 아닌 응답이면 무시 (상태 코드 기반 메시지로 폴백)
+    }
+  }
+  return error;
+};
+
+/**
  * 공용 ky 인스턴스. prefixUrl 기준이므로 호출 시 경로 앞에 "/" 를 붙이지 않는다.
  * 예) api.get(`api/v1/retreat/${slug}/info`)
  *
@@ -22,26 +45,7 @@ export const api = ky.create({
   prefixUrl: SERVER_URL,
   retry: 0,
   hooks: {
-    beforeError: [
-      async (error) => {
-        const { response } = error;
-        if (response) {
-          try {
-            const data = (await response.clone().json()) as {
-              message?: string;
-              error?: string;
-            };
-            const message = data?.message ?? data?.error;
-            if (message) {
-              (error as NormalizedHTTPError).serverMessage = message;
-            }
-          } catch {
-            // JSON 이 아닌 응답이면 무시 (상태 코드 기반 메시지로 폴백)
-          }
-        }
-        return error;
-      },
-    ],
+    beforeError: [normalizeServerError],
   },
 });
 
