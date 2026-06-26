@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { WarningsConfirmModal } from "@/components/leader/warnings-confirm-modal";
 import { useToastStore } from "@/store/toast-store";
@@ -47,12 +47,12 @@ export function SubmitBar({
   const draft = useLeaderDraftStore((s) => s.draft);
   const clearDraft = useLeaderDraftStore((s) => s.clear);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [pendingWarnings, setPendingWarnings] = useState<string[] | null>(null);
 
-  const runSubmit = async () => {
-    setIsSubmitting(true);
-    try {
+  // 모든 변경(출석 → 일정변경요청 → 보고)을 순차 제출하는 단일 mutation.
+  // 첫 에러에서 중단하고 드래프트는 유지(재시도). 성공 시 /members 무효화 + 드래프트 clear.
+  const submitMutation = useMutation({
+    mutationFn: async () => {
       // 1) 출석 — 드래프트 우선, 없으면 서버 값. PRESENT/ABSENT 만 전송.
       const entries: AttendanceEntry[] = [];
       for (const m of members) {
@@ -61,8 +61,7 @@ export function SubmitBar({
           drafted !== undefined ? drafted : m.todayAttendanceStatus;
         if (status === "PRESENT" || status === "ABSENT") {
           const memoDraft = draft.memo[m.userRetreatRegistrationId];
-          const memo =
-            memoDraft !== undefined ? memoDraft : m.todayMemo ?? "";
+          const memo = memoDraft !== undefined ? memoDraft : m.todayMemo ?? "";
           entries.push({
             userRetreatRegistrationId: m.userRetreatRegistrationId,
             status,
@@ -91,17 +90,15 @@ export function SubmitBar({
           prayerRequests: draft.prayerRequests,
         });
       }
-
-      // 성공: 멤버 무효화 + 드래프트 clear
+    },
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: leaderQueryKeys.members(slug),
       });
       clearDraft();
-      addToast({
-        title: "제출이 완료되었습니다",
-        variant: "success",
-      });
-    } catch (error) {
+      addToast({ title: "제출이 완료되었습니다", variant: "success" });
+    },
+    onError: (error) => {
       logError(error, "leader-submit");
       addToast({
         title: "제출에 실패했습니다",
@@ -109,11 +106,11 @@ export function SubmitBar({
         variant: "destructive",
       });
       // 드래프트는 그대로 유지(재시도 가능)
-    } finally {
-      setIsSubmitting(false);
+    },
+    onSettled: () => {
       setPendingWarnings(null);
-    }
-  };
+    },
+  });
 
   const handleSubmit = () => {
     const { errors, warnings } = validateLeaderSubmit({
@@ -138,7 +135,7 @@ export function SubmitBar({
       return;
     }
 
-    void runSubmit();
+    submitMutation.mutate();
   };
 
   return (
@@ -147,11 +144,11 @@ export function SubmitBar({
         <Button
           type="button"
           onClick={handleSubmit}
-          disabled={isSubmitting}
+          disabled={submitMutation.isPending}
           className="w-full text-md flex items-center justify-center"
         >
           <span>제출하기</span>
-          {isSubmitting && (
+          {submitMutation.isPending && (
             <svg
               className="ml-2 h-5 w-5 animate-spin text-white"
               xmlns="http://www.w3.org/2000/svg"
@@ -179,9 +176,9 @@ export function SubmitBar({
       {pendingWarnings && (
         <WarningsConfirmModal
           warnings={pendingWarnings}
-          isSubmitting={isSubmitting}
+          isSubmitting={submitMutation.isPending}
           onClose={() => setPendingWarnings(null)}
-          onConfirm={() => void runSubmit()}
+          onConfirm={() => submitMutation.mutate()}
         />
       )}
     </>
