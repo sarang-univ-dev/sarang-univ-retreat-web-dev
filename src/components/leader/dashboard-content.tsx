@@ -25,6 +25,7 @@ export function DashboardContent({ slug, leader }: DashboardContentProps) {
 
   // 드래프트 컨텍스트 초기화 (slug/gbsId/today). today 가 정해진 뒤에만.
   const initDraft = useLeaderDraftStore((s) => s.init);
+  const draftAttendance = useLeaderDraftStore((s) => s.draft.attendance);
   useEffect(() => {
     if (today) {
       initDraft(slug, leader.gbsId, today);
@@ -72,8 +73,40 @@ export function DashboardContent({ slug, leader }: DashboardContentProps) {
   const members = membersQuery.data.members;
   const schedule = retreatInfoQuery.data.schedule;
 
+  // 출석 입력 진행률 (드래프트 우선, 없으면 서버 값) — 제출 전 완료도 표시
+  const attendanceCheckedCount = members.filter((m) => {
+    const drafted = draftAttendance[m.userRetreatRegistrationId];
+    const status = drafted !== undefined ? drafted : m.todayAttendanceStatus;
+    return status != null;
+  }).length;
+  const attendancePct =
+    members.length > 0
+      ? Math.round((attendanceCheckedCount / members.length) * 100)
+      : 0;
+  const attendanceAllChecked =
+    members.length > 0 && attendanceCheckedCount === members.length;
+
   return (
     <>
+      {members.length > 0 && (
+        <div className="mb-3">
+          <div className="mb-1 flex items-center justify-between text-sm">
+            <span className="font-medium">출석 체크</span>
+            <span className="text-muted-foreground">
+              {attendanceCheckedCount} / {members.length}
+            </span>
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className={`h-full rounded-full transition-all ${
+                attendanceAllChecked ? "bg-green-500" : "bg-primary"
+              }`}
+              style={{ width: `${attendancePct}%` }}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3 pb-4">
         {members.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">

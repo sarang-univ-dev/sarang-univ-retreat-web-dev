@@ -4,7 +4,7 @@ import type { AttendanceStatus } from "@/services/leader";
 /**
  * 리더 대시보드 로컬 드래프트 캐시.
  *
- * 리더가 휴대폰으로 출석/일정변경/보고를 입력하다가 제출 전에 새로고침하거나
+ * 리더가 휴대폰으로 출석/일정변경/비고/보고를 입력하다가 제출 전에 새로고침하거나
  * 앱을 닫아도 입력값이 보존되도록 localStorage 에 영속한다.
  *
  * 키는 컨텍스트별로 분리: `leader-draft-v3:<slug>:<gbsId>:<today>`.
@@ -27,6 +27,11 @@ export interface LeaderDraft {
   attendance: Record<number, AttendanceStatus | null>;
   /** userRetreatRegistrationId → 일정변경 드래프트 */
   scheduleChanges: Record<number, ScheduleChangeDraft>;
+  /**
+   * userRetreatRegistrationId → 비고(특이사항).
+   * 키 없음 = 미수정(서버 값 사용), "" = 명시적 비움(서버 값 덮어쓰기).
+   */
+  memo: Record<number, string>;
   graceSharing: string;
   prayerRequests: string;
 }
@@ -40,6 +45,7 @@ interface LeaderDraftState {
   setAttendance: (id: number, status: AttendanceStatus | null) => void;
   setScheduleChange: (id: number, change: ScheduleChangeDraft) => void;
   clearScheduleChange: (id: number) => void;
+  setMemo: (id: number, memo: string) => void;
   setGraceSharing: (value: string) => void;
   setPrayerRequests: (value: string) => void;
   /** 입력된 게 하나라도 있는지(제출 전 이탈 경고용). */
@@ -51,6 +57,7 @@ interface LeaderDraftState {
 const emptyDraft = (): LeaderDraft => ({
   attendance: {},
   scheduleChanges: {},
+  memo: {},
   graceSharing: "",
   prayerRequests: "",
 });
@@ -76,6 +83,7 @@ function loadDraft(key: string): LeaderDraft {
     return {
       attendance: parsed.attendance ?? {},
       scheduleChanges: parsed.scheduleChanges ?? {},
+      memo: parsed.memo ?? {},
       graceSharing: parsed.graceSharing ?? "",
       prayerRequests: parsed.prayerRequests ?? "",
     };
@@ -144,6 +152,15 @@ export const useLeaderDraftStore = create<LeaderDraftState>((set, get) => ({
       return { draft };
     }),
 
+  setMemo: (id, memo) =>
+    set((state) => {
+      // "" 도 명시적 값으로 보존한다(서버에 저장된 비고를 비우는 케이스).
+      const memoMap = { ...state.draft.memo, [id]: memo };
+      const draft = { ...state.draft, memo: memoMap };
+      persistDraft(state.key, draft);
+      return { draft };
+    }),
+
   setGraceSharing: (graceSharing) =>
     set((state) => {
       const draft = { ...state.draft, graceSharing };
@@ -163,6 +180,7 @@ export const useLeaderDraftStore = create<LeaderDraftState>((set, get) => ({
     return (
       Object.keys(draft.attendance).length > 0 ||
       Object.keys(draft.scheduleChanges).length > 0 ||
+      Object.values(draft.memo).some((v) => v.trim().length > 0) ||
       draft.graceSharing.trim().length > 0 ||
       draft.prayerRequests.trim().length > 0
     );

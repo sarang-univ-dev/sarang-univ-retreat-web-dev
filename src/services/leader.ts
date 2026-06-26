@@ -46,6 +46,7 @@ export interface LeaderMember {
   scheduleIds: number[];
   isLeader: boolean;
   todayAttendanceStatus: AttendanceStatus | null;
+  todayMemo: string | null;
   latestScheduleChangeRequest: LeaderMemberScheduleChangeRequest | null;
 }
 
@@ -58,6 +59,7 @@ export interface LeaderReport {
 export interface AttendanceEntry {
   userRetreatRegistrationId: number;
   status: AttendanceStatus;
+  memo?: string | null;
 }
 
 export interface ScheduleChangeRequest {

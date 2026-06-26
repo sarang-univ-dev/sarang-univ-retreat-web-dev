@@ -60,9 +60,13 @@ export function SubmitBar({
         const status: AttendanceStatus | null =
           drafted !== undefined ? drafted : m.todayAttendanceStatus;
         if (status === "PRESENT" || status === "ABSENT") {
+          const memoDraft = draft.memo[m.userRetreatRegistrationId];
+          const memo =
+            memoDraft !== undefined ? memoDraft : m.todayMemo ?? "";
           entries.push({
             userRetreatRegistrationId: m.userRetreatRegistrationId,
             status,
+            memo,
           });
         }
       }

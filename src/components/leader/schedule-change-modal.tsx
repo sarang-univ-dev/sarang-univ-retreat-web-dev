@@ -4,20 +4,29 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import { ScheduleSlotMatrix } from "@/components/leader/schedule-slot-matrix";
-import type { LeaderMember } from "@/services/leader";
+import type { AttendanceStatus, LeaderMember } from "@/services/leader";
 import type { ScheduleChangeDraft } from "@/store/leader-draft-store";
 import type { TRetreatRegistrationSchedule } from "@/types";
 
 interface ScheduleChangeModalProps {
   member: LeaderMember;
   schedule: TRetreatRegistrationSchedule[];
-  /** 기존에 저장된 드래프트(편집 진입 시 복원) */
+  /** 기존에 저장된 일정변경 드래프트(편집 진입 시 복원) */
   existingDraft?: ScheduleChangeDraft;
+  initialAttendance: AttendanceStatus | null;
+  initialMemo: string;
+  /** 검토 중인 일정 변경 요청이 있어 일정 변경이 잠긴 상태 */
+  scheduleLocked: boolean;
+  /** 잠금 시 표시할 현재 일정 텍스트(부모가 계산해서 전달) */
+  currentScheduleText: string;
   onClose: () => void;
-  onSave: (draft: ScheduleChangeDraft) => void;
-  /** 드래프트 제거(변경 취소) */
-  onRemove: () => void;
+  onSave: (result: {
+    attendance: AttendanceStatus | null;
+    memo: string;
+    scheduleChange: ScheduleChangeDraft | null;
+  }) => void;
 }
 
 function sameIds(a: number[], b: number[]): boolean {
@@ -27,117 +36,174 @@ function sameIds(a: number[], b: number[]): boolean {
 }
 
 /**
- * 한 조원의 일정 변경 모달.
- * - slot 체크박스는 member.scheduleIds(또는 기존 드래프트의 after)로 pre-check
- * - 변경된 slot 강조 (ScheduleSlotMatrix 의 originalIds)
- * - 사유 필수
- * - 저장 시 드래프트({before, after, reason})를 부모로 올린다 (즉시 서버 호출 X)
- *
+ * 한 조원의 출석 · 일정 · 비고를 입력하는 모달.
+ * - 출석/결석 토글 (전원 입력 필수는 제출 단계에서 검증)
+ * - 일정 매트릭스: 변경 시 사유 필수, 드래프트로 저장(즉시 서버 호출 X)
+ * - 비고(특이사항): 출석과 함께 저장되어 인원관리 간사가 모아 본다
  * 오버레이 패턴은 retreat-confirm-modal 을 그대로 따른다.
  */
 export function ScheduleChangeModal({
   member,
   schedule,
   existingDraft,
+  initialAttendance,
+  initialMemo,
+  scheduleLocked,
+  currentScheduleText,
   onClose,
   onSave,
-  onRemove,
 }: ScheduleChangeModalProps) {
   // 원본 = 멤버의 현재 확정 일정
   const originalIds = member.scheduleIds;
 
+  const [attendance, setAttendance] = useState<AttendanceStatus | null>(
+    initialAttendance
+  );
+  const [memo, setMemo] = useState<string>(initialMemo);
   const [selectedIds, setSelectedIds] = useState<number[]>(
     existingDraft ? existingDraft.after : originalIds
   );
   const [reason, setReason] = useState<string>(existingDraft?.reason ?? "");
-  const [reasonError, setReasonError] = useState("");
+  const [error, setError] = useState("");
 
   const isChanged = useMemo(
     () => !sameIds(selectedIds, originalIds),
     [selectedIds, originalIds]
   );
 
-  const handleToggle = (id: number) => {
+  const handleToggleSlot = (id: number) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
+  const toggleAttendance = (next: AttendanceStatus) => {
+    setAttendance((prev) => (prev === next ? null : next));
+  };
+
   const handleSave = () => {
-    if (!isChanged) {
-      setReasonError("변경된 일정이 없습니다.");
-      return;
+    let scheduleChange: ScheduleChangeDraft | null = null;
+    if (!scheduleLocked && isChanged) {
+      if (selectedIds.length === 0) {
+        setError("일정을 한 개 이상 선택해주세요.");
+        return;
+      }
+      if (!reason.trim()) {
+        setError("일정 변경 사유를 입력해주세요.");
+        return;
+      }
+      scheduleChange = {
+        before: originalIds,
+        after: selectedIds,
+        reason: reason.trim(),
+      };
     }
-    if (selectedIds.length === 0) {
-      setReasonError("일정을 한 개 이상 선택해주세요.");
-      return;
-    }
-    if (!reason.trim()) {
-      setReasonError("일정 변경 사유를 입력해주세요.");
-      return;
-    }
-    onSave({
-      before: originalIds,
-      after: selectedIds,
-      reason: reason.trim(),
-    });
+    onSave({ attendance, memo: memo.trim(), scheduleChange });
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <h3 className="text-lg font-bold mb-1">{member.name} 조원 일정 수정</h3>
+        <h3 className="text-lg font-bold mb-1">{member.name} 조원</h3>
         <p className="text-sm text-muted-foreground mb-4 break-keep">
-          변경할 일정을 체크하고 사유를 입력해주세요. 저장하면 제출 시 함께
-          반영됩니다.
+          출석을 체크하고, 필요하면 일정/비고를 입력해주세요. 저장하면 제출 시
+          함께 반영됩니다.
         </p>
 
-        <div className="mb-4 overflow-x-auto">
-          <ScheduleSlotMatrix
-            schedule={schedule}
-            selectedIds={selectedIds}
-            onToggle={handleToggle}
-            originalIds={originalIds}
-          />
-        </div>
-
-        <div className="space-y-2 mb-4">
-          <Label htmlFor="schedule-change-reason">변경 사유</Label>
-          <Textarea
-            id="schedule-change-reason"
-            value={reason}
-            onChange={(e) => {
-              setReason(e.target.value);
-              if (reasonError) setReasonError("");
-            }}
-            placeholder="예) 늦은 합류로 인한 일정 변경"
-          />
-          {reasonError && (
-            <p className="text-red-500 text-sm">{reasonError}</p>
-          )}
-        </div>
-
-        <div className="flex justify-between gap-2">
-          {existingDraft ? (
-            <Button
+        {/* 출석 */}
+        <div className="space-y-2 mb-5">
+          <Label>오늘 출석</Label>
+          <div className="flex items-center gap-2">
+            <button
               type="button"
-              variant="outline"
-              onClick={onRemove}
-              className="text-red-600"
+              onClick={() => toggleAttendance("PRESENT")}
+              className={cn(
+                "flex-1 h-10 rounded-md border text-sm font-medium transition-colors",
+                attendance === "PRESENT"
+                  ? "bg-green-600 text-white border-green-600"
+                  : "bg-background border-input hover:bg-accent"
+              )}
             >
-              변경 취소
-            </Button>
-          ) : (
-            <span />
-          )}
-          <div className="flex gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
-              닫기
-            </Button>
-            <Button type="button" onClick={handleSave}>
-              저장
-            </Button>
+              출석
+            </button>
+            <button
+              type="button"
+              onClick={() => toggleAttendance("ABSENT")}
+              className={cn(
+                "flex-1 h-10 rounded-md border text-sm font-medium transition-colors",
+                attendance === "ABSENT"
+                  ? "bg-red-600 text-white border-red-600"
+                  : "bg-background border-input hover:bg-accent"
+              )}
+            >
+              결석
+            </button>
           </div>
+        </div>
+
+        {/* 일정 */}
+        <div className="mb-5">
+          <Label className="mb-2 block">일정</Label>
+          {scheduleLocked ? (
+            <div className="rounded-md border bg-muted/30 p-3 text-sm break-keep">
+              <div className="text-muted-foreground">
+                현재 일정:{" "}
+                <span className="text-foreground">{currentScheduleText}</span>
+              </div>
+              <div className="mt-1 text-xs text-yellow-700">
+                검토 중인 일정 변경 요청이 있어 일정은 수정할 수 없습니다.
+              </div>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <ScheduleSlotMatrix
+                schedule={schedule}
+                selectedIds={selectedIds}
+                onToggle={handleToggleSlot}
+                originalIds={originalIds}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* 변경 사유 (일정 변경 시 필수) */}
+        {!scheduleLocked && isChanged && (
+          <div className="space-y-2 mb-5">
+            <Label htmlFor="schedule-change-reason">
+              일정 변경 사유 <span className="text-red-500">*</span>
+            </Label>
+            <Textarea
+              id="schedule-change-reason"
+              value={reason}
+              onChange={(e) => {
+                setReason(e.target.value);
+                if (error) setError("");
+              }}
+              placeholder="예) 늦은 합류로 인한 일정 변경"
+            />
+          </div>
+        )}
+
+        {/* 비고 */}
+        <div className="space-y-2 mb-4">
+          <Label htmlFor="member-memo">비고 (특이사항)</Label>
+          <Textarea
+            id="member-memo"
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+            placeholder="예) 컨디션 난조, 중간 합류 등 — 인원관리 간사에게 전달됩니다"
+          />
+        </div>
+
+        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="outline" onClick={onClose}>
+            닫기
+          </Button>
+          <Button type="button" onClick={handleSave}>
+            저장
+          </Button>
         </div>
       </div>
     </div>
