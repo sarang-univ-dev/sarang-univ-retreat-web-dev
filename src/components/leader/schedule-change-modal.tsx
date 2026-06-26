@@ -17,10 +17,6 @@ interface ScheduleChangeModalProps {
   existingDraft?: ScheduleChangeDraft;
   initialAttendance: AttendanceStatus | null;
   initialMemo: string;
-  /** 검토 중인 일정 변경 요청이 있어 일정 변경이 잠긴 상태 */
-  scheduleLocked: boolean;
-  /** 잠금 시 표시할 현재 일정 텍스트(부모가 계산해서 전달) */
-  currentScheduleText: string;
   onClose: () => void;
   onSave: (result: {
     attendance: AttendanceStatus | null;
@@ -38,7 +34,8 @@ function sameIds(a: number[], b: number[]): boolean {
 /**
  * 한 조원의 출석 · 일정 · 비고를 입력하는 모달.
  * - 출석/결석 토글 (전원 입력 필수는 제출 단계에서 검증)
- * - 일정 매트릭스: 변경 시 사유 필수, 드래프트로 저장(즉시 서버 호출 X)
+ * - 일정 매트릭스: 변경 시 사유 필수, 드래프트로 저장(즉시 서버 호출 X).
+ *   검토중 요청이 있어도 다시 제출하면 서버가 같은 리더의 요청을 upsert 하므로 항상 편집 가능.
  * - 비고(특이사항): 출석과 함께 저장되어 인원관리 간사가 모아 본다
  * 오버레이 패턴은 retreat-confirm-modal 을 그대로 따른다.
  */
@@ -48,8 +45,6 @@ export function ScheduleChangeModal({
   existingDraft,
   initialAttendance,
   initialMemo,
-  scheduleLocked,
-  currentScheduleText,
   onClose,
   onSave,
 }: ScheduleChangeModalProps) {
@@ -83,7 +78,7 @@ export function ScheduleChangeModal({
 
   const handleSave = () => {
     let scheduleChange: ScheduleChangeDraft | null = null;
-    if (!scheduleLocked && isChanged) {
+    if (isChanged) {
       if (selectedIds.length === 0) {
         setError("일정을 한 개 이상 선택해주세요.");
         return;
@@ -144,30 +139,18 @@ export function ScheduleChangeModal({
         {/* 일정 */}
         <div className="mb-5">
           <Label className="mb-2 block">일정</Label>
-          {scheduleLocked ? (
-            <div className="rounded-md border bg-muted/30 p-3 text-sm break-keep">
-              <div className="text-muted-foreground">
-                현재 일정:{" "}
-                <span className="text-foreground">{currentScheduleText}</span>
-              </div>
-              <div className="mt-1 text-xs text-yellow-700">
-                검토 중인 일정 변경 요청이 있어 일정은 수정할 수 없습니다.
-              </div>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <ScheduleSlotMatrix
-                schedule={schedule}
-                selectedIds={selectedIds}
-                onToggle={handleToggleSlot}
-                originalIds={originalIds}
-              />
-            </div>
-          )}
+          <div className="overflow-x-auto">
+            <ScheduleSlotMatrix
+              schedule={schedule}
+              selectedIds={selectedIds}
+              onToggle={handleToggleSlot}
+              originalIds={originalIds}
+            />
+          </div>
         </div>
 
         {/* 변경 사유 (일정 변경 시 필수) */}
-        {!scheduleLocked && isChanged && (
+        {isChanged && (
           <div className="space-y-2 mb-5">
             <Label htmlFor="schedule-change-reason">
               일정 변경 사유 <span className="text-red-500">*</span>

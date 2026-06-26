@@ -35,10 +35,6 @@ const MEAL_ORDER: Record<string, number> = {
   SLEEP: 3,
 };
 
-/**
- * 선택된 일정을 겨울 리더보고서식 압축 텍스트로 변환.
- * 없음 → "일정 없음", 전부 → "전참", 그 외 → 연속 슬롯을 "수점~목점" 으로 묶어 ", " 연결.
- */
 function formatScheduleCompact(
   selectedIds: number[],
   schedule: TRetreatRegistrationSchedule[]
@@ -110,8 +106,6 @@ export function MemberCard({ member, schedule }: MemberCardProps) {
   const memo = draftMemo !== undefined ? draftMemo : member.todayMemo ?? "";
 
   const latest = member.latestScheduleChangeRequest;
-  // 검토중 요청이 있고 새 드래프트가 없으면 일정 변경 잠금 (출석/비고는 가능)
-  const scheduleLocked = !scheduleChange && latest?.status === "PENDING";
 
   const scheduleSummary = formatScheduleCompact(member.scheduleIds, schedule);
 
@@ -190,8 +184,6 @@ export function MemberCard({ member, schedule }: MemberCardProps) {
             existingDraft={scheduleChange}
             initialAttendance={attendance}
             initialMemo={memo}
-            scheduleLocked={scheduleLocked}
-            currentScheduleText={scheduleSummary}
             onClose={() => setShowModal(false)}
             onSave={({ attendance: a, memo: m, scheduleChange: sc }) => {
               setAttendance(id, a);

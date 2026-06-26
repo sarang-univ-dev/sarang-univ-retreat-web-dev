@@ -156,7 +156,7 @@ export async function fetchLeaderScheduleChangeRequests(
     .json<{ requests: ScheduleChangeRequest[] }>();
 }
 
-/** POST /schedule-change-requests — body { userRetreatRegistrationId, afterScheduleIds, reason } → { request } (409 if PENDING exists) */
+/** POST /schedule-change-requests — body { userRetreatRegistrationId, afterScheduleIds, reason } → { request }. 같은 리더의 기존 검토대기 요청이 있으면 upsert(갱신) */
 export async function submitLeaderScheduleChangeRequest(
   slug: string,
   payload: {
