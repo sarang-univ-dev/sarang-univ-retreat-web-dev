@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   fetchLeaderMe,
   fetchLeaderMembers,
+  fetchLeaderOpen,
   fetchLeaderReport,
   fetchLeaderToday,
   leaderLogin,
@@ -16,6 +17,7 @@ export const leaderQueryKeys = {
   members: (slug: string) => ["leader-members", slug] as const,
   report: (slug: string, date: string | null) =>
     ["leader-report", slug, date] as const,
+  open: (slug: string) => ["leader-open", slug] as const,
 };
 
 /**
@@ -36,6 +38,13 @@ export function useLeaderToday(slug: string, enabled = true) {
     queryKey: leaderQueryKeys.today(slug),
     queryFn: () => fetchLeaderToday(slug),
     enabled,
+  });
+}
+
+export function useLeaderOpen(slug: string) {
+  return useQuery({
+    queryKey: leaderQueryKeys.open(slug),
+    queryFn: () => fetchLeaderOpen(slug),
   });
 }
 

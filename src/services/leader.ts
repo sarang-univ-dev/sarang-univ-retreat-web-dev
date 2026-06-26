@@ -24,6 +24,7 @@ export interface LeaderTodayResponse {
   days: string[];
   lastDay: string | null;
   isLastDay: boolean;
+  leaderReportOpen: boolean;
 }
 
 export interface LeaderMemberScheduleChangeRequest {
@@ -101,11 +102,20 @@ export async function fetchLeaderMe(
   return leaderApi.get(`${base(slug)}/me`).json<{ leader: LeaderMe }>();
 }
 
-/** GET /today → { today, days, lastDay, isLastDay } */
+/** GET /today → { today, days, lastDay, isLastDay, leaderReportOpen } */
 export async function fetchLeaderToday(
   slug: string
 ): Promise<LeaderTodayResponse> {
   return leaderApi.get(`${base(slug)}/today`).json<LeaderTodayResponse>();
+}
+
+/** GET /open (공개, 무인증) → { leaderReportOpen } — 로그인 전 닫힘 화면 표시용 */
+export async function fetchLeaderOpen(
+  slug: string
+): Promise<{ leaderReportOpen: boolean }> {
+  return leaderApi
+    .get(`${base(slug)}/open`)
+    .json<{ leaderReportOpen: boolean }>();
 }
 
 /** GET /members → { members } */
