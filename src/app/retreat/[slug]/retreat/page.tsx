@@ -6,7 +6,7 @@ import { RetreatRegistrationForm } from "@/components/retreat/retreat-registrati
 import { Skeleton } from "@/components/ui/skeleton";
 import { getKSTFullYear, getRetreatSeason } from "@/lib/date-utils";
 import { useRetreatInfo } from "@/hooks/use-retreat-queries";
-import { useRegistrationGate } from "@/hooks/use-registration-gate";
+import { useRetreatRegistrationGate } from "@/hooks/use-retreat-registration-gate";
 import { getCurrentRegistrationPeriodName } from "@/lib/registration-period";
 import { formatRetreatDates } from "@/lib/format-retreat-dates";
 
@@ -16,15 +16,15 @@ export default function RetreatPage() {
   const { data: retreatData, isLoading, isError } = useRetreatInfo(slug);
 
   // 신청 기간이 지났으면 실패 페이지로 리다이렉트
-  useRegistrationGate(slug, retreatData?.payment);
+  useRetreatRegistrationGate(slug, retreatData?.payment);
 
   if (isLoading) {
     return (
       <div className="container mx-auto p-4">
         <div className="mb-8">
-          <Skeleton className="w-full h-64" />
+          <Skeleton className="h-64 w-full" />
         </div>
-        <Skeleton className="w-full h-[600px]" />
+        <Skeleton className="h-[600px] w-full" />
       </div>
     );
   }
@@ -32,7 +32,9 @@ export default function RetreatPage() {
   if (isError || !retreatData) {
     return (
       <div className="container mx-auto p-4 text-center">
-        <p className="text-red-500 text-lg">데이터를 불러오는데 실패했습니다.</p>
+        <p className="text-lg text-red-500">
+          데이터를 불러오는데 실패했습니다.
+        </p>
       </div>
     );
   }

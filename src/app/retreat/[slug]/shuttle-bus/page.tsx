@@ -5,7 +5,7 @@ import { ShuttleBusRegistrationForm } from "@/components/shuttle-bus/shuttle-bus
 import { Skeleton } from "@/components/ui/skeleton";
 import RetreatCard from "@/components/retreat/retreat-card";
 import { useRetreatInfo, useShuttleBusInfo } from "@/hooks/use-retreat-queries";
-import { useRegistrationGate } from "@/hooks/use-registration-gate";
+import { useShuttleBusRegistrationGate } from "@/hooks/use-shuttle-bus-registration-gate";
 import { formatRetreatDates } from "@/lib/format-retreat-dates";
 import { getKSTFullYear, getRetreatSeason } from "@/lib/date-utils";
 
@@ -21,10 +21,10 @@ export default function ShuttleBusPage() {
     useShuttleBusInfo(slug);
 
   // 셔틀버스 등록 폼은 수양회 결제 기간과 독립된 셔틀버스 결제 일정을 사용한다.
-  useRegistrationGate(slug, shuttleBusData?.shuttleBusPaymentSchedules, {
-    allowEmpty: false,
-    failureForm: "shuttle-bus",
-  });
+  useShuttleBusRegistrationGate(
+    slug,
+    shuttleBusData?.shuttleBusPaymentSchedules
+  );
 
   if (retreatLoading || busLoading) {
     return (
