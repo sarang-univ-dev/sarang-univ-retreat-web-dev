@@ -42,29 +42,48 @@ export async function mockRetreatApi(page: Page, options: RetreatMock = {}) {
   // shuttle-bus/info 가 /info glob 에 먼저 잡히지 않도록 더 구체적인 라우트를 먼저 등록한다.
   if (shuttleBus) {
     await page.route("**/api/v1/retreat/*/shuttle-bus/info", async (route) => {
+      const shuttleBusPaymentSchedules = (
+        open ? openPeriodRetreatInfo.payment : closedPeriodRetreatInfo.payment
+      ).map(({ id, retreatId, name, startAt, endAt, createdAt }) => ({
+        id,
+        retreatId,
+        name,
+        startAt,
+        endAt,
+        createdAt,
+      }));
+
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ shuttleBusInfo }),
+        body: JSON.stringify({
+          shuttleBusInfo: {
+            ...shuttleBusInfo,
+            shuttleBusPaymentSchedules,
+          },
+        }),
       });
     });
   }
 
-  await page.route("**/api/v1/retreat/*/shuttle-bus/register", async (route) => {
-    if (route.request().method() !== "POST") return route.fallback();
-    if (busRegisterStatus >= 200 && busRegisterStatus < 400) {
+  await page.route(
+    "**/api/v1/retreat/*/shuttle-bus/register",
+    async (route) => {
+      if (route.request().method() !== "POST") return route.fallback();
+      if (busRegisterStatus >= 200 && busRegisterStatus < 400) {
+        return route.fulfill({
+          status: busRegisterStatus,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: true }),
+        });
+      }
       return route.fulfill({
         status: busRegisterStatus,
         contentType: "application/json",
-        body: JSON.stringify({ ok: true }),
+        body: JSON.stringify({ message: busRegisterError ?? "등록 실패" }),
       });
     }
-    return route.fulfill({
-      status: busRegisterStatus,
-      contentType: "application/json",
-      body: JSON.stringify({ message: busRegisterError ?? "등록 실패" }),
-    });
-  });
+  );
 
   if (univGroupInfo) {
     await page.route("**/api/v1/retreat/*/univ-group-info", async (route) => {
