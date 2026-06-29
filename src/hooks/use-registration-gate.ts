@@ -14,14 +14,17 @@ import {
  */
 export function useRegistrationGate(
   slug: string,
-  payment: PaymentWindow[] | undefined
+  payment: PaymentWindow[] | undefined,
+  options: { allowEmpty?: boolean } = {}
 ) {
   const router = useRouter();
+  const { allowEmpty = true } = options;
 
   useEffect(() => {
-    if (!payment || payment.length === 0) return;
+    if (!payment) return;
+    if (payment.length === 0 && allowEmpty) return;
     if (isWithinRegistrationPeriod(payment)) return;
 
     router.push(`/retreat/${slug}/registration-failure?reason=period-closed`);
-  }, [slug, payment, router]);
+  }, [allowEmpty, slug, payment, router]);
 }

@@ -4,10 +4,7 @@ import { useSlug } from "@/hooks/use-slug";
 import { ShuttleBusRegistrationForm } from "@/components/shuttle-bus/shuttle-bus-registration-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import RetreatCard from "@/components/retreat/retreat-card";
-import {
-  useRetreatInfo,
-  useShuttleBusInfo,
-} from "@/hooks/use-retreat-queries";
+import { useRetreatInfo, useShuttleBusInfo } from "@/hooks/use-retreat-queries";
 import { useRegistrationGate } from "@/hooks/use-registration-gate";
 import { formatRetreatDates } from "@/lib/format-retreat-dates";
 import { getKSTFullYear, getRetreatSeason } from "@/lib/date-utils";
@@ -20,18 +17,21 @@ export default function ShuttleBusPage() {
     isLoading: retreatLoading,
     isError: retreatError,
   } = useRetreatInfo(slug);
-  const { data: shuttleBusData, isLoading: busLoading } = useShuttleBusInfo(slug);
+  const { data: shuttleBusData, isLoading: busLoading } =
+    useShuttleBusInfo(slug);
 
-  // 신청 기간이 지났으면 실패 페이지로 리다이렉트
-  useRegistrationGate(slug, retreatData?.payment);
+  // 셔틀버스 등록 폼은 수양회 결제 기간과 독립된 셔틀버스 결제 일정을 사용한다.
+  useRegistrationGate(slug, shuttleBusData?.shuttleBusPaymentSchedules, {
+    allowEmpty: false,
+  });
 
   if (retreatLoading || busLoading) {
     return (
       <div className="container mx-auto p-4">
         <div className="mb-8">
-          <Skeleton className="w-full h-64" />
+          <Skeleton className="h-64 w-full" />
         </div>
-        <Skeleton className="w-full h-[600px]" />
+        <Skeleton className="h-[600px] w-full" />
       </div>
     );
   }
@@ -39,7 +39,7 @@ export default function ShuttleBusPage() {
   if (retreatError || !retreatData) {
     return (
       <div className="container mx-auto p-4 text-center">
-        <p className="text-red-500 text-lg">수양회 정보를 찾을 수 없습니다.</p>
+        <p className="text-lg text-red-500">수양회 정보를 찾을 수 없습니다.</p>
       </div>
     );
   }
@@ -47,7 +47,9 @@ export default function ShuttleBusPage() {
   if (!shuttleBusData) {
     return (
       <div className="container mx-auto p-4 text-center">
-        <p className="text-red-500 text-lg">셔틀버스 정보를 찾을 수 없습니다.</p>
+        <p className="text-lg text-red-500">
+          셔틀버스 정보를 찾을 수 없습니다.
+        </p>
       </div>
     );
   }
