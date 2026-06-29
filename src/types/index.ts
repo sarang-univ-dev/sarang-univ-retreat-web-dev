@@ -75,6 +75,15 @@ export type TRetreatPaymentSchedule = {
   createdAt: Date;
 };
 
+export type TRetreatShuttleBusPaymentSchedule = {
+  id: number;
+  retreatId: number;
+  name: string;
+  startAt: Date;
+  endAt: Date;
+  createdAt: Date;
+};
+
 export type TShuttleBuses = {
   id: number;
   retreatId: number;
@@ -274,20 +283,20 @@ export type UserInfo = {
 
 export enum Gender {
   MALE = "MALE",
-  FEMALE = "FEMALE"
+  FEMALE = "FEMALE",
 }
 
 export enum UserRetreatRegistrationType {
   NEW_COMER = "NEW_COMER",
   STAFF = "STAFF",
-  SOLDIER = "SOLDIER"
+  SOLDIER = "SOLDIER",
 }
 
 export enum RetreatRegistrationScheduleType {
   BREAKFAST = "BREAKFAST",
   LUNCH = "LUNCH",
   DINNER = "DINNER",
-  SLEEP = "SLEEP"
+  SLEEP = "SLEEP",
 }
 
 export enum UserRetreatRegistrationPaymentStatus {
@@ -296,14 +305,14 @@ export enum UserRetreatRegistrationPaymentStatus {
   PENDING = "PENDING",
   PAID = "PAID",
   REFUND_REQUEST = "REFUND_REQUEST",
-  REFUNDED = "REFUNDED"
+  REFUNDED = "REFUNDED",
 }
 
 export enum UserRetreatRegistrationMemoType {
   UNIV_GROUP_ADMIN_STAFF = "UNIV_GROUP_ADMIN_STAFF",
   ACCOUNT_STAFF = "ACCOUNT_STAFF",
   LINEUP_STAFF = "LINEUP_STAFF",
-  DORMITORY_STAFF = "DORMITORY_STAFF"
+  DORMITORY_STAFF = "DORMITORY_STAFF",
 }
 
 export enum UserRetreatRegistrationHistoryMemoType {
@@ -311,7 +320,7 @@ export enum UserRetreatRegistrationHistoryMemoType {
   DORMITORY_TEAM_MEMBER = "DORMITORY_TEAM_MEMBER",
   ACCOUNT_STAFF = "ACCOUNT_STAFF",
   LINEUP_STAFF = "LINEUP_STAFF",
-  DORMITORY_STAFF = "DORMITORY_STAFF"
+  DORMITORY_STAFF = "DORMITORY_STAFF",
 }
 
 export enum UserRole {
@@ -322,12 +331,12 @@ export enum UserRole {
   UNIV_GROUP_DORMITORY_MEMBER = "UNIV_GROUP_DORMITORY_MEMBER",
   DORMITORY_STAFF = "DORMITORY_STAFF",
   SHUTTLE_BUS_BOARDING_STAFF = "SHUTTLE_BUS_BOARDING_STAFF",
-  SHUTTLE_BUS_ACCOUNT_MEMBER = "SHUTTLE_BUS_ACCOUNT_MEMBER"
+  SHUTTLE_BUS_ACCOUNT_MEMBER = "SHUTTLE_BUS_ACCOUNT_MEMBER",
 }
 
 export enum RetreatShuttleBusDirection {
   FROM_CHURCH_TO_RETREAT = "FROM_CHURCH_TO_RETREAT",
-  FROM_RETREAT_TO_CHURCH = "FROM_RETREAT_TO_CHURCH"
+  FROM_RETREAT_TO_CHURCH = "FROM_RETREAT_TO_CHURCH",
 }
 
 export enum UserRetreatShuttleBusRegistrationMemoType {
@@ -336,20 +345,20 @@ export enum UserRetreatShuttleBusRegistrationMemoType {
   LINEUP_STAFF = "LINEUP_STAFF",
   DORMITORY_STAFF = "DORMITORY_STAFF",
   SHUTTLE_BUS_ACCOUNT_MEMBER = "SHUTTLE_BUS_ACCOUNT_MEMBER",
-  SHUTTLE_BUS_BOARDING_STAFF = "SHUTTLE_BUS_BOARDING_STAFF"
+  SHUTTLE_BUS_BOARDING_STAFF = "SHUTTLE_BUS_BOARDING_STAFF",
 }
 
 export enum UserRetreatShuttleBusPaymentStatus {
   PENDING = "PENDING",
   PAID = "PAID",
   REFUND_REQUEST = "REFUND_REQUEST",
-  REFUNDED = "REFUNDED"
+  REFUNDED = "REFUNDED",
 }
 
 // TODO: 셔틀 버스 명단에 없는데 탑승한 경우 메모만 생성 (SHUTTLE_BUS_STAFF에 대해)
 export enum UserRetreatShuttleBusRegistrationHistoryMemoType {
   UNIV_GROUP_ADMIN_STAFF = "UNIV_GROUP_ADMIN_STAFF",
-  SHUTTLE_BUS_BOARDING_STAFF = "SHUTTLE_BUS_BOARDING_STAFF"
+  SHUTTLE_BUS_BOARDING_STAFF = "SHUTTLE_BUS_BOARDING_STAFF",
 }
 // #endregion
 
@@ -383,4 +392,5 @@ export type ShuttleBusInfo = {
   }[];
   retreatRegisterSchedules: TRetreatRegistrationSchedule[];
   shuttleBuses: TShuttleBuses[];
+  shuttleBusPaymentSchedules: TRetreatShuttleBusPaymentSchedule[];
 };

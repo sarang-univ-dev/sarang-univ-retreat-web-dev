@@ -16,9 +16,7 @@ test.describe("신청 기간이 닫혔을 때 (period closed)", () => {
     await page.goto(RETREAT_URL);
 
     await expect(page).toHaveURL(
-      new RegExp(
-        `/retreat/${SLUG}/registration-failure\\?reason=period-closed`
-      )
+      new RegExp(`/retreat/${SLUG}/registration-failure\\?reason=period-closed`)
     );
     await expect(
       page.getByRole("heading", { name: "수양회 신청 기간이 아닙니다" })
@@ -31,12 +29,10 @@ test.describe("신청 기간이 닫혔을 때 (period closed)", () => {
     await page.goto(SHUTTLE_BUS_URL);
 
     await expect(page).toHaveURL(
-      new RegExp(
-        `/retreat/${SLUG}/registration-failure\\?reason=period-closed`
-      )
+      new RegExp(`/retreat/${SLUG}/registration-failure\\?reason=period-closed`)
     );
     await expect(
-      page.getByRole("heading", { name: "수양회 신청 기간이 아닙니다" })
+      page.getByRole("heading", { name: "셔틀버스 신청 기간이 아닙니다" })
     ).toBeVisible();
   });
 });
