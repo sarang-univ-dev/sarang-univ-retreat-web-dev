@@ -16,6 +16,8 @@ export default function RegistrationFailurePage() {
   const slug = useSlug();
   const searchParams = useSearchParams();
   const isPeriodClosed = searchParams.get("reason") === "period-closed";
+  const isShuttleBusPeriodClosed =
+    isPeriodClosed && searchParams.get("form") === "shuttle-bus";
 
   // 기간 마감이 아니면 store 의 실패 데이터를 1회 스냅샷한다.
   const [failureData] = useState<RegistrationFailureResult | null>(() =>
@@ -30,25 +32,29 @@ export default function RegistrationFailurePage() {
   }, [failureData]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-2">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <Card className="mx-2 w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <AlertCircle className="h-6 w-6 text-red-600" />
           </div>
           <CardTitle className="text-2xl font-bold">
-            {isPeriodClosed ? "수양회 신청 기간이 아닙니다" : "신청 오류"}
+            {isPeriodClosed
+              ? isShuttleBusPeriodClosed
+                ? "셔틀버스 신청 기간이 아닙니다"
+                : "수양회 신청 기간이 아닙니다"
+              : "신청 오류"}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center">
           {isPeriodClosed ? (
-            <p className="text-muted-foreground mb-6">
-              현재는 수양회 신청 기간이 아닙니다. 신청 기간을 확인하시고 다시
-              방문해주세요.
+            <p className="mb-6 text-muted-foreground">
+              현재는 {isShuttleBusPeriodClosed ? "셔틀버스" : "수양회"} 신청
+              기간이 아닙니다. 신청 기간을 확인하시고 다시 방문해주세요.
             </p>
           ) : (
             <>
-              <div className="bg-red-50 p-4 rounded-md mb-6 text-left">
+              <div className="mb-6 rounded-md bg-red-50 p-4 text-left">
                 <p className="text-red-700">
                   {failureData?.errorMessage ||
                     "죄송합니다. 현재 등록을 완료할 수 없습니다. 다시 시도해주시기 바랍니다."}

@@ -23,6 +23,7 @@ export default function ShuttleBusPage() {
   // 셔틀버스 등록 폼은 수양회 결제 기간과 독립된 셔틀버스 결제 일정을 사용한다.
   useRegistrationGate(slug, shuttleBusData?.shuttleBusPaymentSchedules, {
     allowEmpty: false,
+    failureForm: "shuttle-bus",
   });
 
   if (retreatLoading || busLoading) {
