@@ -79,10 +79,6 @@ export function ScheduleChangeModal({
   const handleSave = () => {
     let scheduleChange: ScheduleChangeDraft | null = null;
     if (isChanged) {
-      if (selectedIds.length === 0) {
-        setError("일정을 한 개 이상 선택해주세요.");
-        return;
-      }
       if (!reason.trim()) {
         setError("일정 변경 사유를 입력해주세요.");
         return;
